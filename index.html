@@ -1,0 +1,126 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="manifest" href="site.webmanifest">
+        <link rel="apple-touch-icon" href="icon.png">
+        <!-- Place favicon.ico in the root directory -->
+
+        <link rel="stylesheet" href="css/normalize.css">
+        <link rel="stylesheet" href="css/main.css">
+    </head>
+    <body class="en">
+        <!--[if lte IE 9]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+        <![endif]-->
+
+				<header id="header">
+					<nav id="mobile-nav">
+					</nav>
+					<h1 class="en">River Watch<span class="subtitle"> - Water Level Current and Forecast</span></h1>
+					<h1 class="fr">Surveillance du flueve<span class="subtitle"> - Niveaux d'eau actuel et prévisions</span></h1>
+					<div id="lang">
+						<div class="fr">EN</div>
+						<div class="en">FR</div>
+					</div>
+				</header>
+
+				<section id="intro">
+					<div class="close">X</div>
+					<div class="en">
+						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse vel condimentum lacus. Maecenas id nulla congue, aliquam arcu ac, congue leo. Vivamus et luctus urna, quis rutrum enim. Proin vehicula risus dolor, eget faucibus neque tristique vitae. Nullam ultricies orci ac aliquam varius. Morbi in pharetra mi. Integer quis arcu aliquam, sodales sapien eu, ornare arcu. Duis ut rhoncus erat. Etiam sodales auctor porttitor. Vestibulum quis laoreet lorem, tristique ultricies orci.</p>
+						<p>Nulla vitae justo venenatis, posuere leo nec, porta mauris. Suspendisse tincidunt justo mollis, eleifend elit ultrices, fringilla eros. Duis accumsan ligula eget dolor mollis, feugiat dictum dolor consectetur. Duis eu nisl justo. Nullam cursus suscipit orci, non ultricies elit pellentesque in. Donec sed est sit amet leo maximus bibendum.</p>
+					</div>
+					<div class="fr">
+						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse vel condimentum lacus. Maecenas id nulla congue, aliquam arcu ac, congue leo. Vivamus et luctus urna, quis rutrum enim. Proin vehicula risus dolor, eget faucibus neque tristique vitae. Nullam ultricies orci ac aliquam varius. Morbi in pharetra mi. Integer quis arcu aliquam, sodales sapien eu, ornare arcu. Duis ut rhoncus erat. Etiam sodales auctor porttitor. Vestibulum quis laoreet lorem, tristique ultricies orci.</p>
+						<p>Nulla vitae justo venenatis, posuere leo nec, porta mauris. Suspendisse tincidunt justo mollis, eleifend elit ultrices, fringilla eros. Duis accumsan ligula eget dolor mollis, feugiat dictum dolor consectetur. Duis eu nisl justo. Nullam cursus suscipit orci, non ultricies elit pellentesque in. Donec sed est sit amet leo maximus bibendum.</p>
+					</div>
+				</section>
+
+				<nav id="nav">
+					<div class="nav-controls">
+						<div class="nav-title">
+							<span class="en">Stations</span>
+							<span class="fr"></span>
+						</div>
+						<div id="nav-sort" class="dropdown">
+							<span class="dropdown-title">
+								<span class="en">Sort</span>
+								<span class="fr"></span> ^
+							</span>
+							<ul>
+								<li data-sort="name">
+									<span class="en">Alphabetic</span>
+									<span class="fr">Alphabetic</span>
+								</li>
+								<li data-sort="status">
+									<span class="en">Flood Status</span>
+									<span class="fr">Flood Status</span>
+								</li>
+								<li data-sort="id">
+									<span class="en">Geographic</span>
+									<span class="fr">Geographic</span>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<ul id="station-list">
+						<li class="normal" data-id="1" data-status="3 normal" data-name="connors">Connors</li>
+						<li class="watch" data-id="2" data-status="1 watch" data-name="st francois">St. Francois</li>
+						<li class="advisory" data-id="3" data-status="2 advisory" data-name="clair">Clair</li>
+						<li class="warning" data-id="4" data-status="0 warning" data-name="st hilaire">St. Hilaire</li>
+					</ul>
+				</nav>
+
+				<main id="content">
+					<section id="station-readings">I will be a station graph</section>
+					<section id="map">I will be a map</section>
+				</main>
+
+				<section id="legend">
+					<span class="legend-title">
+						<span class="en">Legend</span>
+						<span class="fr">Légende</span>
+					</span>
+					<ul>
+						<li class="normal">
+							<span class="en">Normal</span>
+							<span class="fr">Normal</span>
+						</li>
+						<li class="advisory">
+							<span class="en">Advisory</span>
+							<span class="fr">Avis</span>
+						</li>
+						<li class="watch">
+							<span class="en">Watch</span>
+							<span class="fr">Veille</span>
+						</li>
+						<li class="warning">
+							<span class="en">Warning</span>
+							<span class="fr">Avertissement</span>
+						</li>
+					</ul>
+				</section>
+					
+				<footer>
+				</footer>
+
+        <script src="js/vendor/modernizr-3.5.0.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-3.2.1.min.js"><\/script>')</script>
+        <script src="js/plugins.js"></script>
+        <script src="js/main.js"></script>
+
+        <!-- Google Analytics: change UA-XXXXX-Y to be your site's ID. -->
+        <script>
+            window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+            ga('create','UA-XXXXX-Y','auto');ga('send','pageview')
+        </script>
+        <script src="https://www.google-analytics.com/analytics.js" async defer></script>
+    </body>
+</html>
