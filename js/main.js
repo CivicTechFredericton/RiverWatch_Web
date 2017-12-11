@@ -1,10 +1,13 @@
+var floodChart;
+
 $(document).ready( function() {
         
 	populateList();
-        setupLang();
+	setupLang();
 	setupIntro();
 	setupNav();
 	setupLegend();
+	setupChart();
 });
 
 /*******************************************************************************
@@ -113,9 +116,13 @@ function populateList(){
         
         // get levels data - convert string to float for comparison
         var currentLevel = parseFloat( stations[i].getElementsByTagName("forecast_cur")[0].textContent );
+        var forcast24Level = parseFloat(stations[i].getElementsByTagName("forecast_24")[0].textContent );
+        var forcast48Level = parseFloat(stations[i].getElementsByTagName("forecast_48")[0].textContent );
         var advisoryLevel = parseFloat( alertLevelList[i].getElementsByTagName("advisory")[0].textContent );
         var watchLevel = parseFloat( alertLevelList[i].getElementsByTagName("watch")[0].textContent );
         var warningLevel = parseFloat( alertLevelList[i].getElementsByTagName("warning")[0].textContent );
+        var waterLevels = [currentLevel, forcast24Level, forcast48Level];
+        var alertLevels = [advisoryLevel, watchLevel, warningLevel];
         
         // not used  - kept in case needed in the future
         //var floodLevel = parseInt(alertLevelList[i].getElementByTagName("Floodlvl")[0].textContent);
@@ -153,6 +160,8 @@ function populateList(){
 }
 
 function setupLang() {
+	// all text on the site is in both French and English and has a class to identify which language it is
+	// the class on body controls which language is visible
 	$('#lang div').on('click', function() {
 		if ($(this).hasClass('fr')) {
 			$('body').removeClass('fr').addClass('en');
@@ -163,16 +172,20 @@ function setupLang() {
 }
 
 function setupIntro() {
+	// a disclaimer overlay appears when the site first loads and the user must close it to use the site
 	$('.close').on('click', function() {
 		$(this).parents('section').first().addClass('hide');
 	});
 }
 
 function setupNav() {
+	// toggles the visiblity of a dropdown with a class of 'open' on the parent
 	$('.dropdown').on('click', function() {
 		$(this).toggleClass('open');
 	});
 	
+	// the list of stations can be sorted in a variety of ways:
+	// alphabetically, risk of flood and geographical position which corresponds to the station id
 	$('#nav-sort li').on('click', function() {
 		sortList($('#station-list'), $(this));
 	});
@@ -185,14 +198,136 @@ function sortList(list, link) {
 	link.addClass('sel');
 	$('li', list).sort(sort_li).appendTo(list);
   function sort_li(a, b) {
-    return ($(b).data(sortOn)) < ($(a).data(sortOn)) ? 1 : -1;
+	return ($(b).data(sortOn)) < ($(a).data(sortOn)) ? 1 : -1;
   }
 }
 
 function setupLegend() {
+	// on smaller screens the legend is in a dropdown
 	$('#legend').on('click', function() {
 		if ($(window).width() <= 640) {
 			$(this).toggleClass('open');
 		}
 	});
+}
+
+function setupChart() {
+	initializeChart();
+
+	$('#station-list').on('click', 'li', openChart);
+	$('#station-readings').on('click', '.close', function() {
+		$('#station-readings').removeClass('show');
+	});
+}
+
+function initializeChart() {
+	var ctx = $("#flood-chart");
+	floodChart = new Chart(ctx, {
+		type: 'bar',
+		data: {
+			labels: ["May 10", "May 11", "May 12"], // get proper dates
+			datasets: [{
+				label: 'Water Level',
+				data: [],
+				backgroundColor: [
+					'rgba(0, 81, 198, 1.0)',
+					'rgba(64, 125, 212, 1.0)',
+					'rgba(127, 168, 226, 1.0)'
+				],
+				borderWidth: 0
+			}]
+		},
+		options: {
+			
+			bar: {
+				
+			},
+			legend: {
+				display: false,
+			},
+			scales: {
+				yAxes: [{
+					scaleLabel: {
+						display: true,
+						labelString: "Water level / Niveaux d'eau (m)"
+					},
+					ticks: {
+						//beginAtZero:true
+					}
+				}],
+				xAxes: [{
+					categoryPercentage: 0.4
+				}]
+			},
+			annotation: {
+				annotations: [{
+					type: 'line',
+					mode: 'horizontal',
+					id: '0',
+					value: 0,
+					borderColor: 'rgb(252, 238, 33)',
+					borderWidth: 3,
+					label: {
+						enabled: true,
+						content: 'Advisory',
+						position: 'right'
+					}
+				},
+				{
+					type: 'line',
+					mode: 'horizontal',
+					id: '1',
+					value: 0,
+					borderColor: 'rgb(247, 147, 30)',
+					borderWidth: 3,
+					label: {
+						enabled: true,
+						content: 'Watch',
+						position: 'right'
+					}
+				},
+				{
+					type: 'line',
+					mode: 'horizontal',
+					id: '2',
+					value: 0,
+					borderColor: 'rgb(255, 67, 67)',
+					borderWidth: 3,
+					label: {
+						enabled: true,
+						content: 'Warning',
+						position: 'right'
+					}
+				}]
+			}
+		}
+	});
+}
+
+function openChart() {
+	var id = $(this).data('id'),
+		waterLevels = [160.4, 160.5, 160.4], // get water levels by station id
+		alertLevels = [168.7, 169.7, 170.2], // get alert levels by station
+		name = $(this).text();
+	$('#station-title').text(name);
+
+	// remove previous water levels
+	floodChart.data.datasets.forEach(function(dataset) {
+		dataset.data.pop();
+	});
+
+	// add water levels for this station
+	floodChart.data.datasets.forEach(function(dataset) {
+		dataset.data = waterLevels;
+	});
+
+	// update the alert levels
+	floodChart.options.annotation.annotations.forEach(function(annotation) {
+		var i = parseInt(annotation.id);
+		annotation.value = alertLevels[i];
+	});
+
+	// render the chart with the updated values
+	floodChart.update(0);
+	$('#station-readings').addClass('show');
 }
