@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<area>
+	<station>
+		<name>Connors</name> 
+		<stationID>0</stationID> 
+		<advisory>168.7</advisory>
+		<watch>169.7</watch>
+		<warning>170.2</warning>
+		<Floodlvl>170.7</Floodlvl>
+	</station>
+	<station>
+		<name>St. Francois</name> 
+		<stationID>1</stationID> 
+		<advisory>158.2</advisory>
+		<watch>159.2</watch>
+		<warning>159.7</warning>
+		<Floodlvl>160.2</Floodlvl>
+	</station>
+	<station>
+		<name>St. Clair</name> 
+		<stationID>2</stationID> 
+		<advisory>154.2</advisory>
+		<watch>155.2</watch>
+		<warning>155.7</warning>
+		<Floodlvl>156.2</Floodlvl>
+	</station>
+	<station>
+		<name>Baker Brook</name> 
+		<stationID>3</stationID> 
+		<advisory>148.8</advisory>
+		<watch>149.8</watch>
+		<warning>150.3</warning>
+		<Floodlvl>150.8</Floodlvl>
+	</station>
+	<station>
+		<name>St. Hilaire</name> 
+		<stationID>4</stationID> 
+		<advisory>143.5</advisory>
+		<watch>144.5</watch>
+		<warning>145</warning>
+		<Floodlvl>145.5</Floodlvl>
+	</station>
+	<station>
+		<name>Edmundston</name> 
+		<stationID>5</stationID> 
+		<advisory>138.5</advisory>
+		<watch>139.5</watch>
+		<warning>140</warning>
+		<Floodlvl>140.5</Floodlvl>
+	</station>
+	<station>
+		<name>Iroquois</name> 
+		<stationID>6</stationID> 
+		<advisory>138.65</advisory>
+		<watch>139.65</watch>
+		<warning>140.15</warning>
+		<Floodlvl>140.65</Floodlvl>
+	</station>
+	<station>
+		<name>St. Basile</name> 
+		<stationID>7</stationID> 
+		<advisory>141.9</advisory>
+		<watch>142.9</watch>
+		<warning>143.4</warning>
+		<Floodlvl>143.9</Floodlvl>
+	</station>
+	<station>
+		<name>Saint Anne</name> 
+		<stationID>8</stationID> 
+		<advisory>136.3</advisory>
+		<watch>137.3</watch>
+		<warning>137.8</warning>
+		<Floodlvl>138.3</Floodlvl>
+	</station>
+	<station>
+		<name>St. Leonard</name> 
+		<stationID>9</stationID> 
+		<advisory>134</advisory>
+		<watch>135</watch>
+		<warning>135.5</warning>
+		<Floodlvl>136.0</Floodlvl>
+	</station>
+	<station>
+		<name>Nashwaak - Durham Bridge</name>
+		<stationID>10</stationID>
+		<advisory>19</advisory>
+		<watch>20</watch>
+		<warning>20.5</warning>
+		<Floodlvl>21.0</Floodlvl>
+	</station>	
+	<station>
+		<name>Kennebecasis - Apohaqui</name>
+		<stationID>11</stationID>
+		<advisory>11</advisory>
+		<watch>12</watch>
+		<warning>12.5</warning>
+		<Floodlvl>13.0</Floodlvl>
+	</station>	
+	<station>
+		<name>Fredericton</name>
+		<stationID>12</stationID>
+		<advisory>4.5</advisory>
+		<watch>5.5</watch>
+		<warning>6</warning>
+		<Floodlvl>6.5</Floodlvl>
+	</station>	
+	<station>
+		<name>Maugerville</name>
+		<stationID>13</stationID>
+		<advisory>4</advisory>
+		<watch>5</watch>
+		<warning>5.5</warning>
+		<Floodlvl>6.0</Floodlvl>
+	</station>	
+	<station>
+		<name>Jemseg</name>
+		<stationID>14</stationID>
+		<advisory>2.3</advisory>
+		<watch>3.3</watch>
+		<warning>3.8</warning>
+		<Floodlvl>4.3</Floodlvl>
+	</station>		
+	<station>
+		<name>Grand Lake</name>
+		<stationID>15</stationID>
+		<advisory>3</advisory>
+		<watch>4</watch>
+		<warning>4.5</warning>
+		<Floodlvl>5.0</Floodlvl>
+	</station>	
+	<station>
+		<name>Sheffield-Lakeville Corner</name>
+		<stationID>16</stationID>
+		<advisory>2.8</advisory>
+		<watch>3.8</watch>
+		<warning>4.3</warning>
+		<Floodlvl>4.8</Floodlvl>
+	</station>	
+	<station>
+		<name>Oak Point</name>
+		<stationID>17</stationID>
+		<advisory>2.7</advisory>
+		<watch>3.7</watch>
+		<warning>4.2</warning>
+		<Floodlvl>4.7</Floodlvl>
+	</station>
+	<station>
+		<name>Quispamsis-Saint John</name>
+		<stationID>18</stationID>
+		<advisory>2.2</advisory>
+		<watch>3.2</watch>
+		<warning>3.7</warning>
+		<Floodlvl>4.2</Floodlvl>
+	</station>	
+</area>
