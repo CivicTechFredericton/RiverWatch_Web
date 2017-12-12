@@ -1,4 +1,5 @@
 var floodChart;
+var dateList;
 
 $(document).ready( function() {
         
@@ -95,6 +96,14 @@ function populateList(){
     // parse alert.xml - use true url when website uploaded to server
     var XMLStationsList = parseXML("alert.xml");
     
+		var dates = XMLStationsList.getElementsByTagName("dates")[0];
+		var day0En = dates.getElementsByTagName("dates_in")[0].textContent;
+		var day0Fr = dates.getElementsByTagName("dates_in")[1].textContent;
+		var day1En = dates.getElementsByTagName("dates_24")[0].textContent;
+		var day1Fr = dates.getElementsByTagName("dates_24")[1].textContent;
+		var day2En = dates.getElementsByTagName("dates_48")[0].textContent;
+		var day2Fr = dates.getElementsByTagName("dates_48")[1].textContent;
+		dateList = [day0En + ' / '+day0Fr, day1En + ' / '+day1Fr, day2En + ' / '+day2Fr];
 
     // get the list of stations from the parsed XML list
     var stations = XMLStationsList.getElementsByTagName("station");
@@ -149,6 +158,8 @@ function populateList(){
         item.setAttribute("data-id",stationId);
         item.setAttribute("data-status",dataStatus);
         item.setAttribute("data-name",stationName);
+        item.setAttribute("data-levels",waterLevels.join());
+        item.setAttribute("data-alerts",alertLevels.join());
         
         // Set its Name:
         item.appendChild(document.createTextNode(item.getAttribute("data-name")));
@@ -216,7 +227,7 @@ function setupChart() {
 
 	$('#station-list').on('click', 'li', openChart);
 	$('#station-readings').on('click', '.close', function() {
-		$('#station-readings').removeClass('show');
+		$('body').removeClass('show-station');
 	});
 }
 
@@ -225,7 +236,7 @@ function initializeChart() {
 	floodChart = new Chart(ctx, {
 		type: 'bar',
 		data: {
-			labels: ["May 10", "May 11", "May 12"], // get proper dates
+			labels: dateList,
 			datasets: [{
 				label: 'Water Level',
 				data: [],
@@ -238,15 +249,14 @@ function initializeChart() {
 			}]
 		},
 		options: {
-			
-			bar: {
-				
-			},
+			responsive: true,
+			maintainAspectRatio: false,
 			legend: {
 				display: false,
 			},
 			scales: {
 				yAxes: [{
+					id: 'y-axis-0',
 					scaleLabel: {
 						display: true,
 						labelString: "Water level / Niveaux d'eau (m)"
@@ -264,6 +274,7 @@ function initializeChart() {
 					type: 'line',
 					mode: 'horizontal',
 					id: '0',
+					scaleID: 'y-axis-0',
 					value: 0,
 					borderColor: 'rgb(252, 238, 33)',
 					borderWidth: 3,
@@ -277,6 +288,7 @@ function initializeChart() {
 					type: 'line',
 					mode: 'horizontal',
 					id: '1',
+					scaleID: 'y-axis-0',
 					value: 0,
 					borderColor: 'rgb(247, 147, 30)',
 					borderWidth: 3,
@@ -290,6 +302,7 @@ function initializeChart() {
 					type: 'line',
 					mode: 'horizontal',
 					id: '2',
+					scaleID: 'y-axis-0',
 					value: 0,
 					borderColor: 'rgb(255, 67, 67)',
 					borderWidth: 3,
@@ -306,8 +319,8 @@ function initializeChart() {
 
 function openChart() {
 	var id = $(this).data('id'),
-		waterLevels = [160.4, 160.5, 160.4], // get water levels by station id
-		alertLevels = [168.7, 169.7, 170.2], // get alert levels by station
+		waterLevels = $(this).data('levels').split(','),
+		alertLevels = $(this).data('alerts').split(','),
 		name = $(this).text();
 	$('#station-title').text(name);
 
@@ -324,10 +337,10 @@ function openChart() {
 	// update the alert levels
 	floodChart.options.annotation.annotations.forEach(function(annotation) {
 		var i = parseInt(annotation.id);
-		annotation.value = alertLevels[i];
+		annotation.value = parseFloat(alertLevels[i]);
 	});
 
 	// render the chart with the updated values
 	floodChart.update(0);
-	$('#station-readings').addClass('show');
+	$('body').addClass('show-station');
 }
