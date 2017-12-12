@@ -222,12 +222,14 @@ li.warning::before {
 /* Nav */
 
 #nav {
+	background: #fff;
 	bottom: 0;
 	left: 0;
 	position: absolute;
 	overflow-x: hidden;
 	overflow-y: auto;
 	top: 40px;
+	z-index: 10;
 }
 
 .nav-controls {
@@ -290,12 +292,30 @@ li.warning::before {
 	background-color: #fff;
 }
 
-#station-readings.show {
+.show-station #station-readings {
 	display: block;
 }
 
 #station-readings .close {
 	padding: 12px 15px 10px;
+}
+
+#station-title {
+	border-bottom: 1px solid #aaa;
+	font-weight: normal;
+	height: 1.2em;
+	margin: 0 0 10px;
+	padding: 10px;
+	text-align: center;
+}
+
+#chart-wrapper {
+	max-height: calc(100vh - 100px);
+	position: relative;
+}
+
+#flood-chart {
+	
 }
 
 #legend {
@@ -376,19 +396,10 @@ li.warning::before {
 		top: 30px;
 		width: 385px;
 	}
-	
-	#station-title {
-		border-bottom: 1px solid #aaa;
-		font-weight: normal;
-		height: 1.2em;
-		margin: 0 0 10px;
-		padding: 10px;
-		text-align: center;
-	}
-	
-	#flood-chart {
-		height: 410px;
-		width: 365px;
+
+	#chart-wrapper {
+		height: 385px;
+		width: 100%;
 	}
 }
 
@@ -422,13 +433,20 @@ li.warning::before {
 	}
 	
 	#content {
-		display: none;
 		left: 0;
+	}
+
+	.show-station #content {
+		z-index: 11;
 	}
 	
 	#station-readings {
 		height: 100%;
 		width: 100%;
+	}
+
+	#chart-wrapper {
+		height: calc(100vh - 100px);
 	}
 	
 	#legend ul {

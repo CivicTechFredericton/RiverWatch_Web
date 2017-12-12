@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html class="no-js" lang="">
     <head>
         <meta charset="utf-8">
@@ -79,7 +79,9 @@
 					<section id="station-readings">
 						<h3 id="station-title"></h3>
 						<div class="close">X</div>
-						<canvas id="flood-chart" height="370"></canvas>
+						<div id="chart-wrapper">
+							<canvas id="flood-chart"></canvas>
+						</div>
 					</section>
 					<section id="map">I will be a map</section>
 				</main>
@@ -117,7 +119,7 @@
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-3.2.1.min.js"><\/script>')</script>
         
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.min.js"></script>
-        <script src="https://rawgit.com/chartjs/chartjs-plugin-annotation/master/chartjs-plugin-annotation.js"></script>
+        <script src="js/vendor/chartjs-plugin-annotation.min.js"></script>
         <script src="js/plugins.js"></script>
         <script src="js/main.js"></script>
 
