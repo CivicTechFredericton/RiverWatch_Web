@@ -176,10 +176,24 @@ function setupLang() {
 	$('#lang div').on('click', function() {
 		if ($(this).hasClass('fr')) {
 			$('body').removeClass('fr').addClass('en');
+			document.location.hash = 'en';
 		} else {
 			$('body').removeClass('en').addClass('fr');
+			document.location.hash = 'fr';
 		}
 	});
+	var lang = 'en';
+	if (document.location.hash) {
+		lang = document.location.hash.slice(1);
+	}
+	switch (lang) {
+		case 'en':
+			$('body').removeClass('fr').addClass('en');
+			break;
+		case 'fr':
+			$('body').removeClass('en').addClass('fr');
+			break;
+	}
 }
 
 function setupIntro() {
