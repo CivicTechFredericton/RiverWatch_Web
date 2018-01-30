@@ -122,6 +122,7 @@ function populateList(){
         
         // gets station id
         var stationId = stations[i].getElementsByTagName("stationID")[0].textContent;
+        var listId = makeSlug(stationName);
         
         // get levels data - convert string to float for comparison
         var currentLevel = parseFloat( stations[i].getElementsByTagName("forecast_cur")[0].textContent );
@@ -163,7 +164,7 @@ function populateList(){
         // create new station and insert data into the list on leftside of screen
         // data is extracted already from the parsed XML file
         var item = document.createElement('li');
-        item.setAttribute("id",'station'+stationId);
+        item.setAttribute("id",listId);
         item.setAttribute("class",currentAlertlevel);
         item.setAttribute("data-id",stationId);
         item.setAttribute("data-status",dataStatus);
@@ -382,7 +383,6 @@ function initMap() {
 
 	// add a marker for each station
 	for(var i=0; i<stationList.length; i++){
-		var id = stationList[i]['id'];
 		var latLong = new google.maps.LatLng(stationList[i]['lat'],stationList[i]['lng']);
 		var marker = new google.maps.Marker({
 			position: latLong,
@@ -390,7 +390,24 @@ function initMap() {
 			title: stationList[i]['name']
 		});
 		marker.addListener('click', function() {
-			$('#station'+id).trigger('click');
+			var id = makeSlug(this.getTitle());
+			$('#'+id).trigger('click');
 		});
 	}
+}
+
+function makeSlug(string) {
+	var strReplaceAll = string;
+	var intIndexOfMatch = strReplaceAll.indexOf(' ');
+	while(intIndexOfMatch != -1){
+			strReplaceAll = strReplaceAll.replace(' ', '-');
+			intIndexOfMatch = strReplaceAll.indexOf(' ');
+	}
+	string = strReplaceAll;
+	for(var i = 0, output = '', valid='-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'; i < string.length; i++) {
+			if(valid.indexOf(string.charAt(i)) != -1) {
+					output += string.charAt(i);
+			}
+	}
+	return output.toLowerCase();
 }
