@@ -7,7 +7,6 @@ $(document).ready( function() {
 	setupIntro();
 	setupNav();
 	setupLegend();
-	setupChart();
 });
 
 /*******************************************************************************
@@ -287,7 +286,8 @@ function initializeChart() {
 						labelString: "Water level / Niveaux d'eau (m)"
 					},
 					ticks: {
-						//beginAtZero:true
+						min: 0,
+						max: 200
 					}
 				}],
 				xAxes: [{
@@ -346,7 +346,9 @@ function openChart() {
 	var id = $(this).data('id'),
 		waterLevels = $(this).data('levels').split(','),
 		alertLevels = $(this).data('alerts').split(','),
-		name = $(this).text();
+		name = $(this).text(),
+		min = 200,
+		max = 0;
 	$('#station-title').text(name);
 
 	// remove previous water levels
@@ -359,11 +361,43 @@ function openChart() {
 		dataset.data = waterLevels;
 	});
 
+	// find max and min for the chart area
+	for(var i=0; i<waterLevels.length; i++){
+		value = parseFloat(waterLevels[i]);
+		if (value > max) {
+			max = value;
+		}
+		if (value < min) {
+			min = value;
+		}
+	}
+
 	// update the alert levels
 	floodChart.options.annotation.annotations.forEach(function(annotation) {
 		var i = parseInt(annotation.id);
 		annotation.value = parseFloat(alertLevels[i]);
+		if (annotation.value > max) {
+			max = annotation.value;
+		}
+		if (annotation.value < min) {
+			min = annotation.value;
+		}
 	});
+	
+	// round and pad the max and min for tidier y-axis values
+	max = Math.ceil(max);
+	min = Math.floor(min) - 3;
+	if (min < 0) {
+		min = 0;
+	}
+	if (max - min > 10) { // 10 ticks on the y-axis
+		min = min - Math.floor((20 - max + min)/2);
+		max = min + 20;
+	}
+	
+	// update the min and max
+	floodChart.options.scales.yAxes[0].ticks.min = min;
+	floodChart.options.scales.yAxes[0].ticks.max = max;
 
 	// render the chart with the updated values
 	floodChart.update(0);
@@ -373,6 +407,7 @@ function openChart() {
 function initMap() {
 	// the map needs station data
 	populateList();
+	setupChart();
 
 	// create a new map centered on New Brunswick
 	var nb = new google.maps.LatLng(46.5653,-66.4619);
