@@ -382,7 +382,6 @@ function initMap() {
 	// add a marker for each station
 	for(var i=0; i<stationList.length; i++){
 		var latLong = new google.maps.LatLng(stationList[i]['lat'],stationList[i]['lng']);
-		console.log(latLong);
 		var marker = new google.maps.Marker({
 			position: latLong,
 			map: map,

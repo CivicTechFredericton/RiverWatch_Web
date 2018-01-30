@@ -150,22 +150,18 @@ body.fr .en {display: none !important;}
 
 li.normal::before {
 	background: #8cc63f;
-	content: "0";
 }
 
 li.advisory::before {
 	background: #fcee21;
-	content: "1";
 }
 
 li.watch::before {
 	background: #f7931e;
-	content: "2";
 }
 
 li.warning::before {
 	background: #ff4343;
-	content: "3";
 }
 
 
@@ -265,14 +261,12 @@ li.warning::before {
 }
 
 #station-list li::before {
-	border-radius: 10px;
+	border-radius: 8px;
+	content: " ";
 	display: inline-block;
-	font-weight: bold;
-	height: 20px;
-	line-height: 19px;
-	margin-right: 5px;
-	text-indent: 6px;
-	width: 20px;
+	height: 15px;
+	margin-right: 8px;
+	width: 15px;
 }
 
 #station-list li {
@@ -349,14 +343,12 @@ li.warning::before {
 }
 
 #legend ul li::before {
-	border-radius: 10px;
+	border-radius: 5px;
+	content: " ";
 	display: inline-block;
-	font-weight: bold;
-	height: 20px;
-	line-height: 19px;
+	height: 10px;
 	margin-right: 5px;
-	text-indent: 6px;
-	width: 20px;
+	width: 10px;
 }
 
 /* Footer */
