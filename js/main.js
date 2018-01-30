@@ -162,7 +162,8 @@ function populateList(){
         
         // create new station and insert data into the list on leftside of screen
         // data is extracted already from the parsed XML file
-        var item = document.createElement('li'); 
+        var item = document.createElement('li');
+        item.setAttribute("id",'station'+stationId);
         item.setAttribute("class",currentAlertlevel);
         item.setAttribute("data-id",stationId);
         item.setAttribute("data-status",dataStatus);
@@ -381,11 +382,15 @@ function initMap() {
 
 	// add a marker for each station
 	for(var i=0; i<stationList.length; i++){
+		var id = stationList[i]['id'];
 		var latLong = new google.maps.LatLng(stationList[i]['lat'],stationList[i]['lng']);
 		var marker = new google.maps.Marker({
 			position: latLong,
 			map: map,
 			title: stationList[i]['name']
+		});
+		marker.addListener('click', function() {
+			$('#station'+id).trigger('click');
 		});
 	}
 }
