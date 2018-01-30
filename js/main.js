@@ -1,9 +1,8 @@
 var floodChart;
 var dateList;
+var stationList = new Array();
 
 $(document).ready( function() {
-        
-	populateList();
 	setupLang();
 	setupIntro();
 	setupNav();
@@ -115,6 +114,7 @@ function populateList(){
     var list = document.getElementById("station-list");
     
     for(var i=0; i<stations.length; i++){
+    		var stationData;
          
         // get current station name
         //                picks the station then tag picks item inside the station then get text value
@@ -150,6 +150,15 @@ function populateList(){
         if( currentAlertlevel === "advisory" ) dataStatus = "2 advisory";
         if( currentAlertlevel === "watch" )    dataStatus = "1 watch";
         if( currentAlertlevel === "warning" )  dataStatus = "0 warning";
+        
+        stationData = {
+        	'id': stationId,
+        	'name': stationName,
+        	'lat': 46.5653 + i*0.1, // temporary values
+        	'lng': -66.4619 - i*0.1,
+        	'level': currentLevel
+        };
+        stationList.push(stationData);
         
         // create new station and insert data into the list on leftside of screen
         // data is extracted already from the parsed XML file
@@ -357,4 +366,27 @@ function openChart() {
 	// render the chart with the updated values
 	floodChart.update(0);
 	$('body').addClass('show-station');
+}
+
+function initMap() {
+	// the map needs station data
+	populateList();
+
+	// create a new map centered on New Brunswick
+	var nb = new google.maps.LatLng(46.5653,-66.4619);
+	var map = new google.maps.Map(document.getElementById('map'), {
+		zoom: 7,
+		center: nb
+	});
+
+	// add a marker for each station
+	for(var i=0; i<stationList.length; i++){
+		var latLong = new google.maps.LatLng(stationList[i]['lat'],stationList[i]['lng']);
+		console.log(latLong);
+		var marker = new google.maps.Marker({
+			position: latLong,
+			map: map,
+			title: stationList[i]['name']
+		});
+	}
 }
