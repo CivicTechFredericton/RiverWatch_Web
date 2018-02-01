@@ -154,8 +154,6 @@ function populateList(){
         stationData = {
         	'id': stationId,
         	'name': stationName,
-        	'lat': 46.5653 + i*0.1, // temporary values
-        	'lng': -66.4619 - i*0.1,
         	'level': currentLevel
         };
         stationList.push(stationData);
@@ -418,7 +416,7 @@ function initMap() {
 
 	// add a marker for each station
 	for(var i=0; i<stationList.length; i++){
-		var latLong = new google.maps.LatLng(stationList[i]['lat'],stationList[i]['lng']);
+		var latLong = new google.maps.LatLng(stationDetails[i]['lat'],stationDetails[i]['lng']);
 		var marker = new google.maps.Marker({
 			position: latLong,
 			map: map,
