@@ -5,7 +5,6 @@ var stationList = new Array();
 $(document).ready( function() {
 	setupLang();
 	setupIntro();
-	setupNav();
 	setupLegend();
 });
 
@@ -154,7 +153,8 @@ function populateList(){
         stationData = {
         	'id': stationId,
         	'name': stationName,
-        	'level': currentLevel
+        	'level': currentLevel,
+        	'status': dataStatus
         };
         stationList.push(stationData);
         
@@ -206,7 +206,7 @@ function setupLang() {
 
 function setupIntro() {
 	// a disclaimer overlay appears when the site first loads and the user must close it to use the site
-	$('.close').on('click', function() {
+	$('#intro .close').on('click', function() {
 		$(this).parents('section').first().addClass('hide');
 	});
 }
@@ -222,6 +222,12 @@ function setupNav() {
 	$('#nav-sort li').on('click', function() {
 		sortList($('#station-list'), $(this));
 	});
+	
+	if (Cookies.get('sort_order')) {
+		var sortOrder = Cookies.get('sort_order');
+		$('#nav-sort li.sort-'+sortOrder).click();
+		$('#nav-sort').removeClass('open');
+	}
 }
 
 
@@ -229,6 +235,7 @@ function sortList(list, link) {
 	var sortOn = link.data('sort');
 	link.siblings().removeClass('sel');
 	link.addClass('sel');
+	Cookies.set('sort_order', sortOn, {expires: 365});
 	$('li', list).sort(sort_li).appendTo(list);
   function sort_li(a, b) {
 	return ($(b).data(sortOn)) < ($(a).data(sortOn)) ? 1 : -1;
@@ -345,9 +352,10 @@ function openChart() {
 		waterLevels = $(this).data('levels').split(','),
 		alertLevels = $(this).data('alerts').split(','),
 		name = $(this).text(),
-		min = 200,
-		max = 0;
+		min = 200, // the min value displayed on the chart
+		max = 0; // the max value displayed on the chart
 	$('#station-title').text(name);
+	$('#station-readings').data('id', id);
 
 	// remove previous water levels
 	floodChart.data.datasets.forEach(function(dataset) {
@@ -374,6 +382,7 @@ function openChart() {
 	floodChart.options.annotation.annotations.forEach(function(annotation) {
 		var i = parseInt(annotation.id);
 		annotation.value = parseFloat(alertLevels[i]);
+		// include annotations in chart number range
 		if (annotation.value > max) {
 			max = annotation.value;
 		}
@@ -383,17 +392,20 @@ function openChart() {
 	});
 	
 	// round and pad the max and min for tidier y-axis values
-	max = Math.ceil(max);
-	min = Math.floor(min) - 3;
+	max = Math.ceil(max + 1); // pad above the max
+	min = Math.floor(min - 3); // pad below the min
 	if (min < 0) {
-		min = 0;
+		min = 0; // flood levels will not be negative
 	}
-	if (max - min > 10) { // 10 ticks on the y-axis
-		min = min - Math.floor((20 - max + min)/2);
-		max = min + 20;
+	// adjust the max and min so the y-axis will have even tick intervals
+	if (max - min > 10) { // max of 10 ticks on the y-axis
+		var nearestDiff = 2*Math.round((max - min)/2); // difference between max and min rounded to an even number
+		min = min - Math.floor((nearestDiff - max + min)/2); // reduce the min by half the difference
+		min = 2*Math.floor(min/2); // make the min an even number
+		max = min + nearestDiff; // set the max as an even amount more than the min
 	}
 	
-	// update the min and max
+	// update the min and max on the chart
 	floodChart.options.scales.yAxes[0].ticks.min = min;
 	floodChart.options.scales.yAxes[0].ticks.max = max;
 
@@ -405,10 +417,11 @@ function openChart() {
 function initMap() {
 	// the map needs station data
 	populateList();
+	setupNav();
 	setupChart();
 
 	// create a new map centered on New Brunswick
-	var nb = new google.maps.LatLng(46.5653,-66.4619);
+	var nb = new google.maps.LatLng(46.5653,-67.0619);
 	var map = new google.maps.Map(document.getElementById('map'), {
 		zoom: 7,
 		center: nb
@@ -416,10 +429,19 @@ function initMap() {
 
 	// add a marker for each station
 	for(var i=0; i<stationList.length; i++){
-		var latLong = new google.maps.LatLng(stationDetails[i]['lat'],stationDetails[i]['lng']);
+		var latLong = new google.maps.LatLng(stationDetails[i]['lat'],stationDetails[i]['lng']),
+			statusCode = parseInt(stationList[i]['status']),
+			imgUrl = '/img/map'+statusCode+'.png';
+		var image = {
+			url: imgUrl,
+			size: new google.maps.Size(21, 31),
+			origin: new google.maps.Point(0, 0),
+			anchor: new google.maps.Point(10, 31)
+		};
 		var marker = new google.maps.Marker({
 			position: latLong,
 			map: map,
+			icon: image,
 			title: stationList[i]['name']
 		});
 		marker.addListener('click', function() {

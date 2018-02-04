@@ -45,9 +45,15 @@
 				</section>
 
 				<nav id="nav">
+					<div id="my-station">
+						<div class="nav-title">
+							<span class="en">My Station</span>
+							<span class="fr"></span>
+						</div>
+					</div>
 					<div class="nav-controls">
 						<div class="nav-title">
-							<span class="en">Stations</span>
+							<span class="en">All Stations</span>
 							<span class="fr"></span>
 						</div>
 						<div id="nav-sort" class="dropdown">
@@ -56,15 +62,15 @@
 								<span class="fr"></span>
 							</span>
 							<ul>
-								<li data-sort="name">
+								<li class="sort-name" data-sort="name">
 									<span class="en">Alphabetic</span>
 									<span class="fr">Alphabetic</span>
 								</li>
-								<li data-sort="status">
+								<li class="sort-status" data-sort="status">
 									<span class="en">Flood Status</span>
 									<span class="fr">Flood Status</span>
 								</li>
-								<li data-sort="id">
+								<li class="sort-id sel" data-sort="id">
 									<span class="en">Geographic</span>
 									<span class="fr">Geographic</span>
 								</li>
@@ -76,11 +82,14 @@
 
 				<main id="content">
 					<section id="map"></section>
-					<section id="station-readings">
+					<section id="station-readings" data-id="">
 						<h3 id="station-title"></h3>
 						<div class="close">X</div>
 						<div id="chart-wrapper">
 							<canvas id="flood-chart"></canvas>
+						</div>
+						<div id="station-footer">
+							
 						</div>
 					</section>
 				</main>
@@ -117,6 +126,7 @@
         <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-3.2.1.min.js"><\/script>')</script>
         
+        <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js"></script>
         <script src="js/vendor/chartjs-plugin-annotation.min.js"></script> 
         <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBogcztiGvTqPeQ7ZRpgshvqSjApRGzoUw&callback=initMap"></script>
