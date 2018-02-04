@@ -1,14 +1,11 @@
 var floodChart;
 var dateList;
+var stationList = new Array();
 
 $(document).ready( function() {
-        
-	populateList();
 	setupLang();
 	setupIntro();
-	setupNav();
 	setupLegend();
-	setupChart();
 });
 
 /*******************************************************************************
@@ -115,6 +112,7 @@ function populateList(){
     var list = document.getElementById("station-list");
     
     for(var i=0; i<stations.length; i++){
+    		var stationData;
          
         // get current station name
         //                picks the station then tag picks item inside the station then get text value
@@ -122,6 +120,7 @@ function populateList(){
         
         // gets station id
         var stationId = stations[i].getElementsByTagName("stationID")[0].textContent;
+        var listId = makeSlug(stationName);
         
         // get levels data - convert string to float for comparison
         var currentLevel = parseFloat( stations[i].getElementsByTagName("forecast_cur")[0].textContent );
@@ -151,9 +150,18 @@ function populateList(){
         if( currentAlertlevel === "watch" )    dataStatus = "1 watch";
         if( currentAlertlevel === "warning" )  dataStatus = "0 warning";
         
+        stationData = {
+        	'id': stationId,
+        	'name': stationName,
+        	'level': currentLevel,
+        	'status': dataStatus
+        };
+        stationList.push(stationData);
+        
         // create new station and insert data into the list on leftside of screen
         // data is extracted already from the parsed XML file
-        var item = document.createElement('li'); 
+        var item = document.createElement('li');
+        item.setAttribute("id",listId);
         item.setAttribute("class",currentAlertlevel);
         item.setAttribute("data-id",stationId);
         item.setAttribute("data-status",dataStatus);
@@ -198,7 +206,7 @@ function setupLang() {
 
 function setupIntro() {
 	// a disclaimer overlay appears when the site first loads and the user must close it to use the site
-	$('.close').on('click', function() {
+	$('#intro .close').on('click', function() {
 		$(this).parents('section').first().addClass('hide');
 	});
 }
@@ -214,6 +222,12 @@ function setupNav() {
 	$('#nav-sort li').on('click', function() {
 		sortList($('#station-list'), $(this));
 	});
+	
+	if (Cookies.get('sort_order')) {
+		var sortOrder = Cookies.get('sort_order');
+		$('#nav-sort li.sort-'+sortOrder).click();
+		$('#nav-sort').removeClass('open');
+	}
 }
 
 
@@ -221,6 +235,7 @@ function sortList(list, link) {
 	var sortOn = link.data('sort');
 	link.siblings().removeClass('sel');
 	link.addClass('sel');
+	Cookies.set('sort_order', sortOn, {expires: 365});
 	$('li', list).sort(sort_li).appendTo(list);
   function sort_li(a, b) {
 	return ($(b).data(sortOn)) < ($(a).data(sortOn)) ? 1 : -1;
@@ -276,7 +291,8 @@ function initializeChart() {
 						labelString: "Water level / Niveaux d'eau (m)"
 					},
 					ticks: {
-						//beginAtZero:true
+						min: 0,
+						max: 200
 					}
 				}],
 				xAxes: [{
@@ -335,8 +351,11 @@ function openChart() {
 	var id = $(this).data('id'),
 		waterLevels = $(this).data('levels').split(','),
 		alertLevels = $(this).data('alerts').split(','),
-		name = $(this).text();
+		name = $(this).text(),
+		min = 200, // the min value displayed on the chart
+		max = 0; // the max value displayed on the chart
 	$('#station-title').text(name);
+	$('#station-readings').data('id', id);
 
 	// remove previous water levels
 	floodChart.data.datasets.forEach(function(dataset) {
@@ -348,13 +367,102 @@ function openChart() {
 		dataset.data = waterLevels;
 	});
 
+	// find max and min for the chart area
+	for(var i=0; i<waterLevels.length; i++){
+		value = parseFloat(waterLevels[i]);
+		if (value > max) {
+			max = value;
+		}
+		if (value < min) {
+			min = value;
+		}
+	}
+
 	// update the alert levels
 	floodChart.options.annotation.annotations.forEach(function(annotation) {
 		var i = parseInt(annotation.id);
 		annotation.value = parseFloat(alertLevels[i]);
+		// include annotations in chart number range
+		if (annotation.value > max) {
+			max = annotation.value;
+		}
+		if (annotation.value < min) {
+			min = annotation.value;
+		}
 	});
+	
+	// round and pad the max and min for tidier y-axis values
+	max = Math.ceil(max + 1); // pad above the max
+	min = Math.floor(min - 3); // pad below the min
+	if (min < 0) {
+		min = 0; // flood levels will not be negative
+	}
+	// adjust the max and min so the y-axis will have even tick intervals
+	if (max - min > 10) { // max of 10 ticks on the y-axis
+		var nearestDiff = 2*Math.round((max - min)/2); // difference between max and min rounded to an even number
+		min = min - Math.floor((nearestDiff - max + min)/2); // reduce the min by half the difference
+		min = 2*Math.floor(min/2); // make the min an even number
+		max = min + nearestDiff; // set the max as an even amount more than the min
+	}
+	
+	// update the min and max on the chart
+	floodChart.options.scales.yAxes[0].ticks.min = min;
+	floodChart.options.scales.yAxes[0].ticks.max = max;
 
 	// render the chart with the updated values
 	floodChart.update(0);
 	$('body').addClass('show-station');
+}
+
+function initMap() {
+	// the map needs station data
+	populateList();
+	setupNav();
+	setupChart();
+
+	// create a new map centered on New Brunswick
+	var nb = new google.maps.LatLng(46.5653,-67.0619);
+	var map = new google.maps.Map(document.getElementById('map'), {
+		zoom: 7,
+		center: nb
+	});
+
+	// add a marker for each station
+	for(var i=0; i<stationList.length; i++){
+		var latLong = new google.maps.LatLng(stationDetails[i]['lat'],stationDetails[i]['lng']),
+			statusCode = parseInt(stationList[i]['status']),
+			imgUrl = '/img/map'+statusCode+'.png';
+		var image = {
+			url: imgUrl,
+			size: new google.maps.Size(21, 31),
+			origin: new google.maps.Point(0, 0),
+			anchor: new google.maps.Point(10, 31)
+		};
+		var marker = new google.maps.Marker({
+			position: latLong,
+			map: map,
+			icon: image,
+			title: stationList[i]['name']
+		});
+		marker.addListener('click', function() {
+			var id = makeSlug(this.getTitle());
+			$('#'+id).trigger('click');
+		});
+	}
+}
+
+function makeSlug(string) {
+	var strReplaceAll = string;
+	var intIndexOfMatch = strReplaceAll.indexOf(' ');
+	while(intIndexOfMatch != -1){
+			strReplaceAll = strReplaceAll.replace(' ', '-');
+			intIndexOfMatch = strReplaceAll.indexOf(' ');
+	}
+	string = strReplaceAll;
+	for(var i = 0, output = '', valid='-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'; i < string.length; i++) {
+			if(valid.indexOf(string.charAt(i)) != -1) {
+					output += string.charAt(i);
+			}
+	}
+	return output.toLowerCase();
 }
