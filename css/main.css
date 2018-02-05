@@ -178,7 +178,7 @@ li.warning::before {
 
 #intro {
 	background: #fff;
-	max-height: calc(100vh - 140px);
+	max-height: calc(100vh - 120px);
 	overflow-y: auto;
 	padding: 30px;
 	position: fixed;
@@ -269,7 +269,8 @@ li.warning::before {
 	right: 0;
 }
 
-#station-list li::before {
+#station-list li::before,
+#my-station li::before {
 	background-image: url('/img/icons.png');
 	content: " ";
 	display: inline-block;
@@ -278,8 +279,17 @@ li.warning::before {
 	width: 15px;
 }
 
-#station-list li {
+#station-list li,
+#my-station li {
 	cursor: pointer;
+}
+
+#my-station {
+	display: none;
+}
+
+#my-station.show {
+	display: block;
 }
 
 /* Content */
@@ -319,12 +329,18 @@ li.warning::before {
 }
 
 #chart-wrapper {
-	max-height: calc(100vh - 100px);
 	position: relative;
 }
 
 #flood-chart {
-	
+
+}
+
+#station-footer {
+	border-top: 1px solid #aaa;
+	padding: 10px 20px;
+	margin-top: 10px;
+	text-align: right;
 }
 
 #legend {
@@ -388,20 +404,27 @@ li.warning::before {
 	#station-list {
 		padding: 0 20px 20px;
 	}
+	#my-station-list {
+		padding: 0 20px;
+	}
 
-	#station-list li {
-		border-bottom: 1px solid #888;
+	#station-list li,
+	#my-station-list li {
 		padding: 10px 0;
 	}
-	
+	#station-list li {
+		border-bottom: 1px solid #888;
+	}
+
 	#content {
 		left: 251px;
 	}
 	
 	#station-readings {
 		border: 1px solid #aaa;
-		height: 450px;
+		height: 490px;
 		left: 30px;
+		max-height: calc(100vh - 100px);
 		position: absolute;
 		top: 30px;
 		width: 385px;
@@ -409,6 +432,7 @@ li.warning::before {
 
 	#chart-wrapper {
 		height: 385px;
+		max-height: calc(100vh - 200px);
 		padding-left: 20px;
 	}
 }
@@ -431,11 +455,13 @@ li.warning::before {
 		font-size: 14px;
 	}
 	
-	#station-list {
+	#station-list,
+	#my-station-list {
 		padding: 20px;
 	}
 
-	#station-list li {
+	#station-list li,
+	#my-station-list li {
 		border: 2px solid #999;
 		border-radius: 15px;
 		font-size: 16px;
@@ -462,7 +488,7 @@ li.warning::before {
 	}
 
 	#chart-wrapper {
-		height: calc(100vh - 100px);
+		height: calc(100vh - 140px);
 	}
 	
 	#legend ul {
