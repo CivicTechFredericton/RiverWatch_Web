@@ -271,7 +271,7 @@ li.warning::before {
 
 #station-list li::before,
 #my-station li::before {
-	background-image: url('/img/icons.png');
+	background-image: url('../img/icons.png');
 	content: " ";
 	display: inline-block;
 	height: 15px;
@@ -368,7 +368,7 @@ li.warning::before {
 }
 
 #legend ul li::before {
-	background-image: url('/img/icons.png');
+	background-image: url('../img/icons.png');
 	background-size: 50px 10px;
 	content: " ";
 	display: inline-block;

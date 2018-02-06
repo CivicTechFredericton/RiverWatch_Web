@@ -480,7 +480,7 @@ function initMap() {
 	for(var i=0; i<stationList.length; i++){
 		var latLong = new google.maps.LatLng(stationDetails[i]['lat'],stationDetails[i]['lng']),
 			statusCode = parseInt(stationList[i]['status']),
-			imgUrl = '/img/map'+statusCode+'.png';
+			imgUrl = 'img/map'+statusCode+'.png';
 		var image = {
 			url: imgUrl,
 			size: new google.maps.Size(21, 31),
