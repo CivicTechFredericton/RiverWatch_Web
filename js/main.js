@@ -154,28 +154,34 @@ function populateList(){
         	'id': stationId,
         	'name': stationName,
         	'level': currentLevel,
-        	'status': dataStatus
+        	'status': dataStatus,
+        	'waterLevels': waterLevels,
+        	'alertLevels': alertLevels
         };
         stationList.push(stationData);
         
         // create new station and insert data into the list on leftside of screen
-        // data is extracted already from the parsed XML file
-        var item = document.createElement('li');
-        item.setAttribute("id",listId);
-        item.setAttribute("class",currentAlertlevel);
-        item.setAttribute("data-id",stationId);
-        item.setAttribute("data-status",dataStatus);
-        item.setAttribute("data-name",stationName);
-        item.setAttribute("data-levels",waterLevels.join());
-        item.setAttribute("data-alerts",alertLevels.join());
+				var item = createStationItem(stationData);
         
-        // Set its Name:
-        item.appendChild(document.createTextNode(item.getAttribute("data-name")));
         // Add it to the list:
         list.appendChild(item);
         
     }
     
+}
+
+function createStationItem(station) {
+	// data is extracted already from the parsed XML file
+	var item = document.createElement('li');
+	item.setAttribute("id",station['id']);
+	item.setAttribute("class",station['status']);
+	item.setAttribute("data-id",station['id']);
+	item.setAttribute("data-status",station['status']);
+	item.setAttribute("data-name",station['name']);
+	
+	// Set its Name:
+	item.appendChild(document.createTextNode(station['name']));
+	return item;
 }
 
 function setupLang() {
@@ -216,18 +222,9 @@ function setupNav() {
 	$('.dropdown').on('click', function() {
 		$(this).toggleClass('open');
 	});
-	
-	// the list of stations can be sorted in a variety of ways:
-	// alphabetically, risk of flood and geographical position which corresponds to the station id
-	$('#nav-sort li').on('click', function() {
-		sortList($('#station-list'), $(this));
-	});
-	
-	if (Cookies.get('sort_order')) {
-		var sortOrder = Cookies.get('sort_order');
-		$('#nav-sort li.sort-'+sortOrder).click();
-		$('#nav-sort').removeClass('open');
-	}
+
+	setupStationList();
+	setupChooseStation();
 }
 
 
@@ -237,9 +234,54 @@ function sortList(list, link) {
 	link.addClass('sel');
 	Cookies.set('sort_order', sortOn, {expires: 365});
 	$('li', list).sort(sort_li).appendTo(list);
-  function sort_li(a, b) {
-	return ($(b).data(sortOn)) < ($(a).data(sortOn)) ? 1 : -1;
-  }
+	function sort_li(a, b) {
+		return ($(b).data(sortOn)) < ($(a).data(sortOn)) ? 1 : -1;
+	}
+}
+
+function setupStationList() {
+	// the list of stations can be sorted in a variety of ways:
+	// alphabetically, risk of flood and geographical position which corresponds to the station id
+	$('#nav-sort li').on('click', function() {
+		sortList($('#station-list'), $(this));
+	});
+
+	if (Cookies.get('sort_order')) {
+		var sortOrder = Cookies.get('sort_order');
+		$('#nav-sort li.sort-'+sortOrder).click();
+		$('#nav-sort').removeClass('open');
+	}
+}
+
+function setupChooseStation(id) {
+	$("#choose-station").click(function() {
+		if ($(this).is(":checked")) {
+			var id = $('#station-readings').data('id');
+			setMyStation(id);
+		} else {
+			clearMyStation();
+		}
+	});
+	
+	if (Cookies.get('station_id')) {
+		var id = Cookies.get('station_id');
+		setMyStation(id);
+	}
+}
+
+function setMyStation(id) {
+	var stationData = stationList[id];
+
+	var stationItem = createStationItem(stationData);
+	$('#my-station-list').empty().append(stationItem);
+
+	Cookies.set('station_id', id, {expires: 365});
+	$('#my-station').addClass('show');
+}
+
+function clearMyStation() {
+	Cookies.remove('station_id');
+	$('#my-station').removeClass('show');
 }
 
 function setupLegend() {
@@ -254,7 +296,7 @@ function setupLegend() {
 function setupChart() {
 	initializeChart();
 
-	$('#station-list').on('click', 'li', openChart);
+	$('#station-list, #my-station').on('click', 'li', openChart);
 	$('#station-readings').on('click', '.close', function() {
 		$('body').removeClass('show-station');
 	});
@@ -349,13 +391,20 @@ function initializeChart() {
 
 function openChart() {
 	var id = $(this).data('id'),
-		waterLevels = $(this).data('levels').split(','),
-		alertLevels = $(this).data('alerts').split(','),
-		name = $(this).text(),
+		station = stationList[id],
+		waterLevels = station['waterLevels'],
+		alertLevels = station['alertLevels'],
+		name = station['name'],
 		min = 200, // the min value displayed on the chart
 		max = 0; // the max value displayed on the chart
 	$('#station-title').text(name);
 	$('#station-readings').data('id', id);
+	
+	if (Cookies.get('station_id') == id) {
+		$('#choose-station').prop('checked', true);
+	} else {
+		$('#choose-station').prop('checked', false);
+	}
 
 	// remove previous water levels
 	floodChart.data.datasets.forEach(function(dataset) {
@@ -431,7 +480,7 @@ function initMap() {
 	for(var i=0; i<stationList.length; i++){
 		var latLong = new google.maps.LatLng(stationDetails[i]['lat'],stationDetails[i]['lng']),
 			statusCode = parseInt(stationList[i]['status']),
-			imgUrl = '/img/map'+statusCode+'.png';
+			imgUrl = 'img/map'+statusCode+'.png';
 		var image = {
 			url: imgUrl,
 			size: new google.maps.Size(21, 31),
