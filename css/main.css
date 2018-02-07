@@ -342,10 +342,25 @@ li.warning::before {
 
 #chart-wrapper {
 	position: relative;
+	padding-left: 20px;
 }
 
 #flood-chart {
 
+}
+
+#forecast-notice {
+	color: #ff4343;
+	opacity: 0;
+	text-align: center;
+}
+
+#forecast-notice.show {
+	opacity: 1;
+}
+
+#forecast-notice.singular .plural {
+	display: none;
 }
 
 #station-footer {
@@ -439,7 +454,6 @@ li.warning::before {
 	
 	#station-readings {
 		border: 1px solid #aaa;
-		height: 490px;
 		left: 30px;
 		max-height: calc(100vh - 100px);
 		position: absolute;
@@ -449,8 +463,7 @@ li.warning::before {
 
 	#chart-wrapper {
 		height: 385px;
-		max-height: calc(100vh - 200px);
-		padding-left: 20px;
+		max-height: calc(100vh - 220px);
 	}
 }
 
@@ -516,7 +529,7 @@ li.warning::before {
 	}
 
 	#chart-wrapper {
-		height: calc(100vh - 140px);
+		height: calc(100vh - 160px);
 	}
 	
 	#legend ul {
@@ -540,6 +553,10 @@ li.warning::before {
 	.legend-title {
 		cursor: pointer;
 		padding: 10px;
+	}
+
+	.show-station #legend {
+		display: none;
 	}
 }
 

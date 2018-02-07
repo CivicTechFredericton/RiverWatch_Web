@@ -1,5 +1,6 @@
 var floodChart;
 var dateList;
+var firstDate;
 var stationList = new Array();
 
 $(document).ready( function() {
@@ -102,7 +103,8 @@ function populateList(){
 		var day2En = dates.getElementsByTagName("dates_48")[0].textContent;
 		var day2Fr = dates.getElementsByTagName("dates_48")[1].textContent;
 		dateList = [day0En + ' / '+day0Fr, day1En + ' / '+day1Fr, day2En + ' / '+day2Fr];
-		
+		firstDate = day0En;
+
 		var alertCounts = {
 			'normal': 0,
 			'advisory': 0,
@@ -322,6 +324,8 @@ function setupChart() {
 	$('#station-readings').on('click', '.close', function() {
 		$('body').removeClass('show-station');
 	});
+	
+	setupDateWarning();
 }
 
 function initializeChart() {
@@ -479,6 +483,26 @@ function openChart() {
 	// render the chart with the updated values
 	floodChart.update(0);
 	$('body').addClass('show-station');
+}
+
+function setupDateWarning() {
+	var today = new Date(),
+		currentYear = today.getFullYear();
+		startDate = new Date(firstDate+' '+currentYear),
+		oneDay = 1000*60*60*24; // ms in a day
+		days = Math.floor((today - startDate)/oneDay);
+	if (days < 0) {
+		var lastYear = currentYear - 1;
+		startDate = new Date(firstDate+' '+lastYear);
+		days = Math.floor((today - startDate)/oneDay);
+	}
+	if (days > 0) {
+		$('#forecast-notice .count').text(days);
+		$('#forecast-notice').addClass('show');
+		if (days == 1) {
+			$('#forecast-notice').addClass('singular');
+		}
+	}
 }
 
 function initMap() {
