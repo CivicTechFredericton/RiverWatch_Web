@@ -101,6 +101,13 @@ function populateList(){
 		var day2En = dates.getElementsByTagName("dates_48")[0].textContent;
 		var day2Fr = dates.getElementsByTagName("dates_48")[1].textContent;
 		dateList = [day0En + ' / '+day0Fr, day1En + ' / '+day1Fr, day2En + ' / '+day2Fr];
+		
+		var alertCounts = {
+			'normal': 0,
+			'advisory': 0,
+			'watch': 0,
+			'warning': 0
+		};
 
     // get the list of stations from the parsed XML list
     var stations = XMLStationsList.getElementsByTagName("station");
@@ -149,6 +156,7 @@ function populateList(){
         if( currentAlertlevel === "advisory" ) dataStatus = "2 advisory";
         if( currentAlertlevel === "watch" )    dataStatus = "1 watch";
         if( currentAlertlevel === "warning" )  dataStatus = "0 warning";
+        alertCounts[currentAlertlevel]++;
         
         stationData = {
         	'id': stationId,
@@ -167,18 +175,21 @@ function populateList(){
         list.appendChild(item);
         
     }
-    
+	['advisory', 'watch', 'warning'].forEach(function(level) {
+		var levelCount = alertCounts[level];
+		$('#'+level+'-count').text(levelCount);
+	});
 }
 
 function createStationItem(station) {
 	// data is extracted already from the parsed XML file
 	var item = document.createElement('li');
-	item.setAttribute("id",station['id']);
+	item.setAttribute("id",makeSlug(station['name']));
 	item.setAttribute("class",station['status']);
 	item.setAttribute("data-id",station['id']);
 	item.setAttribute("data-status",station['status']);
 	item.setAttribute("data-name",station['name']);
-	
+
 	// Set its Name:
 	item.appendChild(document.createTextNode(station['name']));
 	return item;

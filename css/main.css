@@ -357,7 +357,6 @@ li.warning::before {
 }
 
 #legend ul {
-	background-color: #fff;
 	display: inline-block;
 	list-style: none;
 	margin: 0;
@@ -494,6 +493,7 @@ li.warning::before {
 	}
 	
 	#legend ul {
+		background-color: #fff;
 		border: 1px solid #ccc;
 		bottom: 49px;
 		display: none;
