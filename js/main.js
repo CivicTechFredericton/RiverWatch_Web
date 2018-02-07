@@ -406,26 +406,22 @@ function openChart() {
 		$('#choose-station').prop('checked', false);
 	}
 
-	// remove previous water levels
-	floodChart.data.datasets.forEach(function(dataset) {
-		dataset.data.pop();
-	});
-
 	// add water levels for this station
 	floodChart.data.datasets.forEach(function(dataset) {
-		dataset.data = waterLevels;
+		// remove previous water levels
+		dataset.data = [];
+		// add current data
+		waterLevels.forEach(function(level) {
+			dataset.data.push(level);
+			// find max and min for the chart area
+			if (level > max) {
+				max = level;
+			}
+			if (level < min) {
+				min = level;
+			}
+		});
 	});
-
-	// find max and min for the chart area
-	for(var i=0; i<waterLevels.length; i++){
-		value = parseFloat(waterLevels[i]);
-		if (value > max) {
-			max = value;
-		}
-		if (value < min) {
-			min = value;
-		}
-	}
 
 	// update the alert levels
 	floodChart.options.annotation.annotations.forEach(function(annotation) {
