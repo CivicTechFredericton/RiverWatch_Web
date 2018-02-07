@@ -4,6 +4,7 @@ var stationList = new Array();
 
 $(document).ready( function() {
 	setupLang();
+	setupToggleView();
 	setupIntro();
 	setupLegend();
 });
@@ -101,6 +102,13 @@ function populateList(){
 		var day2En = dates.getElementsByTagName("dates_48")[0].textContent;
 		var day2Fr = dates.getElementsByTagName("dates_48")[1].textContent;
 		dateList = [day0En + ' / '+day0Fr, day1En + ' / '+day1Fr, day2En + ' / '+day2Fr];
+		
+		var alertCounts = {
+			'normal': 0,
+			'advisory': 0,
+			'watch': 0,
+			'warning': 0
+		};
 
     // get the list of stations from the parsed XML list
     var stations = XMLStationsList.getElementsByTagName("station");
@@ -149,6 +157,7 @@ function populateList(){
         if( currentAlertlevel === "advisory" ) dataStatus = "2 advisory";
         if( currentAlertlevel === "watch" )    dataStatus = "1 watch";
         if( currentAlertlevel === "warning" )  dataStatus = "0 warning";
+        alertCounts[currentAlertlevel]++;
         
         stationData = {
         	'id': stationId,
@@ -167,18 +176,21 @@ function populateList(){
         list.appendChild(item);
         
     }
-    
+	['advisory', 'watch', 'warning'].forEach(function(level) {
+		var levelCount = alertCounts[level];
+		$('#'+level+'-count').text(levelCount);
+	});
 }
 
 function createStationItem(station) {
 	// data is extracted already from the parsed XML file
 	var item = document.createElement('li');
-	item.setAttribute("id",station['id']);
+	item.setAttribute("id",makeSlug(station['name']));
 	item.setAttribute("class",station['status']);
 	item.setAttribute("data-id",station['id']);
 	item.setAttribute("data-status",station['status']);
 	item.setAttribute("data-name",station['name']);
-	
+
 	// Set its Name:
 	item.appendChild(document.createTextNode(station['name']));
 	return item;
@@ -208,6 +220,16 @@ function setupLang() {
 			$('body').removeClass('en').addClass('fr');
 			break;
 	}
+}
+
+function setupToggleView() {
+	$('#mobile-view li').on('click', function() {
+		var view = $(this).data('view');
+		$(this).siblings().removeClass('sel');
+		$(this).addClass('sel');
+		$('body').removeClass('view-map view-list show-station');
+		$('body').addClass('view-'+view);
+	});
 }
 
 function setupIntro() {
@@ -406,26 +428,22 @@ function openChart() {
 		$('#choose-station').prop('checked', false);
 	}
 
-	// remove previous water levels
-	floodChart.data.datasets.forEach(function(dataset) {
-		dataset.data.pop();
-	});
-
 	// add water levels for this station
 	floodChart.data.datasets.forEach(function(dataset) {
-		dataset.data = waterLevels;
+		// remove previous water levels
+		dataset.data = [];
+		// add current data
+		waterLevels.forEach(function(level) {
+			dataset.data.push(level);
+			// find max and min for the chart area
+			if (level > max) {
+				max = level;
+			}
+			if (level < min) {
+				min = level;
+			}
+		});
 	});
-
-	// find max and min for the chart area
-	for(var i=0; i<waterLevels.length; i++){
-		value = parseFloat(waterLevels[i]);
-		if (value > max) {
-			max = value;
-		}
-		if (value < min) {
-			min = value;
-		}
-	}
 
 	// update the alert levels
 	floodChart.options.annotation.annotations.forEach(function(annotation) {
