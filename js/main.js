@@ -4,6 +4,7 @@ var stationList = new Array();
 
 $(document).ready( function() {
 	setupLang();
+	setupToggleView();
 	setupIntro();
 	setupLegend();
 });
@@ -219,6 +220,16 @@ function setupLang() {
 			$('body').removeClass('en').addClass('fr');
 			break;
 	}
+}
+
+function setupToggleView() {
+	$('#mobile-view li').on('click', function() {
+		var view = $(this).data('view');
+		$(this).siblings().removeClass('sel');
+		$(this).addClass('sel');
+		$('body').removeClass('view-map view-list show-station');
+		$('body').addClass('view-'+view);
+	});
 }
 
 function setupIntro() {

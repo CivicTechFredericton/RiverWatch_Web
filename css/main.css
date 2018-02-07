@@ -126,6 +126,10 @@ body.fr .en {display: none !important;}
 	display: none;
 }
 
+.dropdown {
+	position: relative;
+}
+
 .dropdown-title,
 .dropdown li {
 	cursor: pointer;
@@ -135,9 +139,14 @@ body.fr .en {display: none !important;}
 	background: #fff;
 	border: 1px solid #ccc;
 	display: none;
+	list-style: none;
 	margin: 0;
 	padding: 5px;
 	position: absolute;
+}
+
+.dropdown-right ul {
+	right: 0;
 }
 
 .dropdown.open ul {
@@ -145,6 +154,7 @@ body.fr .en {display: none !important;}
 }
 
 .dropdown li {
+	color: #000;
 	padding: 5px;
 }
 
@@ -208,6 +218,7 @@ li.warning::before {
 	position: absolute;
 	top: 0;
 	width: 100%;
+	z-index: 12;
 }
 
 #header h1 {
@@ -224,6 +235,7 @@ li.warning::before {
 #lang {
 	cursor: pointer;
 	display: inline-block;
+	line-height: 16px;
 	float: right;
 	margin: 12px;
 }
@@ -387,6 +399,10 @@ li.warning::before {
 /* Responsive */
 
 @media screen and (min-width: 641px) {
+	#mobile-view {
+		display: none;
+	}
+
 	#intro {
 		left: 50%;
 		margin-left: -270px;
@@ -447,9 +463,20 @@ li.warning::before {
 	#header .subtitle {
 		display: none;
 	}
+	
+	#mobile-view {
+		display: inline-block;
+		line-height: 16px;
+		float: right;
+		margin: 12px;
+	}
 
 	#nav {
 		width: 100%;
+	}
+	
+	.view-map #nav {
+		display: none;
 	}
 	
 	.nav-controls {
