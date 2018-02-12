@@ -257,7 +257,7 @@ function setupToggleView() {
  * @returns {undefined}
  ******************************************************************************/
 function setupIntro() {
-	$('#intro .close').on('click', function() {
+	$('#intro .agree').on('click', function() {
 		$(this).parents('section').first().addClass('hide');
 	});
 }
