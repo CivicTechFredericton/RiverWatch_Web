@@ -1,27 +1,26 @@
 <!doctype html>
 <html class="no-js" lang="">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title></title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="x-ua-compatible" content="ie=edge">
+		<title></title>
+		<meta name="description" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <link rel="manifest" href="site.webmanifest">
-        <link rel="apple-touch-icon" href="icon.png">
-        <!-- Place favicon.ico in the root directory -->
+		<link rel="manifest" href="site.webmanifest">
+		<link rel="apple-touch-icon" href="icon.png">
+		<!-- Place favicon.ico in the root directory -->
 
-        <link rel="stylesheet" href="css/normalize.css">
-        <link rel="stylesheet" href="css/main.css">
-    </head>
-    <body class="en">
-        <!--[if lte IE 9]>
-            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
-        <![endif]-->
+		<link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
+		<link rel="stylesheet" href="css/normalize.css">
+		<link rel="stylesheet" href="css/main.css">
+	</head>
+	<body class="en">
+		<!--[if lte IE 9]>
+			<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+		<![endif]-->
 
 				<header id="header">
-					<nav id="mobile-nav">
-					</nav>
 					<h1 class="en">River Watch<span class="subtitle"> - Water Level Current and Forecast</span></h1>
 					<h1 class="fr">Surveillance du flueve<span class="subtitle"> - Niveaux d'eau actuel et prévisions</span></h1>
 					<div id="lang">
@@ -30,6 +29,8 @@
 					</div>
 					<span id="mobile-view" class="dropdown dropdown-right">
 						<span class="dropdown-title">
+							<i class="fas fa-chevron-down"></i>
+							<i class="fas fa-chevron-up"></i>
 							<span class="en">View</span>
 							<span class="fr">View</span>
 						</span>
@@ -46,17 +47,26 @@
 					</span>
 				</header>
 
-				<section id="intro">
-					<div class="close">X</div>
-					<div class="en">
-						<p>This flood mapping information, including flood lines, extents, flood risk areas, and areas flooded in particular events, is provided for general information purposes only. Due to mapping and other inaccuracies, lines, boundaries or extents may not correspond exactly with locations on the ground. If there is any question whether a given property or location is within a flood risk area, the location and elevation should be determined by a survey. No representations or warranties, either express or implied, are made as to the accuracy of the information presented and the user assumes the entire risk as to the use of any and all information.</p>
-						<p>The information displayed here is current as of the date and time indicated. Updates are provided throughout the spring freshet and other times of the year when high water levels are anticipated.</p>
-						<p>Forecast water levels are dependant on a number of factors not least of which is weather forecasts, therefore complete accuracy can not be guaranteed. Users of this service are advised to allow for some margin of error.</p>
-					</div>
-					<div class="fr">
-						<p>L’information cartographique, y compris les lignes d’inondation, l’étendue de l’eau, les zones inondables et les zones qui ont été inondées lors de crues données, est fournie à titre indicatif seulement. En raison d’imprécisions relatives à la cartographie ou de toute autre inexactitude, il se peut que les lignes, les limites ou les étendues ne correspondent pas exactement aux endroits au sol. Lorsqu’un doute subsiste quant à la possibilité qu’un terrain ou un endroit donné se trouve dans une zone inondable, l’emplacement et l’élévation devraient être déterminés au moyen d’un levé. Le ministère n’offre aucune garantie explicite ou implicite quant à l’exactitude de l’information présentée et l’utilisateur accepte pleinement les risques liés à l’utilisation d’une partie ou de l’ensemble de cette information.</p>
-						<p>L'information affichée reflète les données actualisées à la date et à l'heure indiquées. Les mises à jour sont fournies pendant la crue printanière et à d'autres moments pendant l'année lorsque des niveaux d'eau élevés sont prévisions.</p>
-						<p>Les prévisions concernant les niveaux d'eau dépendent d'un certain nombre de facteurs, dont les prévisions météorologiques. Par conséquent, une exactitude absolue des renseignements ne peut être garantie. Les utilisateurs du service sont priés de prévoir une certaine marge d'erreur.</p>
+				<section id="intro" class="overlay">
+					<div class="overlay-content">
+						<div class="en">
+							<p>This flood mapping information, including flood lines, extents, flood risk areas, and areas flooded in particular events, is provided for general information purposes only. Due to mapping and other inaccuracies, lines, boundaries or extents may not correspond exactly with locations on the ground. If there is any question whether a given property or location is within a flood risk area, the location and elevation should be determined by a survey. No representations or warranties, either express or implied, are made as to the accuracy of the information presented and the user assumes the entire risk as to the use of any and all information.</p>
+							<p>The information displayed here is current as of the date and time indicated. Updates are provided throughout the spring freshet and other times of the year when high water levels are anticipated.</p>
+							<p>Forecast water levels are dependant on a number of factors not least of which is weather forecasts, therefore complete accuracy can not be guaranteed. Users of this service are advised to allow for some margin of error.</p>
+						</div>
+						<div class="fr">
+							<p>L’information cartographique, y compris les lignes d’inondation, l’étendue de l’eau, les zones inondables et les zones qui ont été inondées lors de crues données, est fournie à titre indicatif seulement. En raison d’imprécisions relatives à la cartographie ou de toute autre inexactitude, il se peut que les lignes, les limites ou les étendues ne correspondent pas exactement aux endroits au sol. Lorsqu’un doute subsiste quant à la possibilité qu’un terrain ou un endroit donné se trouve dans une zone inondable, l’emplacement et l’élévation devraient être déterminés au moyen d’un levé. Le ministère n’offre aucune garantie explicite ou implicite quant à l’exactitude de l’information présentée et l’utilisateur accepte pleinement les risques liés à l’utilisation d’une partie ou de l’ensemble de cette information.</p>
+							<p>L'information affichée reflète les données actualisées à la date et à l'heure indiquées. Les mises à jour sont fournies pendant la crue printanière et à d'autres moments pendant l'année lorsque des niveaux d'eau élevés sont prévisions.</p>
+							<p>Les prévisions concernant les niveaux d'eau dépendent d'un certain nombre de facteurs, dont les prévisions météorologiques. Par conséquent, une exactitude absolue des renseignements ne peut être garantie. Les utilisateurs du service sont priés de prévoir une certaine marge d'erreur.</p>
+						</div>
+						<div class="agree">
+							<span class="en">OK</span>
+							<span class="fr">OK</span>
+						</div>
+						<div class="logos">
+							<img id="civic-tech-logo" src="img/civic-tech-logo.png" alt="Civic Tech Fredericton" />
+							<img id="nb-logo" src="img/nb-logo.png" alt="Government of New Brunswick" />
+						</div>
 					</div>
 				</section>
 
@@ -76,6 +86,8 @@
 						</div>
 						<div id="nav-sort" class="dropdown">
 							<span class="dropdown-title">
+								<i class="fas fa-chevron-down"></i>
+								<i class="fas fa-chevron-up"></i>
 								<span class="en">Sort</span>
 								<span class="fr">Sort</span>
 							</span>
@@ -94,8 +106,8 @@
 								</li>
 							</ul>
 						</div>
-					</div>                         
-					<ul id="station-list"></ul>                        
+					</div>						 
+					<ul id="station-list"></ul>						
 				</nav>
 
 				<main id="content">
@@ -105,6 +117,10 @@
 						<div class="close">X</div>
 						<div id="chart-wrapper">
 							<canvas id="flood-chart"></canvas>
+						</div>
+						<div id="forecast-notice">
+							<span class="en">This forecast is from <span class="count">0</span> day<span class="plural">s</span> ago</span>
+							<span class="fr">This forecast is from <span class="count">0</span> day<span class="plural">s</span> ago</span>
 						</div>
 						<div id="station-footer">
 							<input id="choose-station" type="checkbox">
@@ -116,6 +132,8 @@
 
 				<section id="legend">
 					<span class="legend-title">
+						<i class="fas fa-chevron-down"></i>
+						<i class="fas fa-chevron-up"></i>
 						<span class="en">Legend</span>
 						<span class="fr">Légende</span>
 					</span>
@@ -144,24 +162,24 @@
 					
 				<footer>
 				</footer>
-    
-        <script src="js/vendor/modernizr-3.5.0.min.js"></script>
-        <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
-        <script>window.jQuery || document.write('<script src="js/vendor/jquery-3.2.1.min.js"><\/script>')</script>
-        
-        <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js"></script>
-        <script src="js/vendor/chartjs-plugin-annotation.min.js"></script> 
-        <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBogcztiGvTqPeQ7ZRpgshvqSjApRGzoUw&callback=initMap"></script>
-        <script src="js/plugins.js"></script>
-        <script src="js/station-locations.js"></script>
-        <script src="js/main.js"></script>
+	
+		<script src="js/vendor/modernizr-3.5.0.min.js"></script>
+		<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+		<script>window.jQuery || document.write('<script src="js/vendor/jquery-3.2.1.min.js"><\/script>')</script>
+		
+		<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js"></script>
+		<script src="js/vendor/chartjs-plugin-annotation.min.js"></script> 
+		<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBogcztiGvTqPeQ7ZRpgshvqSjApRGzoUw&callback=initMap"></script>
+		<script src="js/plugins.js"></script>
+		<script src="js/station-locations.js"></script>
+		<script src="js/main.js"></script>
 
-        <!-- Google Analytics -->
-        <script>
-            window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
-            ga('create','UA-34468740-1','auto');ga('send','pageview')
-        </script>
-        <script src="https://www.google-analytics.com/analytics.js" async defer></script>
-    </body>
+		<!-- Google Analytics -->
+		<script>
+			window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+			ga('create','UA-34468740-1','auto');ga('send','pageview')
+		</script>
+		<script src="https://www.google-analytics.com/analytics.js" async defer></script>
+	</body>
 </html>
