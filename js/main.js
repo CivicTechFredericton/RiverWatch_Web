@@ -1,5 +1,6 @@
 var floodChart;
 var dateList;
+var firstDate;
 var stationList = new Array();
 
 $(document).ready( function() {
@@ -102,7 +103,8 @@ function populateList(){
 		var day2En = dates.getElementsByTagName("dates_48")[0].textContent;
 		var day2Fr = dates.getElementsByTagName("dates_48")[1].textContent;
 		dateList = [day0En + ' / '+day0Fr, day1En + ' / '+day1Fr, day2En + ' / '+day2Fr];
-		
+		firstDate = day0En;
+
 		var alertCounts = {
 			'normal': 0,
 			'advisory': 0,
@@ -182,6 +184,12 @@ function populateList(){
 	});
 }
 
+/*******************************************************************************
+ * @brief Creates a DOM element for a station to be used in the list view
+ * 
+ * @param {object} station
+ * @returns {DOM element}
+ ******************************************************************************/
 function createStationItem(station) {
 	// data is extracted already from the parsed XML file
 	var item = document.createElement('li');
@@ -196,8 +204,13 @@ function createStationItem(station) {
 	return item;
 }
 
+/*******************************************************************************
+ * @brief Allows the user to switch between French and English versions of the site
+ * 
+ * @returns {undefined}
+ ******************************************************************************/
 function setupLang() {
-	// all text on the site is in both French and English and has a class to identify which language it is
+	// all text on the site is in both French and English and has a class to identify the language
 	// the class on body controls which language is visible
 	$('#lang div').on('click', function() {
 		if ($(this).hasClass('fr')) {
@@ -222,6 +235,11 @@ function setupLang() {
 	}
 }
 
+/*******************************************************************************
+ * @brief A dropdown on mobile that the user can switch between list and map modes
+ * 
+ * @returns {undefined}
+ ******************************************************************************/
 function setupToggleView() {
 	$('#mobile-view li').on('click', function() {
 		var view = $(this).data('view');
@@ -232,13 +250,24 @@ function setupToggleView() {
 	});
 }
 
+/*******************************************************************************
+ * @brief Displays a disclaimer overlay when the site first loads and the user 
+ * must close it to use the site
+ * 
+ * @returns {undefined}
+ ******************************************************************************/
 function setupIntro() {
-	// a disclaimer overlay appears when the site first loads and the user must close it to use the site
-	$('#intro .close').on('click', function() {
+	$('#intro .agree').on('click', function() {
 		$(this).parents('section').first().addClass('hide');
 	});
 }
 
+/*******************************************************************************
+ * @brief Sets up the behaviour of all site dropdown and calls functions 
+ * setupStationList and setupChooseStation
+ * 
+ * @returns {undefined}
+ ******************************************************************************/
 function setupNav() {
 	// toggles the visiblity of a dropdown with a class of 'open' on the parent
 	$('.dropdown').on('click', function() {
@@ -249,7 +278,14 @@ function setupNav() {
 	setupChooseStation();
 }
 
-
+/*******************************************************************************
+ * @brief Allows the user to sort the station list by location, name, or warning
+ * level and saves that sort order in a cookie
+ * 
+ * @param {jQuery object} list
+ * @param {jQuery object} link
+ * @returns {undefined}
+ ******************************************************************************/
 function sortList(list, link) {
 	var sortOn = link.data('sort');
 	link.siblings().removeClass('sel');
@@ -261,6 +297,12 @@ function sortList(list, link) {
 	}
 }
 
+/*******************************************************************************
+ * @brief Sets up the dropdown that the user can use to sort the station list and
+ * applies the previous sort order if there is a cookie saved
+ * 
+ * @returns {undefined}
+ ******************************************************************************/
 function setupStationList() {
 	// the list of stations can be sorted in a variety of ways:
 	// alphabetically, risk of flood and geographical position which corresponds to the station id
@@ -275,6 +317,13 @@ function setupStationList() {
 	}
 }
 
+/*******************************************************************************
+ * @brief Controls a checkbox where the user can mark a specific station as their
+ * favorite and checks for an existing favorite saved as a cookie
+ * 
+ * @param {int} id
+ * @returns {undefined}
+ ******************************************************************************/
 function setupChooseStation(id) {
 	$("#choose-station").click(function() {
 		if ($(this).is(":checked")) {
@@ -291,6 +340,13 @@ function setupChooseStation(id) {
 	}
 }
 
+/*******************************************************************************
+ * @brief Displays the chosen favorite and saves a cookie with the favorite 
+ * station id
+ * 
+ * @param {int} id
+ * @returns {undefined}
+ ******************************************************************************/
 function setMyStation(id) {
 	var stationData = stationList[id];
 
@@ -301,11 +357,23 @@ function setMyStation(id) {
 	$('#my-station').addClass('show');
 }
 
+/*******************************************************************************
+ * @brief Deletes the favorite station cookie and removes the favorite station from
+ * the top of the list
+ * 
+ * @returns {undefined}
+ ******************************************************************************/
 function clearMyStation() {
 	Cookies.remove('station_id');
 	$('#my-station').removeClass('show');
+	$('#my-station-list').empty();
 }
 
+/*******************************************************************************
+ * @brief Controls a dropdown for the map legend on small screens
+ * 
+ * @returns {undefined}
+ ******************************************************************************/
 function setupLegend() {
 	// on smaller screens the legend is in a dropdown
 	$('#legend').on('click', function() {
@@ -315,6 +383,12 @@ function setupLegend() {
 	});
 }
 
+/*******************************************************************************
+ * @brief Creates the controls to open the chart and calls functions
+ * initializeChart and setupDateWarning
+ * 
+ * @returns {undefined}
+ ******************************************************************************/
 function setupChart() {
 	initializeChart();
 
@@ -322,8 +396,16 @@ function setupChart() {
 	$('#station-readings').on('click', '.close', function() {
 		$('body').removeClass('show-station');
 	});
+	
+	setupDateWarning();
 }
 
+/*******************************************************************************
+ * @brief Initializes the chart.js plugin that we are using to display the water
+ * levels
+ * 
+ * @returns {undefined}
+ ******************************************************************************/
 function initializeChart() {
 	var ctx = $("#flood-chart");
 	floodChart = new Chart(ctx, {
@@ -411,6 +493,11 @@ function initializeChart() {
 	});
 }
 
+/*******************************************************************************
+ * @brief Updates the chart data for a specific station and then display the chart
+ * 
+ * @returns {undefined}
+ ******************************************************************************/
 function openChart() {
 	var id = $(this).data('id'),
 		station = stationList[id],
@@ -481,8 +568,41 @@ function openChart() {
 	$('body').addClass('show-station');
 }
 
+/*******************************************************************************
+ * @brief Displays a message about the age of the data if it is more than a day old
+ * 
+ * @returns {undefined}
+ ******************************************************************************/
+function setupDateWarning() {
+	var today = new Date(),
+		currentYear = today.getFullYear();
+		startDate = new Date(firstDate+' '+currentYear), // assume the forecast is from the current year
+		oneDay = 1000*60*60*24; // ms in a day
+		days = Math.floor((today - startDate)/oneDay);
+	// if the assumed forecast date is in future, the date must be from last year instead
+	if (days < 0) {
+		var lastYear = currentYear - 1;
+		startDate = new Date(firstDate+' '+lastYear);
+		days = Math.floor((today - startDate)/oneDay);
+	}
+	// display the warning about the age of the forecast
+	if (days > 0) {
+		$('#forecast-notice .count').text(days);
+		if (days == 1) {
+			$('#forecast-notice').addClass('singular');
+		}
+		$('#forecast-notice').addClass('show');
+	}
+}
+
+/*******************************************************************************
+ * @brief Calls populateList, setupNav, and setupChart and then create the google
+ * map that displays all of the station locations
+ * 
+ * @returns {undefined}
+ ******************************************************************************/
 function initMap() {
-	// the map needs station data
+	// the map needs station data to be created
 	populateList();
 	setupNav();
 	setupChart();
@@ -511,6 +631,7 @@ function initMap() {
 			icon: image,
 			title: stationList[i]['name']
 		});
+		// open the chart when the user clicks on a marker
 		marker.addListener('click', function() {
 			var id = makeSlug(this.getTitle());
 			$('#'+id).trigger('click');
@@ -518,6 +639,14 @@ function initMap() {
 	}
 }
 
+/*******************************************************************************
+ * @brief Creates a slug from the station name so it can be used as an element id
+ * Used by initMap and createStationItem to connect the map marker to the station
+ * it represents
+ * 
+ * @param {string} string
+ * @returns {string}
+ ******************************************************************************/
 function makeSlug(string) {
 	var strReplaceAll = string;
 	var intIndexOfMatch = strReplaceAll.indexOf(' ');
