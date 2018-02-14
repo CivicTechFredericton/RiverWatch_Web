@@ -463,7 +463,7 @@ li.warning::before {
 
 /* Responsive */
 
-@media screen and (min-width: 701px) {
+@media screen and (min-width: 769px) {
 	#mobile-view {
 		display: none;
 	}
@@ -521,7 +521,7 @@ li.warning::before {
 	}
 }
 
-@media screen and (max-width: 700px) {
+@media screen and (max-width: 768px) {
 	#intro .overlay-content {
 		left: 10px;
 		right: 10px;
