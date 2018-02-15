@@ -611,7 +611,9 @@ function initMap() {
 	var nb = new google.maps.LatLng(46.5653,-67.0619);
 	var map = new google.maps.Map(document.getElementById('map'), {
 		zoom: 7,
-		center: nb
+		center: nb,
+		fullscreenControl: false,
+		streetViewControl: false
 	});
 
 	// add a marker for each station
