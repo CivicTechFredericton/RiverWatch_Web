@@ -377,7 +377,7 @@ function clearMyStation() {
 function setupLegend() {
 	// on smaller screens the legend is in a dropdown
 	$('#legend').on('click', function() {
-		if ($(window).width() <= 640) {
+		if ($(window).width() <= 768) {
 			$(this).toggleClass('open');
 		}
 	});

@@ -132,6 +132,11 @@ h2 {margin-top: 0;}
 	position: relative;
 }
 
+.dropdown-title {
+	display: inline-block;
+	padding: 10px;
+}
+
 .dropdown-title,
 .dropdown li {
 	cursor: pointer;
@@ -287,7 +292,7 @@ li.warning::before {
 	display: inline-block;
 	line-height: 16px;
 	float: right;
-	margin: 12px;
+	padding: 12px;
 }
 
 /* Nav */
@@ -309,12 +314,15 @@ li.warning::before {
 	font-size: 12px;
 	line-height: 1em;
 	list-style: none;
-	padding: 10px;
 }
 
 .nav-controls > * {
 	flex-grow: 1;
 	position: relative;
+}
+
+.nav-title {
+	padding: 10px;
 }
 
 #nav ul {
@@ -535,7 +543,11 @@ li.warning::before {
 		display: inline-block;
 		line-height: 16px;
 		float: right;
-		margin: 12px;
+	}
+
+	#mobile-view .dropdown-title {
+		display: inline-block;
+		padding: 12px;
 	}
 
 	#nav {
@@ -548,6 +560,11 @@ li.warning::before {
 	
 	.nav-controls {
 		font-size: 14px;
+	}
+	
+	.dropdown li {
+		font-size: 14px;
+		padding: 10px 20px;
 	}
 	
 	#station-list,
