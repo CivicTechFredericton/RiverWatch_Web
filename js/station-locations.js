@@ -85,8 +85,8 @@ var stationDetails = {
 		'name': 'Sheffield-Lakeville Corner'
 	},
 	'17': {
-		'lat': -66.07702364913098,
-		'lng': 45.51462589451279,
+		'lat': 45.51462589451279,
+		'lng': -66.07702364913098,
 		'name': 'Oak Point'
 	},
 	'18': {

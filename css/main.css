@@ -132,6 +132,11 @@ h2 {margin-top: 0;}
 	position: relative;
 }
 
+.dropdown-title {
+	display: inline-block;
+	padding: 10px;
+}
+
 .dropdown-title,
 .dropdown li {
 	cursor: pointer;
@@ -287,7 +292,7 @@ li.warning::before {
 	display: inline-block;
 	line-height: 16px;
 	float: right;
-	margin: 12px;
+	padding: 12px;
 }
 
 /* Nav */
@@ -309,12 +314,15 @@ li.warning::before {
 	font-size: 12px;
 	line-height: 1em;
 	list-style: none;
-	padding: 10px;
 }
 
 .nav-controls > * {
 	flex-grow: 1;
 	position: relative;
+}
+
+.nav-title {
+	padding: 10px;
 }
 
 #nav ul {
@@ -334,10 +342,12 @@ li.warning::before {
 #station-list li::before,
 #my-station li::before {
 	background-image: url('../img/icons.png');
+	background-repeat: repeat-x;
 	content: " ";
 	display: inline-block;
-	height: 15px;
+	height: 18px;
 	margin-right: 8px;
+	vertical-align: middle;
 	width: 15px;
 }
 
@@ -421,7 +431,7 @@ li.warning::before {
 }
 
 #legend {
-	background: rgba(255,255,255,0.5);
+	background: rgba(255,255,255,0.7);
 	bottom: 0;
 	padding: 5px;
 	position: absolute;
@@ -447,12 +457,14 @@ li.warning::before {
 
 #legend ul li::before {
 	background-image: url('../img/icons.png');
-	background-size: 50px 10px;
+	background-repeat: repeat-x;
+	background-size: 75px 15px;
 	content: " ";
 	display: inline-block;
-	height: 10px;
+	height: 18px;
 	margin-right: 5px;
-	width: 10px;
+	vertical-align: middle;
+	width: 15px;
 }
 
 /* Footer */
@@ -535,7 +547,11 @@ li.warning::before {
 		display: inline-block;
 		line-height: 16px;
 		float: right;
-		margin: 12px;
+	}
+
+	#mobile-view .dropdown-title {
+		display: inline-block;
+		padding: 12px;
 	}
 
 	#nav {
@@ -548,6 +564,11 @@ li.warning::before {
 	
 	.nav-controls {
 		font-size: 14px;
+	}
+	
+	.dropdown li {
+		font-size: 14px;
+		padding: 10px 20px;
 	}
 	
 	#station-list,
