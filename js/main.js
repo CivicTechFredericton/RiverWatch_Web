@@ -93,7 +93,7 @@ function populateList(){
     var XMLStationAlerts = parseXML("alertlevels.xml");
 
     // parse alert.xml - use true url when website uploaded to server
-    var XMLStationsList = parseXML("alert.xml");
+    var XMLStationsList = parseXML("alert27mar2017.xml");
     
 		var dates = XMLStationsList.getElementsByTagName("dates")[0];
 		var day0En = dates.getElementsByTagName("dates_in")[0].textContent;
@@ -154,7 +154,7 @@ function populateList(){
         // "2 advisory"
         // "1 watch"
         // "0 warning"
-        var dataStatus;
+        var dataStatus = "3 normal";
         if( currentAlertlevel === "normal" )   dataStatus = "3 normal";
         if( currentAlertlevel === "advisory" ) dataStatus = "2 advisory";
         if( currentAlertlevel === "watch" )    dataStatus = "1 watch";
