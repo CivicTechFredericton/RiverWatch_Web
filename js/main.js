@@ -457,7 +457,7 @@ function initializeChart() {
 					borderWidth: 3,
 					label: {
 						enabled: true,
-						content: 'Advisory',
+						content: 'Advisory/Avis',
 						position: 'right'
 					}
 				},
@@ -471,7 +471,7 @@ function initializeChart() {
 					borderWidth: 3,
 					label: {
 						enabled: true,
-						content: 'Watch',
+						content: 'Watch/Veille',
 						position: 'right'
 					}
 				},
@@ -485,7 +485,7 @@ function initializeChart() {
 					borderWidth: 3,
 					label: {
 						enabled: true,
-						content: 'Warning',
+						content: 'Warning/Avertissement',
 						position: 'right'
 					}
 				}]
