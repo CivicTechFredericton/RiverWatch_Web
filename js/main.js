@@ -133,9 +133,9 @@ function populateList(){
         var listId = makeSlug(stationName);
         
         // get levels data - convert string to float for comparison
-        var currentLevel = parseFloat( stations[i].getElementsByTagName("forecast_cur")[0].textContent );
-        var forcast24Level = parseFloat(stations[i].getElementsByTagName("forecast_24")[0].textContent );
-        var forcast48Level = parseFloat(stations[i].getElementsByTagName("forecast_48")[0].textContent );
+        var currentLevel = parseFloat( stations[i].getElementsByTagName("forecast_cur")[0].textContent ) || 0;
+        var forcast24Level = parseFloat(stations[i].getElementsByTagName("forecast_24")[0].textContent ) || 0;
+        var forcast48Level = parseFloat(stations[i].getElementsByTagName("forecast_48")[0].textContent ) || 0;
         var advisoryLevel = parseFloat( alertLevelList[i].getElementsByTagName("advisory")[0].textContent );
         var watchLevel = parseFloat( alertLevelList[i].getElementsByTagName("watch")[0].textContent );
         var warningLevel = parseFloat( alertLevelList[i].getElementsByTagName("warning")[0].textContent );
@@ -165,6 +165,7 @@ function populateList(){
         	'id': stationId,
         	'name': stationName,
         	'level': currentLevel,
+        	'alertLevel': currentAlertlevel,
         	'status': dataStatus,
         	'waterLevels': waterLevels,
         	'alertLevels': alertLevels
@@ -194,7 +195,7 @@ function createStationItem(station) {
 	// data is extracted already from the parsed XML file
 	var item = document.createElement('li');
 	item.setAttribute("id",makeSlug(station['name']));
-	item.setAttribute("class",station['status']);
+	item.setAttribute("class",station['alertLevel']);
 	item.setAttribute("data-id",station['id']);
 	item.setAttribute("data-status",station['status']);
 	item.setAttribute("data-name",station['name']);
@@ -456,7 +457,7 @@ function initializeChart() {
 					borderWidth: 3,
 					label: {
 						enabled: true,
-						content: 'Advisory',
+						content: 'Advisory/Avis',
 						position: 'right'
 					}
 				},
@@ -470,7 +471,7 @@ function initializeChart() {
 					borderWidth: 3,
 					label: {
 						enabled: true,
-						content: 'Watch',
+						content: 'Watch/Veille',
 						position: 'right'
 					}
 				},
@@ -484,7 +485,7 @@ function initializeChart() {
 					borderWidth: 3,
 					label: {
 						enabled: true,
-						content: 'Warning',
+						content: 'Warning/Avertissement',
 						position: 'right'
 					}
 				}]
