@@ -93,7 +93,7 @@ function populateList(){
     var XMLStationAlerts = parseXML("alertlevels.xml");
 
     // parse alert.xml - use true url when website uploaded to server
-    var XMLStationsList = parseXML("alert27mar2017.xml");
+    var XMLStationsList = parseXML("alert.xml");
     
 		var dates = XMLStationsList.getElementsByTagName("dates")[0];
 		var day0En = dates.getElementsByTagName("dates_in")[0].textContent;
