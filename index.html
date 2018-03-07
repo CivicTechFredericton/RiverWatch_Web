@@ -23,10 +23,6 @@
 				<header id="header">
 					<h1 class="en">River Watch Mobile<span class="subtitle"> - Water Level Current and Forecast</span></h1>
 					<h1 class="fr">Surveillance du fleuve mobile<span class="subtitle"> - Niveaux d'eau actuel et prévisions</span></h1>
-					<div id="lang">
-						<div class="fr">EN</div>
-						<div class="en">FR</div>
-					</div>
 					<span id="mobile-view" class="dropdown dropdown-right">
 						<span class="dropdown-title">
 							<i class="fas fa-chevron-down"></i>
@@ -45,6 +41,10 @@
 							</li>
 						</ul>
 					</span>
+					<div id="lang">
+						<div class="fr">EN</div>
+						<div class="en">FR</div>
+					</div>
 				</header>
 
 				<section id="intro" class="overlay">
@@ -81,6 +81,35 @@
 				</section>
 
 				<nav id="nav">
+					<section class="legend">
+						<div class="nav-controls">
+							<span class="nav-title legend-title">
+								<span class="en">Legend</span>
+								<span class="fr">Légende</span>
+							</span>
+						</div>
+						<ul>
+							<li class="normal">
+								<span class="en">Normal</span>
+								<span class="fr">Normal</span>
+							</li>
+							<li class="advisory">
+								<span class="en">Advisory</span>
+								<span class="fr">Avis</span>
+								(<span id="advisory-count">0</span>)
+							</li>
+							<li class="watch">
+								<span class="en">Watch</span>
+								<span class="fr">Veille</span>
+								(<span id="watch-count">0</span>)
+							</li>
+							<li class="warning">
+								<span class="en">Warning</span>
+								<span class="fr">Avertissement</span>
+								(<span id="warning-count">0</span>)
+							</li>
+						</ul>
+					</section>
 					<div id="my-station">
 						<div class="nav-controls">
 							<div class="nav-title">
@@ -141,11 +170,9 @@
 						</div>
 					</section>
 				</main>
-
-				<section id="legend">
+		
+				<section class="legend">
 					<span class="legend-title">
-						<i class="fas fa-chevron-down"></i>
-						<i class="fas fa-chevron-up"></i>
 						<span class="en">Legend</span>
 						<span class="fr">Légende</span>
 					</span>

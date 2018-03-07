@@ -7,7 +7,6 @@ $(document).ready( function() {
 	setupLang();
 	setupToggleView();
 	setupIntro();
-	setupLegend();
 });
 
 /*******************************************************************************
@@ -260,6 +259,7 @@ function setupToggleView() {
 function setupIntro() {
 	$('#intro .agree').on('click', function() {
 		$(this).parents('section').first().addClass('hide');
+		$('body').addClass('intro-closed');
 	});
 }
 
@@ -368,20 +368,6 @@ function clearMyStation() {
 	Cookies.remove('station_id');
 	$('#my-station').removeClass('show');
 	$('#my-station-list').empty();
-}
-
-/*******************************************************************************
- * @brief Controls a dropdown for the map legend on small screens
- * 
- * @returns {undefined}
- ******************************************************************************/
-function setupLegend() {
-	// on smaller screens the legend is in a dropdown
-	$('#legend').on('click', function() {
-		if ($(window).width() <= 768) {
-			$(this).toggleClass('open');
-		}
-	});
 }
 
 /*******************************************************************************
