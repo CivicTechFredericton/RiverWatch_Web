@@ -421,7 +421,7 @@ function initializeChart() {
 					id: 'y-axis-0',
 					scaleLabel: {
 						display: true,
-						labelString: "Water level / Niveaux d'eau (m)"
+						labelString: "Water level / Niveau des eaux (m)"
 					},
 					ticks: {
 						min: 0,
