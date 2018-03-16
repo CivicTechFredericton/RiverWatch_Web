@@ -258,8 +258,16 @@ function setupToggleView() {
  ******************************************************************************/
 function setupIntro() {
 	$('#intro .agree').on('click', function() {
-		$(this).parents('section').first().addClass('hide');
+		$(this).parents('section').first().removeClass('show');
 		$('body').addClass('intro-closed');
+	});
+	
+	$('#help-link').on('click', function() {
+		$('#help').addClass('show');
+	});
+	
+	$('.overlay .close').on('click', function() {
+		$(this).parents('section').first().removeClass('show');
 	});
 }
 

@@ -190,34 +190,54 @@ h2 {margin-top: 0;}
 	background: #e0e0e0;
 }
 
-li.normal::before {
+.normal::before,
+.advisory::before,
+.watch::before,
+.warning::before {
+	background-image: url('../img/icons.png');
+	background-repeat: repeat-x;
+	background-size: 75px 15px;
+	content: " ";
+	display: inline-block;
+	height: 18px;
+	margin-right: 5px;
+	vertical-align: middle;
+	width: 15px;
+}
+
+.normal::before {
 	background-position: 0 0;
 }
 
-li.advisory::before {
+.advisory::before {
 	background-position: -92% 0;
 }
 
-li.watch::before {
+.watch::before {
 	background-position: -60% 0;
 }
 
-li.warning::before {
+.warning::before {
 	background-position: -25% 0;
 }
 
 
-/* Intro */
+/* Intro & Help */
 
-#intro {
+.overlay {
 	background: rgba(255,255,255,0.5);
+	display: none;
 	height: 100%;
 	position: fixed;
 	width: 100%;
 	z-index: 12;
 }
 
-#intro .overlay-content {
+.overlay.show {
+	display: block;
+}
+
+.overlay .overlay-content {
 	background: #fff;
 	max-height: calc(100vh - 120px);
 	overflow-y: auto;
@@ -268,6 +288,10 @@ li.warning::before {
 	clear: both;
 }
 
+.contact h3 {
+	margin-top: 0;
+}
+
 /* Header */
 
 #header {
@@ -298,7 +322,7 @@ li.warning::before {
 	font-weight: normal;
 }
 
-#lang {
+.header-button {
 	border: 1px solid #fff;
 	cursor: pointer;
 	display: inline-block;
@@ -350,18 +374,6 @@ li.warning::before {
 #nav-sort ul {
 	min-width: 100px;
 	right: 0;
-}
-
-#station-list li::before,
-#my-station li::before {
-	background-image: url('../img/icons.png');
-	background-repeat: repeat-x;
-	content: " ";
-	display: inline-block;
-	height: 18px;
-	margin-right: 8px;
-	vertical-align: middle;
-	width: 15px;
 }
 
 #station-list li,
@@ -459,18 +471,6 @@ li.warning::before {
 	padding: 0 10px;
 }
 
-.legend ul li::before {
-	background-image: url('../img/icons.png');
-	background-repeat: repeat-x;
-	background-size: 75px 15px;
-	content: " ";
-	display: inline-block;
-	height: 18px;
-	margin-right: 5px;
-	vertical-align: middle;
-	width: 15px;
-}
-
 /* Footer */
 
 #footer {
@@ -484,7 +484,7 @@ li.warning::before {
 		display: none;
 	}
 
-	#intro .overlay-content {
+	.overlay .overlay-content {
 		left: 50%;
 		margin-left: -270px;
 		width: 480px;
@@ -547,7 +547,7 @@ li.warning::before {
 }
 
 @media screen and (max-width: 768px) {
-	#intro .overlay-content {
+	.overlay .overlay-content {
 		left: 10px;
 		max-height: calc(100vh - 200px);
 		right: 10px;
