@@ -1,7 +1,19 @@
 var floodChart;
-var dateList;
 var firstDate;
 var stationList = new Array();
+var lang = 'en';
+var chartLabels = {
+	en: {
+		dates: [],
+		levels: ['Advisory', 'Watch', 'Warning'],
+		yAxis: 'Water level (m)',
+	},
+	fr: {
+		dates: [],
+		levels: ['Avis', 'Veille', 'Avertissement'],
+		yAxis: "Niveau des eaux (m)",
+	}
+};
 
 $(document).ready( function() {
 	setupLang();
@@ -101,7 +113,8 @@ function populateList(){
 		var day1Fr = dates.getElementsByTagName("dates_24")[1].textContent;
 		var day2En = dates.getElementsByTagName("dates_48")[0].textContent;
 		var day2Fr = dates.getElementsByTagName("dates_48")[1].textContent;
-		dateList = [day0En + ' / '+day0Fr, day1En + ' / '+day1Fr, day2En + ' / '+day2Fr];
+		chartLabels['en']['dates'] = [day0En, day1En, day2En];
+		chartLabels['fr']['dates'] = [day0Fr, day1Fr, day2Fr];
 		firstDate = day0En;
 
 		var alertCounts = {
@@ -216,12 +229,15 @@ function setupLang() {
 		if ($(this).hasClass('fr')) {
 			$('body').removeClass('fr').addClass('en');
 			document.location.hash = 'en';
+			lang = 'en';
 		} else {
 			$('body').removeClass('en').addClass('fr');
 			document.location.hash = 'fr';
+			lang = 'fr';
 		}
+		updateChartLabels();
 	});
-	var lang = 'en';
+
 	if (document.location.hash) {
 		lang = document.location.hash.slice(1);
 	}
@@ -233,6 +249,7 @@ function setupLang() {
 			$('body').removeClass('en').addClass('fr');
 			break;
 	}
+	updateChartLabels();
 }
 
 /*******************************************************************************
@@ -406,7 +423,7 @@ function initializeChart() {
 	floodChart = new Chart(ctx, {
 		type: 'bar',
 		data: {
-			labels: dateList,
+			labels: chartLabels[lang]['dates'],
 			datasets: [{
 				label: 'Water Level',
 				data: [],
@@ -429,7 +446,7 @@ function initializeChart() {
 					id: 'y-axis-0',
 					scaleLabel: {
 						display: true,
-						labelString: "Water level / Niveau des eaux (m)"
+						labelString: chartLabels[lang]['yAxis']
 					},
 					ticks: {
 						min: 0,
@@ -451,7 +468,7 @@ function initializeChart() {
 					borderWidth: 3,
 					label: {
 						enabled: true,
-						content: 'Advisory/Avis',
+						content: chartLabels[lang]['levels'][0],
 						position: 'right'
 					}
 				},
@@ -465,7 +482,7 @@ function initializeChart() {
 					borderWidth: 3,
 					label: {
 						enabled: true,
-						content: 'Watch/Veille',
+						content: chartLabels[lang]['levels'][1],
 						position: 'right'
 					}
 				},
@@ -479,7 +496,7 @@ function initializeChart() {
 					borderWidth: 3,
 					label: {
 						enabled: true,
-						content: 'Warning/Avertissement',
+						content: chartLabels[lang]['levels'][2],
 						position: 'right'
 					}
 				}]
@@ -561,6 +578,24 @@ function openChart() {
 	// render the chart with the updated values
 	floodChart.update(0);
 	$('body').addClass('show-station');
+}
+
+/*******************************************************************************
+ * @brief Changes the language of the station chart between French & English
+ * 
+ * @returns {undefined}
+ ******************************************************************************/
+
+function updateChartLabels() {
+	if (!floodChart) {return; }
+
+	floodChart.options.scales.yAxes[0].scaleLabel.labelString = chartLabels[lang]['yAxis'];
+	floodChart.options.annotation.annotations[0].label.content = chartLabels[lang]['levels'][0];
+	floodChart.options.annotation.annotations[1].label.content = chartLabels[lang]['levels'][1];
+	floodChart.options.annotation.annotations[2].label.content = chartLabels[lang]['levels'][2];
+	floodChart.data.labels = chartLabels[lang]['dates'];
+
+	floodChart.update(0);
 }
 
 /*******************************************************************************
