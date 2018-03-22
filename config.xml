@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.geonb.rwm" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+    <name>River Watch New Brunswick</name>
+    <description>
+        River Watch Mobile is an app for the distribution of flood forecast data for 19 communities in the Saint John River Basin in New Brunswick, Canada.
+    </description>
+    <author email="civictechfredericton@gmail.com" href="https://www.civictechfredericton.com/">
+        Civic Tech Fredericton
+    </author>
+    <content src="index.html" />
+    <access origin="*" />
+</widget>
