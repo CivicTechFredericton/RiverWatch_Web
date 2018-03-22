@@ -425,7 +425,7 @@ function initializeChart() {
 		data: {
 			labels: chartLabels[lang]['dates'],
 			datasets: [{
-				label: 'Water Level',
+				label: chartLabels[lang]['yAxis'],
 				data: [],
 				backgroundColor: [
 					'rgba(0, 81, 198, 1.0)',
@@ -590,6 +590,7 @@ function updateChartLabels() {
 	if (!floodChart) {return; }
 
 	floodChart.options.scales.yAxes[0].scaleLabel.labelString = chartLabels[lang]['yAxis'];
+	floodChart.data.datasets[0].label = chartLabels[lang]['yAxis'];
 	floodChart.options.annotation.annotations[0].label.content = chartLabels[lang]['levels'][0];
 	floodChart.options.annotation.annotations[1].label.content = chartLabels[lang]['levels'][1];
 	floodChart.options.annotation.annotations[2].label.content = chartLabels[lang]['levels'][2];
