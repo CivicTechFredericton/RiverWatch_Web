@@ -122,8 +122,19 @@ body {
 body.en .fr {display: none !important;}
 body.fr .en {display: none !important;}
 
+h2 {margin-top: 0;}
+
 .hide {
 	display: none;
+}
+
+.dropdown {
+	position: relative;
+}
+
+.dropdown-title {
+	display: inline-block;
+	padding: 10px;
 }
 
 .dropdown-title,
@@ -131,13 +142,34 @@ body.fr .en {display: none !important;}
 	cursor: pointer;
 }
 
+.dropdown-title .fa-chevron-up {
+	display: none;
+}
+
+.open .dropdown-title .fa-chevron-up {
+	display: inline-block;
+}
+
+.open .dropdown-title .fa-chevron-down {
+	display: none;
+}
+
+.open .dropdown-title .fa-chevron-up {
+	display: inline-block;
+}
+
 .dropdown ul {
 	background: #fff;
 	border: 1px solid #ccc;
 	display: none;
+	list-style: none;
 	margin: 0;
 	padding: 5px;
 	position: absolute;
+}
+
+.dropdown-right ul {
+	right: 0;
 }
 
 .dropdown.open ul {
@@ -145,36 +177,73 @@ body.fr .en {display: none !important;}
 }
 
 .dropdown li {
+	color: #000;
 	padding: 5px;
 }
 
-li.normal::before {
-	background: #8cc63f;
+.dropdown li.sel {
+	background: #efefef;
 }
 
-li.advisory::before {
-	background: #fcee21;
+.dropdown li:hover,
+.dropdown li.sel:hover {
+	background: #e0e0e0;
 }
 
-li.watch::before {
-	background: #f7931e;
+.normal::before,
+.advisory::before,
+.watch::before,
+.warning::before {
+	background-image: url('../img/icons.png');
+	background-repeat: repeat-x;
+	background-size: 75px 15px;
+	content: " ";
+	display: inline-block;
+	height: 18px;
+	margin-right: 5px;
+	vertical-align: middle;
+	width: 15px;
 }
 
-li.warning::before {
-	background: #ff4343;
+.normal::before {
+	background-position: 0 0;
+}
+
+.advisory::before {
+	background-position: -92% 0;
+}
+
+.watch::before {
+	background-position: -60% 0;
+}
+
+.warning::before {
+	background-position: -25% 0;
 }
 
 
-/* Intro */
+/* Intro & Help */
 
-#intro {
+.overlay {
+	background: rgba(255,255,255,0.5);
+	display: none;
+	height: 100%;
+	position: fixed;
+	width: 100%;
+	z-index: 12;
+}
+
+.overlay.show {
+	display: block;
+}
+
+.overlay .overlay-content {
 	background: #fff;
-	max-height: calc(100vh - 140px);
+	max-height: calc(100vh - 120px);
 	overflow-y: auto;
 	padding: 30px;
 	position: fixed;
 	top: 50px;
-	z-index: 50;
 	-webkit-box-shadow: 1px 1px 2px 1px rgba(170,170,170,1);
 	-moz-box-shadow: 1px 1px 2px 1px rgba(170,170,170,1);
 	box-shadow: 1px 1px 2px 1px rgba(170,170,170,1);
@@ -188,46 +257,92 @@ li.warning::before {
 	top: 0;
 }
 
+.disclaimer {
+	margin-top: 40px;
+}
+
+.agree {
+	cursor: pointer;
+	margin-bottom: 40px;
+	text-align: center;
+}
+
+.agree span {
+	border: 1px solid #666;
+	display: inline-block;
+	padding: 10px;
+}
+
+.credit p {
+	margin-top: 10px;
+}
+.credit .logo {
+	float: left;
+	margin-right: 20px;
+	margin-top: -5px;
+}
+
+.credit:after {
+	content: '';
+	display: block;
+	clear: both;
+}
+
+.contact h3 {
+	margin-top: 0;
+}
+
 /* Header */
 
 #header {
-	background-color: #003ac9;
+	background-color: #003F87;
 	border-bottom: 1px solid #000;
 	color: #fff;
+	display: flex;
 	height: 39px;
 	left: 0;
 	position: absolute;
 	top: 0;
+	white-space: nowrap;
 	width: 100%;
+	z-index: 13;
 }
 
 #header h1 {
+	color: #cde;
 	display: inline-block;
+	flex-grow: 1;
 	font-size: 16px;
 	line-height: 1em;
-	margin: 12px;
+	margin: 12px 0 12px 12px;
+	overflow: hidden;
 }
 
 #header h1 .subtitle {
 	font-weight: normal;
 }
 
-#lang {
+.header-button {
+	border: 1px solid #fff;
 	cursor: pointer;
 	display: inline-block;
-	float: right;
-	margin: 12px;
+	height: 16px;
+	line-height: 16px;
+	margin: 4px;
+	padding: 7px;
 }
 
 /* Nav */
 
 #nav {
+	background: #fff;
 	bottom: 0;
 	left: 0;
 	position: absolute;
 	overflow-x: hidden;
 	overflow-y: auto;
 	top: 40px;
+	z-index: 10;
 }
 
 .nav-controls {
@@ -236,12 +351,15 @@ li.warning::before {
 	font-size: 12px;
 	line-height: 1em;
 	list-style: none;
-	padding: 10px;
 }
 
 .nav-controls > * {
 	flex-grow: 1;
 	position: relative;
+}
+
+.nav-title {
+	padding: 10px;
 }
 
 #nav ul {
@@ -258,13 +376,17 @@ li.warning::before {
 	right: 0;
 }
 
-#station-list li::before {
-	border-radius: 8px;
-	content: " ";
-	display: inline-block;
-	height: 15px;
-	margin-right: 8px;
-	width: 15px;
+#station-list li,
+#my-station li {
+	cursor: pointer;
+}
+
+#my-station {
+	display: none;
+}
+
+#my-station.show {
+	display: block;
 }
 
 /* Content */
@@ -282,40 +404,71 @@ li.warning::before {
 }
 
 #station-readings {
+	display: none;
 	background-color: #fff;
 }
 
-#legend {
-	background: rgba(255,255,255,0.5);
-	bottom: 0;
-	padding: 5px;
-	position: absolute;
-	right: 0;
+.show-station #station-readings {
+	display: block;
+}
+
+#station-readings .close {
+	padding: 12px 15px 10px;
+}
+
+#station-title {
+	border-bottom: 1px solid #aaa;
+	font-weight: normal;
+	height: 1.2em;
+	margin: 0 0 10px;
+	padding: 10px;
+	text-align: center;
+}
+
+#chart-wrapper {
+	position: relative;
+	padding-left: 20px;
+}
+
+#flood-chart {
+
+}
+
+#forecast-notice {
+	color: #ff4343;
+	opacity: 0;
+	text-align: center;
+}
+
+#forecast-notice.show {
+	opacity: 1;
+}
+
+#forecast-notice.singular .plural {
+	display: none;
+}
+
+#station-footer {
+	border-top: 1px solid #aaa;
+	padding: 10px 20px;
+	margin-top: 10px;
+	text-align: right;
 }
 
 .legend-title {
 	display: inline-block;
 }
 
-#legend ul {
+.legend ul {
 	display: inline-block;
 	list-style: none;
 	margin: 0;
 	padding: 0;
 }
 
-#legend ul li {
+.legend ul li {
 	display: inline-block;
 	padding: 0 10px;
-}
-
-#legend ul li::before {
-	border-radius: 5px;
-	content: " ";
-	display: inline-block;
-	height: 10px;
-	margin-right: 5px;
-	width: 10px;
 }
 
 /* Footer */
@@ -326,8 +479,12 @@ li.warning::before {
 
 /* Responsive */
 
-@media screen and (min-width: 641px) {
-	#intro {
+@media screen and (min-width: 769px) {
+	#mobile-view {
+		display: none;
+	}
+
+	.overlay .overlay-content {
 		left: 50%;
 		margin-left: -270px;
 		width: 480px;
@@ -335,7 +492,7 @@ li.warning::before {
 	
 	#nav {
 		border-right: 1px solid #888;
-		width: 200px;
+		width: 275px;
 	}
 	
 	#nav ul {
@@ -345,45 +502,102 @@ li.warning::before {
 	#station-list {
 		padding: 0 20px 20px;
 	}
+	#my-station-list {
+		padding: 0 20px;
+	}
 
-	#station-list li {
-		border-bottom: 1px solid #888;
+	#station-list li,
+	#my-station-list li {
 		padding: 10px 0;
 	}
-	
+	#station-list li {
+		border-bottom: 1px solid #888;
+	}
+
 	#content {
-		left: 201px;
+		left: 276px;
 	}
 	
 	#station-readings {
 		border: 1px solid #aaa;
-		height: 450px;
 		left: 30px;
+		max-height: calc(100vh - 100px);
 		position: absolute;
 		top: 30px;
 		width: 385px;
 	}
+
+	#chart-wrapper {
+		height: 385px;
+		max-height: calc(100vh - 220px);
+	}
+	
+	.legend {
+		background: rgba(255,255,255,0.7);
+		bottom: 0;
+		padding: 5px;
+		position: absolute;
+		right: 0;
+		z-index: 11;
+	}
+
+	#nav .legend {
+		display: none;
+	}
 }
 
-@media screen and (max-width: 640px) {
-	#intro {
+@media screen and (max-width: 768px) {
+	.overlay .overlay-content {
 		left: 10px;
+		max-height: calc(100vh - 200px);
 		right: 10px;
+	}
+	
+	#header .subtitle {
+		display: none;
+	}
+	
+	#mobile-view {
+		display: none;
+		line-height: 16px;
+	}
+
+	.intro-closed #mobile-view {
+		display: inline-block;
+	}
+
+	#mobile-view .dropdown-title {
+		border: 1px solid #fff;
+		display: inline-block;
+		height: 16px;
+		margin: 4px;
+		padding: 7px;
 	}
 
 	#nav {
 		width: 100%;
 	}
 	
+	.view-map #nav {
+		display: none;
+	}
+	
 	.nav-controls {
 		font-size: 14px;
 	}
 	
-	#station-list {
+	.dropdown li {
+		font-size: 14px;
+		padding: 10px 20px;
+	}
+	
+	#station-list,
+	#my-station-list {
 		padding: 20px;
 	}
 
-	#station-list li {
+	#station-list li,
+	#my-station-list li {
 		border: 2px solid #999;
 		border-radius: 15px;
 		font-size: 16px;
@@ -394,37 +608,37 @@ li.warning::before {
 		margin-top: 15px;
 	}
 	
-	#content {
+	.legend {
 		display: none;
+	}
+	
+	#nav .legend {
+		display: block;
+	}
+
+	#nav .legend ul {
+		padding: 10px;
+	}	
+	
+	#content {
 		left: 0;
+	}
+
+	.show-station #content {
+		z-index: 11;
 	}
 	
 	#station-readings {
 		height: 100%;
+		position: absolute;
+		top: 0;
 		width: 100%;
 	}
-	
-	#legend ul {
-		border: 1px solid #ccc;
-		bottom: 49px;
-		display: none;
-		padding: 10px 0;
-		position: absolute;
-		right: 10px;
-		width: 90px;
+
+	#chart-wrapper {
+		height: calc(100vh - 160px);
 	}
-	
-	#legend.open ul {
-		display: block;
-	}
-	#legend li + li {
-		margin-top: 5px;
-	}
-	
-	.legend-title {
-		cursor: pointer;
-		padding: 10px;
-	}
+
 }
 
 
