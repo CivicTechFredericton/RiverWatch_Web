@@ -19,6 +19,7 @@ $(document).ready( function() {
 	setupLang();
 	setupToggleView();
 	setupIntro();
+	initMap();
 });
 
 /*******************************************************************************
@@ -142,7 +143,6 @@ function populateList(){
         
         // gets station id
         var stationId = stations[i].getElementsByTagName("stationID")[0].textContent;
-        var listId = makeSlug(stationName);
         
         // get levels data - convert string to float for comparison
         var currentLevel = parseFloat( stations[i].getElementsByTagName("forecast_cur")[0].textContent ) || 0;
@@ -206,7 +206,7 @@ function populateList(){
 function createStationItem(station) {
 	// data is extracted already from the parsed XML file
 	var item = document.createElement('li');
-	item.setAttribute("id",makeSlug(station['name']));
+	item.setAttribute("id","gauge"+station['id']);
 	item.setAttribute("class",station['alertLevel']);
 	item.setAttribute("data-id",station['id']);
 	item.setAttribute("data-status",station['status']);
@@ -627,72 +627,70 @@ function setupDateWarning() {
 }
 
 /*******************************************************************************
- * @brief Calls populateList, setupNav, and setupChart and then create the google
+ * @brief Calls populateList, setupNav, and setupChart and then create the ESRI
  * map that displays all of the station locations
  * 
  * @returns {undefined}
  ******************************************************************************/
 function initMap() {
-	// the map needs station data to be created
-	populateList();
-	setupNav();
-	setupChart();
+	require([
+		"esri/Map",
+		"esri/views/MapView",
+		"esri/Graphic",
+		"dojo/domReady!"
+	], function(Map, MapView, Graphic) {
 
-	// create a new map centered on New Brunswick
-	var nb = new google.maps.LatLng(46.5653,-67.0619);
-	var map = new google.maps.Map(document.getElementById('map'), {
-		zoom: 7,
-		center: nb,
-		mapTypeId: 'terrain',
-		fullscreenControl: false,
-		streetViewControl: false
-	});
+		// the map needs station data to be created
+		populateList();
+		setupNav();
+		setupChart();
 
-	// add a marker for each station
-	for(var i=0; i<stationList.length; i++){
-		var latLong = new google.maps.LatLng(stationDetails[i]['lat'],stationDetails[i]['lng']),
-			statusCode = parseInt(stationList[i]['status']),
-			imgUrl = 'img/map'+statusCode+'.png';
-		var image = {
-			url: imgUrl,
-			size: new google.maps.Size(21, 31),
-			origin: new google.maps.Point(0, 0),
-			anchor: new google.maps.Point(10, 31)
-		};
-		var marker = new google.maps.Marker({
-			position: latLong,
+		// create a map centered on New Brunswick
+		var map = new Map({
+			basemap: "streets"
+		});
+		var view = new MapView({
+			container: "map",
 			map: map,
-			icon: image,
-			title: stationList[i]['name']
+			zoom: 7,
+			center: [-67.0619, 46.5653]
 		});
-		// open the chart when the user clicks on a marker
-		marker.addListener('click', function() {
-			var id = makeSlug(this.getTitle());
-			$('#'+id).trigger('click');
-		});
-	}
-}
+		var gauges = [];
 
-/*******************************************************************************
- * @brief Creates a slug from the station name so it can be used as an element id
- * Used by initMap and createStationItem to connect the map marker to the station
- * it represents
- * 
- * @param {string} string
- * @returns {string}
- ******************************************************************************/
-function makeSlug(string) {
-	var strReplaceAll = string;
-	var intIndexOfMatch = strReplaceAll.indexOf(' ');
-	while(intIndexOfMatch != -1){
-			strReplaceAll = strReplaceAll.replace(' ', '-');
-			intIndexOfMatch = strReplaceAll.indexOf(' ');
-	}
-	string = strReplaceAll;
-	for(var i = 0, output = '', valid='-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'; i < string.length; i++) {
-			if(valid.indexOf(string.charAt(i)) != -1) {
-					output += string.charAt(i);
-			}
-	}
-	return output.toLowerCase();
+		// add a marker for each station
+		for(var i=0; i<stationList.length; i++){
+			var statusCode = parseInt(stationList[i]['status']),
+				imgUrl = 'img/map'+statusCode+'.png';
+			var point = {
+				type: "point",
+				longitude: stationDetails[i]['lng'],
+				latitude: stationDetails[i]['lat'],
+				title: stationList[i]['name']
+			};
+			var markerSymbol = {
+				type: "picture-marker",
+				url: imgUrl,
+				width: "21px",
+				height: "31px",
+				yoffset: "16px",
+			};
+			var pointGraphic = new Graphic({
+				geometry: point,
+				symbol: markerSymbol
+			});
+
+			gauges.push(pointGraphic);
+		}
+			
+		// Add the graphics to the view's graphics layer
+		view.graphics.addMany(gauges);
+
+		view.on("click", function(event) {
+			view.hitTest(event).then(function(response){
+				var gaugeId = response.results[0].graphic.uid;
+				
+		 		$('#gauge'+gaugeId).trigger('click');
+			});
+		});
+	});
 }
