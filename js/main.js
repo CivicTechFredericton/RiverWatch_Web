@@ -688,11 +688,23 @@ function initMap() {
 		// Add the graphics to the view's graphics layer
 		view.graphics.addMany(gauges);
 
+		// open the chart for a station
 		view.on("click", function(event) {
 			view.hitTest(event).then(function(response){
 				var gaugeId = response.results[0].graphic.uid;
 				
 		 		$('#gauge'+gaugeId).trigger('click');
+			});
+		});
+		
+		// change cursor when the mouse is over a station marker
+		view.on("pointer-move", function(event) {
+			view.hitTest(event).then(function(response){
+				if (response.results.length) {
+					$('#map').css({cursor: 'pointer'});
+				} else {
+					$('#map').css({cursor: 'default'});
+				}
 			});
 		});
 	});
