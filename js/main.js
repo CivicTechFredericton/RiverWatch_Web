@@ -635,10 +635,11 @@ function setupDateWarning() {
 function initMap() {
 	require([
 		"esri/Map",
+		"esri/WebMap",
 		"esri/views/MapView",
 		"esri/Graphic",
 		"dojo/domReady!"
-	], function(Map, MapView, Graphic) {
+	], function(Map, WebMap, MapView, Graphic) {
 
 		// the map needs station data to be created
 		populateList();
@@ -646,8 +647,10 @@ function initMap() {
 		setupChart();
 
 		// create a map centered on New Brunswick
-		var map = new Map({
-			basemap: "streets"
+		var map = new WebMap({
+			portalItem: {
+				id: "ab0fc003c4ff4e5bb4721afa49304584"
+			}
 		});
 		var view = new MapView({
 			container: "map",
