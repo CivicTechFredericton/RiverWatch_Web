@@ -193,7 +193,7 @@ function populateList(){
     }
 	['advisory', 'watch', 'warning'].forEach(function(level) {
 		var levelCount = alertCounts[level];
-		$('#'+level+'-count').text(levelCount);
+		$('.'+level+'-count').html(levelCount);
 	});
 }
 
