@@ -100,11 +100,11 @@ function getAlertLevel(currentLevel, advisoryLevel, watchLevel, warningLevel){
  ******************************************************************************/
 function populateList(){
 		var timeStamp = Date.now();
-		// parse alertlevels.xml - use true url when website uploaded to server
-		var XMLStationAlerts = parseXML("alertlevels.xml");
+		// parse alertlevels.xml
+		var XMLStationAlerts = parseXML("http://geonb.snb.ca/riverwatch/alertlevels.xml");
 
-		// parse alert.xml - use true url when website uploaded to server
-		var XMLStationsList = parseXML("alert.xml?t="+timeStamp);
+		// parse alert.xml
+		var XMLStationsList = parseXML("http://geonb.snb.ca/riverwatch/alert.xml?t="+timeStamp);
 
 		var dates = XMLStationsList.getElementsByTagName("dates")[0];
 		var day0En = dates.getElementsByTagName("dates_in")[0].textContent;
