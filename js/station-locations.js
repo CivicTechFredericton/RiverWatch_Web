@@ -2,12 +2,12 @@ var stationDetails = {
 	'0': {
 		'lat': 47.208350075747525,
 		'lng': -68.82394529675196,
-		'name': 'Connor'
+		'name': 'Connors'
 	},
 	'1': {
 		'lat': 47.24101293494635,
 		'lng': -68.69827532748425,
-		'name': 'St. Francois'
+		'name': 'Saint-François'
 	},
 	'2': {
 		'lat': 47.257618649443394,
@@ -37,59 +37,79 @@ var stationDetails = {
 	'7': {
 		'lat': 47.339511169547826,
 		'lng': -68.20406036130075,
-		'name': 'St. Basile'
+		'name': 'Saint-Basile'
 	},
 	'8': {
 		'lat': 47.24224110392505,
 		'lng': -68.0307552519344,
-		'name': 'Saint Anne'
+		'name': 'Sainte-Anne'
 	},
 	'9': {
 		'lat': 47.15966172331119,
 		'lng': -67.93077455436041,
-		'name': 'St. Leonard'
+		'name': 'Saint-Léonard'
 	},
 	'10': {
+		'lat': 46.741111,
+		'lng': -67.701191,
+		'name': 'Perth-Andover'
+	},
+	'11': {
+		'lat': 46.335291,
+		'lng': -67.553599,
+		'name': 'Simonds'
+	},
+	'12': {
+		'lat': 46.297846,
+		'lng': -67.529177,
+		'name': 'Hartland'
+	},
+	'13': {
+		'lat': 46.137484,
+		'lng': -67.575029,
+		'name': 'Woodstock'
+	},
+	'14': {
 		'lat': 46.12591999995847,
 		'lng': -66.6113100002114,
 		'name': 'Nashwaak (Durham Bridge)'
 	},
-	'11': {
+	'15': {
 		'lat': 45.7013899996772,
 		'lng': -65.60169000056176,
 		'name': 'Kennebecasis (Apohaqui)'
 	},
-	'12': {
+	'16': {
 		'lat': 45.96619000004309,
 		'lng': -66.6516100001013,
 		'name': 'Fredericton'
 	},
-	'13': {
+	'17': {
 		'lat': 45.862441149742736,
 		'lng': -66.45676822625995,
 		'name': 'Maugerville'
 	},
-	'14': {
+	'18': {
 		'lat': 45.82891999996499,
 		'lng': -66.11542000022237,
 		'name': 'Jemseg'
 	},
-	'15': {
+	'19': {
 		'lat': 46.05671999989892,
 		'lng': -66.0040300004993,
 		'name': 'Grand Lake'
 	},
-	'16': {
+	'20': {
 		'lat': 45.90882999961771,
 		'lng': -66.25643999999556,
 		'name': 'Sheffield-Lakeville Corner'
 	},
-	'17': {
+	'21': {
 		'lat': 45.51462589451279,
 		'lng': -66.07702364913098,
 		'name': 'Oak Point'
 	},
-	'18': {
+	'22': {
 		'lat': 45.27193595568854,
 		'lng': -66.08899846504715,
 		'name': 'Quispamsis-Saint John'
