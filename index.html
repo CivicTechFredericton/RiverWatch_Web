@@ -78,12 +78,12 @@
 				</div>
 				<div class="credit">
 					<img id="civic-tech-logo" class="logo" src="img/civic-tech-logo.png" alt="Civic Tech Fredericton" />
-					<span class="en">This app created and maintained by Civic Tech Fredericton</span>
+					<span class="en">This app is created and maintained by Civic Tech Fredericton</span>
 					<span class="fr">Application développée et maintenue par Civic Tech Fredericton</span>
 				</div>
 			</div>
 		</section>
-		
+
 		<section id="help" class="overlay">
 			<div class="overlay-content">
 				<div class="close">X</div>
@@ -140,17 +140,17 @@
 					<li class="advisory">
 						<span class="en">Advisory</span>
 						<span class="fr">Avis</span>
-						(<span id="advisory-count">0</span>)
+						(<span class="advisory-count">0</span>)
 					</li>
 					<li class="watch">
 						<span class="en">Watch</span>
 						<span class="fr">Veille</span>
-						(<span id="watch-count">0</span>)
+						(<span class="watch-count">0</span>)
 					</li>
 					<li class="warning">
 						<span class="en">Warning</span>
 						<span class="fr">Avertissement</span>
-						(<span id="warning-count">0</span>)
+						(<span class="warning-count">0</span>)
 					</li>
 				</ul>
 			</section>
@@ -200,12 +200,17 @@
 			<section id="station-readings" data-id="">
 				<h3 id="station-title"></h3>
 				<div class="close">X</div>
+				<div id="flood-level">
+					<span class="en">Water Level: <span class="water-level"></span> meters</span>
+					<span class="fr">Niveau des eaux: <span class="water-level"></span> mètres</span>
+				</div>
 				<div id="chart-wrapper">
 					<canvas id="flood-chart"></canvas>
 				</div>
 				<div id="forecast-notice">
-					<span class="en">This data is from <span class="count">0</span> day<span class="plural">s</span> ago</span>
-					<span class="fr">Données de <span class="count">0</span> jour<span class="plural">s</span></span>
+					<span class="en">Date Issued:</span>
+					<span class="fr">Date d'émission:</span>
+					<span id="date-issued"></span>
 				</div>
 				<div id="station-footer">
 					<input id="choose-station" type="checkbox">
@@ -228,17 +233,17 @@
 				<li class="advisory">
 					<span class="en">Advisory</span>
 					<span class="fr">Avis</span>
-					(<span id="advisory-count">0</span>)
+					(<span class="advisory-count">0</span>)
 				</li>
 				<li class="watch">
 					<span class="en">Watch</span>
 					<span class="fr">Veille</span>
-					(<span id="watch-count">0</span>)
+					(<span class="watch-count">0</span>)
 				</li>
 				<li class="warning">
 					<span class="en">Warning</span>
 					<span class="fr">Avertissement</span>
-					(<span id="warning-count">0</span>)
+					(<span class="warning-count">0</span>)
 				</li>
 			</ul>
 		</section>
@@ -249,10 +254,10 @@
 		<script src="js/vendor/modernizr-3.5.0.min.js"></script>
 		<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
 		<script>window.jQuery || document.write('<script src="js/vendor/jquery-3.2.1.min.js"><\/script>')</script>
-		
+
 		<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js"></script>
-		<script src="js/vendor/chartjs-plugin-annotation.min.js"></script> 
+		<script src="js/vendor/chartjs-plugin-annotation.min.js"></script>
 		<script src="js/plugins.js"></script>
 		<script src="js/station-locations.js"></script>
 		<script src="js/main.js"></script>

@@ -430,22 +430,16 @@ h2 {margin-top: 0;}
 	padding-left: 20px;
 }
 
+#flood-level {
+	padding: 10px 70px 0;
+}
+
 #flood-chart {
 
 }
 
 #forecast-notice {
-	color: #ff4343;
-	opacity: 0;
-	text-align: center;
-}
-
-#forecast-notice.show {
-	opacity: 1;
-}
-
-#forecast-notice.singular .plural {
-	display: none;
+	padding: 10px 70px 0;
 }
 
 #station-footer {
@@ -474,7 +468,7 @@ h2 {margin-top: 0;}
 /* Footer */
 
 #footer {
-	
+
 }
 
 /* Responsive */
@@ -489,16 +483,16 @@ h2 {margin-top: 0;}
 		margin-left: -270px;
 		width: 480px;
 	}
-	
+
 	#nav {
 		border-right: 1px solid #888;
 		width: 275px;
 	}
-	
+
 	#nav ul {
-		font-size: 14px; 
+		font-size: 14px;
 	}
-	
+
 	#station-list {
 		padding: 0 20px 20px;
 	}
@@ -517,7 +511,7 @@ h2 {margin-top: 0;}
 	#content {
 		left: 276px;
 	}
-	
+
 	#station-readings {
 		border: 1px solid #aaa;
 		left: 30px;
@@ -531,7 +525,7 @@ h2 {margin-top: 0;}
 		height: 385px;
 		max-height: calc(100vh - 220px);
 	}
-	
+
 	.legend {
 		background: rgba(255,255,255,0.7);
 		bottom: 0;
@@ -552,11 +546,11 @@ h2 {margin-top: 0;}
 		max-height: calc(100vh - 200px);
 		right: 10px;
 	}
-	
+
 	#header .subtitle {
 		display: none;
 	}
-	
+
 	#mobile-view {
 		display: none;
 		line-height: 16px;
@@ -577,20 +571,20 @@ h2 {margin-top: 0;}
 	#nav {
 		width: 100%;
 	}
-	
+
 	.view-map #nav {
 		display: none;
 	}
-	
+
 	.nav-controls {
 		font-size: 14px;
 	}
-	
+
 	.dropdown li {
 		font-size: 14px;
 		padding: 10px 20px;
 	}
-	
+
 	#station-list,
 	#my-station-list {
 		padding: 20px;
@@ -607,19 +601,19 @@ h2 {margin-top: 0;}
 	#station-list li + li {
 		margin-top: 15px;
 	}
-	
+
 	.legend {
 		display: none;
 	}
-	
+
 	#nav .legend {
 		display: block;
 	}
 
 	#nav .legend ul {
 		padding: 10px;
-	}	
-	
+	}
+
 	#content {
 		left: 0;
 	}
@@ -627,7 +621,7 @@ h2 {margin-top: 0;}
 	.show-station #content {
 		z-index: 11;
 	}
-	
+
 	#station-readings {
 		height: 100%;
 		position: absolute;
@@ -636,7 +630,7 @@ h2 {margin-top: 0;}
 	}
 
 	#chart-wrapper {
-		height: calc(100vh - 160px);
+		height: calc(100vh - 200px);
 	}
 
 }
