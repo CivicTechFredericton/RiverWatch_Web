@@ -1,144 +1,248 @@
 <?xml version="1.0" encoding="utf-8"?>
   <forecast>
     <dates>
-      <dates_in>19 May</dates_in>
-      <dates_in>19 Mai</dates_in>
-      <dates_24>20 May</dates_24>
-      <dates_24>20 Mai</dates_24>
-      <dates_48>21 May</dates_48>
-      <dates_48>21 Mai</dates_48>
+	  <date_issued>2018-05-18</date_issued>
+      <dates_in>18 May</dates_in>
+      <dates_in>18 Mai</dates_in>
+      <dates_24>19 May</dates_24>
+      <dates_24>19 Mai</dates_24>
+      <dates_48>20 May</dates_48>
+      <dates_48>20 Mai</dates_48>
+      <dates_72>21 May</dates_72>
+      <dates_72>21 Mai</dates_72>
+      <dates_96>22 May</dates_96>
+      <dates_96>22 Mai</dates_96>
+      <dates_120>23 May</dates_120>
+      <dates_120>23 Mai</dates_120>
     </dates>
     <station>
-      <name>Connor</name>
+      <name>Connors</name>
       <stationID>0</stationID>
-      <forecast_cur>160.4</forecast_cur>
-      <forecast_24>160.5</forecast_24>
-      <forecast_48>160.4</forecast_48>
+      <forecast_cur>170.00</forecast_cur>
+      <forecast_24>170.0</forecast_24>
+      <forecast_48>170.0</forecast_48>
+      <forecast_72>170.0</forecast_72>
+      <forecast_96>170.0</forecast_96>
+      <forecast_120>N/A</forecast_120>
     </station>
     <station>
-      <name>St. Francois</name>
+      <name>Saint-François</name>
       <stationID>1</stationID>
-      <forecast_cur>154.7</forecast_cur>
-      <forecast_24>154.7</forecast_24>
-      <forecast_48>154.7</forecast_48>
+      <forecast_cur>0.00</forecast_cur>
+      <forecast_24>0.0</forecast_24>
+      <forecast_48>0.0</forecast_48>
+      <forecast_72>0.0</forecast_72>
+      <forecast_96>0.0</forecast_96>
+      <forecast_120>0.0</forecast_120>
     </station>
     <station>
       <name>Clair</name>
       <stationID>2</stationID>
-      <forecast_cur>152.11</forecast_cur>
-      <forecast_24>152.2</forecast_24>
-      <forecast_48>152.1</forecast_48>
+      <forecast_cur>0.00</forecast_cur>
+      <forecast_24>0.0</forecast_24>
+      <forecast_48>0.0</forecast_48>
+      <forecast_72>0.0</forecast_72>
+      <forecast_96>0.0</forecast_96>
+      <forecast_120>0.0</forecast_120>
     </station>
     <station>
       <name>Baker Brook</name>
       <stationID>3</stationID>
-      <forecast_cur>146.7</forecast_cur>
-      <forecast_24>146.7</forecast_24>
-      <forecast_48>146.7</forecast_48>
+      <forecast_cur>0.00</forecast_cur>
+      <forecast_24>0.0</forecast_24>
+      <forecast_48>0.0</forecast_48>
+      <forecast_72>0.0</forecast_72>
+      <forecast_96>0.0</forecast_96>
+      <forecast_120>0.0</forecast_120>
     </station>
     <station>
       <name>St. Hilaire</name>
       <stationID>4</stationID>
-      <forecast_cur>142.1</forecast_cur>
-      <forecast_24>142.1</forecast_24>
-      <forecast_48>142.1</forecast_48>
+      <forecast_cur>0.00</forecast_cur>
+      <forecast_24>0.0</forecast_24>
+      <forecast_48>0.0</forecast_48>
+      <forecast_72>0.0</forecast_72>
+      <forecast_96>0.0</forecast_96>
+      <forecast_120>0.0</forecast_120>
     </station>
     <station>
       <name>Edmundston</name>
       <stationID>5</stationID>
-      <forecast_cur>136.43</forecast_cur>
-      <forecast_24>136.5</forecast_24>
-      <forecast_48>136.4</forecast_48>
+      <forecast_cur>0.00</forecast_cur>
+      <forecast_24>0.0</forecast_24>
+      <forecast_48>0.0</forecast_48>
+      <forecast_72>0.0</forecast_72>
+      <forecast_96>0.0</forecast_96>
+      <forecast_120>0.0</forecast_120>
     </station>
     <station>
       <name>Iroquois</name>
       <stationID>6</stationID>
-      <forecast_cur>135.3</forecast_cur>
-      <forecast_24>135.4</forecast_24>
-      <forecast_48>135.3</forecast_48>
+      <forecast_cur>0.00</forecast_cur>
+      <forecast_24>0.0</forecast_24>
+      <forecast_48>0.0</forecast_48>
+      <forecast_72>0.0</forecast_72>
+      <forecast_96>0.0</forecast_96>
+      <forecast_120>0.0</forecast_120>
     </station>
     <station>
-      <name>St. Basile</name>
+      <name>Saint-Basile</name>
       <stationID>7</stationID>
-      <forecast_cur>134.0</forecast_cur>
-      <forecast_24>134.1</forecast_24>
-      <forecast_48>134.0</forecast_48>
+      <forecast_cur>0.00</forecast_cur>
+      <forecast_24>0.0</forecast_24>
+      <forecast_48>0.0</forecast_48>
+      <forecast_72>0.0</forecast_72>
+      <forecast_96>0.0</forecast_96>
+      <forecast_120>0.0</forecast_120>
     </station>
     <station>
-      <name>Saint Anne</name>
+      <name>Sainte-Anne</name>
       <stationID>8</stationID>
-      <forecast_cur>131.5</forecast_cur>
-      <forecast_24>131.6</forecast_24>
-      <forecast_48>131.5</forecast_48>
+      <forecast_cur>0.00</forecast_cur>
+      <forecast_24>0.0</forecast_24>
+      <forecast_48>0.0</forecast_48>
+      <forecast_72>0.0</forecast_72>
+      <forecast_96>0.0</forecast_96>
+      <forecast_120>0.0</forecast_120>
     </station>
     <station>
-      <name>St. Leonard</name>
+      <name>Saint-Léonard</name>
       <stationID>9</stationID>
-      <forecast_cur>130.60</forecast_cur>
-      <forecast_24>130.7</forecast_24>
-      <forecast_48>130.7</forecast_48>
+      <forecast_cur>0.00</forecast_cur>
+      <forecast_24>0.0</forecast_24>
+      <forecast_48>0.0</forecast_48>
+      <forecast_72>0.0</forecast_72>
+      <forecast_96>0.0</forecast_96>
+      <forecast_120>0.0</forecast_120>
+    </station>
+    <station>
+      <name>Perth-Andover</name>
+      <stationID>10</stationID>
+      <forecast_cur>0.00</forecast_cur>
+      <forecast_24>0.0</forecast_24>
+      <forecast_48>0.0</forecast_48>
+      <forecast_72>0.0</forecast_72>
+      <forecast_96>0.0</forecast_96>
+      <forecast_120>0.0</forecast_120>
+    </station>
+    <station>
+      <name>Simonds</name>
+      <stationID>11</stationID>
+      <forecast_cur>0.00</forecast_cur>
+      <forecast_24>0.0</forecast_24>
+      <forecast_48>0.0</forecast_48>
+      <forecast_72>0.0</forecast_72>
+      <forecast_96>0.0</forecast_96>
+      <forecast_120>0.0</forecast_120>
+    </station>
+    <station>
+      <name>Hartland</name>
+      <stationID>12</stationID>
+      <forecast_cur>0.00</forecast_cur>
+      <forecast_24>0.0</forecast_24>
+      <forecast_48>0.0</forecast_48>
+      <forecast_72>0.0</forecast_72>
+      <forecast_96>0.0</forecast_96>
+      <forecast_120>0.0</forecast_120>
+    </station>
+    <station>
+      <name>Woodstock</name>
+      <stationID>13</stationID>
+      <forecast_cur>0.00</forecast_cur>
+      <forecast_24>0.0</forecast_24>
+      <forecast_48>0.0</forecast_48>
+      <forecast_72>0.0</forecast_72>
+      <forecast_96>0.0</forecast_96>
+      <forecast_120>0.0</forecast_120>
     </station>
     <station>
       <name>Nashwaak (Durham Bridge)</name>
-      <stationID>10</stationID>
-      <forecast_cur>18.43</forecast_cur>
-      <forecast_24>18.4</forecast_24>
-      <forecast_48>18.4</forecast_48>
+      <stationID>14</stationID>
+      <forecast_cur>0.00</forecast_cur>
+      <forecast_24>0.0</forecast_24>
+      <forecast_48>0.0</forecast_48>
+      <forecast_72>0.0</forecast_72>
+      <forecast_96>0.0</forecast_96>
+      <forecast_120>0.0</forecast_120>
     </station>
     <station>
       <name>Kennebecasis (Apohaqui)</name>
-      <stationID>11</stationID>
-      <forecast_cur>8.27</forecast_cur>
-      <forecast_24>8.2</forecast_24>
-      <forecast_48>8.2</forecast_48>
+      <stationID>15</stationID>
+      <forecast_cur>0.00</forecast_cur>
+      <forecast_24>0.0</forecast_24>
+      <forecast_48>0.0</forecast_48>
+      <forecast_72>0.0</forecast_72>
+      <forecast_96>0.0</forecast_96>
+      <forecast_120>0.0</forecast_120>
     </station>
     <station>
       <name>Fredericton</name>
-      <stationID>12</stationID>
-      <forecast_cur>4.26</forecast_cur>
-      <forecast_24>4.1</forecast_24>
-      <forecast_48>4.1</forecast_48>
+      <stationID>16</stationID>
+      <forecast_cur>0.00</forecast_cur>
+      <forecast_24>0.0</forecast_24>
+      <forecast_48>0.0</forecast_48>
+      <forecast_72>0.0</forecast_72>
+      <forecast_96>0.0</forecast_96>
+      <forecast_120>0.0</forecast_120>
     </station>
     <station>
       <name>Maugerville</name>
-      <stationID>13</stationID>
-      <forecast_cur>3.98</forecast_cur>
-      <forecast_24>3.9</forecast_24>
-      <forecast_48>3.8</forecast_48>
+      <stationID>17</stationID>
+      <forecast_cur>0.00</forecast_cur>
+      <forecast_24>0.0</forecast_24>
+      <forecast_48>0.0</forecast_48>
+      <forecast_72>0.0</forecast_72>
+      <forecast_96>0.0</forecast_96>
+      <forecast_120>0.0</forecast_120>
     </station>
     <station>
       <name>Jemseg</name>
-      <stationID>14</stationID>
-      <forecast_cur>3.69</forecast_cur>
-      <forecast_24>3.5</forecast_24>
-      <forecast_48>3.4</forecast_48>
+      <stationID>18</stationID>
+      <forecast_cur>0.00</forecast_cur>
+      <forecast_24>0.0</forecast_24>
+      <forecast_48>0.0</forecast_48>
+      <forecast_72>0.0</forecast_72>
+      <forecast_96>0.0</forecast_96>
+      <forecast_120>0.0</forecast_120>
     </station>
     <station>
       <name>Grand Lake</name>
-      <stationID>15</stationID>
-      <forecast_cur>3.77</forecast_cur>
-      <forecast_24>3.6</forecast_24>
-      <forecast_48>3.4</forecast_48>
+      <stationID>19</stationID>
+      <forecast_cur>0.00</forecast_cur>
+      <forecast_24>0.0</forecast_24>
+      <forecast_48>0.0</forecast_48>
+      <forecast_72>0.0</forecast_72>
+      <forecast_96>0.0</forecast_96>
+      <forecast_120>0.0</forecast_120>
     </station>
     <station>
-      <name>Sheffield-Lakeville Corner</name>
-      <stationID>16</stationID>
-      <forecast_cur>3.88</forecast_cur>
-      <forecast_24>3.7</forecast_24>
-      <forecast_48>3.5</forecast_48>
+      <name>Sheffield - Lakeville Corner</name>
+      <stationID>20</stationID>
+      <forecast_cur>0.00</forecast_cur>
+      <forecast_24>0.0</forecast_24>
+      <forecast_48>0.0</forecast_48>
+      <forecast_72>0.0</forecast_72>
+      <forecast_96>0.0</forecast_96>
+      <forecast_120>0.0</forecast_120>
     </station>
     <station>
       <name>Oak Point</name>
-      <stationID>17</stationID>
-      <forecast_cur>3.16</forecast_cur>
-      <forecast_24>3.0</forecast_24>
-      <forecast_48>2.9</forecast_48>
+      <stationID>21</stationID>
+      <forecast_cur>0.00</forecast_cur>
+      <forecast_24>0.0</forecast_24>
+      <forecast_48>0.0</forecast_48>
+      <forecast_72>0.0</forecast_72>
+      <forecast_96>0.0</forecast_96>
+      <forecast_120>0.0</forecast_120>
     </station>
     <station>
-      <name>Quispamsis-Saint John</name>
-      <stationID>18</stationID>
-      <forecast_cur>3.02</forecast_cur>
-      <forecast_24>3.0</forecast_24>
-      <forecast_48>3.0</forecast_48>
+      <name>Quispamsis - Saint John</name>
+      <stationID>22</stationID>
+      <forecast_cur>0.00</forecast_cur>
+      <forecast_24>0.0</forecast_24>
+      <forecast_48>0.0</forecast_48>
+      <forecast_72>0.0</forecast_72>
+      <forecast_96>0.0</forecast_96>
+      <forecast_120>0.0</forecast_120>
     </station>
   </forecast>

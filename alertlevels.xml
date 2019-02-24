@@ -9,7 +9,7 @@
 		<Floodlvl>170.7</Floodlvl>
 	</station>
 	<station>
-		<name>St. Francois</name> 
+		<name>Saint-François</name> 
 		<stationID>1</stationID> 
 		<advisory>158.2</advisory>
 		<watch>159.2</watch>
@@ -17,7 +17,7 @@
 		<Floodlvl>160.2</Floodlvl>
 	</station>
 	<station>
-		<name>St. Clair</name> 
+		<name>Clair</name> 
 		<stationID>2</stationID> 
 		<advisory>154.2</advisory>
 		<watch>155.2</watch>
@@ -57,7 +57,7 @@
 		<Floodlvl>140.65</Floodlvl>
 	</station>
 	<station>
-		<name>St. Basile</name> 
+		<name>Saint-Basile</name> 
 		<stationID>7</stationID> 
 		<advisory>141.9</advisory>
 		<watch>142.9</watch>
@@ -65,7 +65,7 @@
 		<Floodlvl>143.9</Floodlvl>
 	</station>
 	<station>
-		<name>Saint Anne</name> 
+		<name>Sainte-Anne</name> 
 		<stationID>8</stationID> 
 		<advisory>136.3</advisory>
 		<watch>137.3</watch>
@@ -73,7 +73,7 @@
 		<Floodlvl>138.3</Floodlvl>
 	</station>
 	<station>
-		<name>St. Leonard</name> 
+		<name>Saint-Léonard</name> 
 		<stationID>9</stationID> 
 		<advisory>134</advisory>
 		<watch>135</watch>
@@ -81,16 +81,48 @@
 		<Floodlvl>136.0</Floodlvl>
 	</station>
 	<station>
-		<name>Nashwaak - Durham Bridge</name>
-		<stationID>10</stationID>
+		<name>Perth-Andover</name> 
+		<stationID>10</stationID> 
+		<advisory>75.2</advisory>
+		<watch>76.2</watch>
+		<warning>76.7</warning>
+		<Floodlvl>77.2</Floodlvl>
+	</station>
+	<station>
+		<name>Simonds</name> 
+		<stationID>11</stationID> 
+		<advisory>46.5</advisory>
+		<watch>47.5</watch>
+		<warning>48.0</warning>
+		<Floodlvl>48.5</Floodlvl>
+	</station>
+	<station>
+		<name>Hartland</name> 
+		<stationID>12</stationID> 
+		<advisory>43.7</advisory>
+		<watch>44.7</watch>
+		<warning>45.2</warning>
+		<Floodlvl>45.7</Floodlvl>
+	</station>
+	<station>
+		<name>Woodstock</name> 
+		<stationID>13</stationID> 
+		<advisory>39.4</advisory>
+		<watch>40.4</watch>
+		<warning>40.9</warning>
+		<Floodlvl>41.4</Floodlvl>
+	</station>
+	<station>
+		<name>Nashwaak (Durham Bridge)</name>
+		<stationID>14</stationID>
 		<advisory>19</advisory>
 		<watch>20</watch>
 		<warning>20.5</warning>
 		<Floodlvl>21.0</Floodlvl>
 	</station>	
 	<station>
-		<name>Kennebecasis - Apohaqui</name>
-		<stationID>11</stationID>
+		<name>Kennebecasis (Apohaqui)</name>
+		<stationID>15</stationID>
 		<advisory>11</advisory>
 		<watch>12</watch>
 		<warning>12.5</warning>
@@ -98,7 +130,7 @@
 	</station>	
 	<station>
 		<name>Fredericton</name>
-		<stationID>12</stationID>
+		<stationID>16</stationID>
 		<advisory>4.5</advisory>
 		<watch>5.5</watch>
 		<warning>6</warning>
@@ -106,7 +138,7 @@
 	</station>	
 	<station>
 		<name>Maugerville</name>
-		<stationID>13</stationID>
+		<stationID>17</stationID>
 		<advisory>4</advisory>
 		<watch>5</watch>
 		<warning>5.5</warning>
@@ -114,7 +146,7 @@
 	</station>	
 	<station>
 		<name>Jemseg</name>
-		<stationID>14</stationID>
+		<stationID>18</stationID>
 		<advisory>2.3</advisory>
 		<watch>3.3</watch>
 		<warning>3.8</warning>
@@ -122,7 +154,7 @@
 	</station>		
 	<station>
 		<name>Grand Lake</name>
-		<stationID>15</stationID>
+		<stationID>19</stationID>
 		<advisory>3</advisory>
 		<watch>4</watch>
 		<warning>4.5</warning>
@@ -130,7 +162,7 @@
 	</station>	
 	<station>
 		<name>Sheffield-Lakeville Corner</name>
-		<stationID>16</stationID>
+		<stationID>20</stationID>
 		<advisory>2.8</advisory>
 		<watch>3.8</watch>
 		<warning>4.3</warning>
@@ -138,15 +170,15 @@
 	</station>	
 	<station>
 		<name>Oak Point</name>
-		<stationID>17</stationID>
+		<stationID>21</stationID>
 		<advisory>2.7</advisory>
 		<watch>3.7</watch>
 		<warning>4.2</warning>
 		<Floodlvl>4.7</Floodlvl>
 	</station>
 	<station>
-		<name>Quispamsis-Saint John</name>
-		<stationID>18</stationID>
+		<name>Quispamsis - Saint John</name>
+		<stationID>22</stationID>
 		<advisory>2.2</advisory>
 		<watch>3.2</watch>
 		<warning>3.7</warning>

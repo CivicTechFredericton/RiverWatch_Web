@@ -22,184 +22,185 @@ $(document).ready( function() {
 });
 
 /*******************************************************************************
- * @brief function to Parse XML data and return a JS object containing the data 
+ * @brief function to Parse XML data and return a JS object containing the data
  * @param {type} url
  * @returns {Node|ActiveXObject.responseXML|Document}
  ******************************************************************************/
 function parseXML(url){
-    
-    // variable to store xml data as string
-    var xml = "";
 
-    var xmlList;
+	// variable to store xml data as string
+	var xml = "";
+	var xmlList;
 
-    if (window.XMLHttpRequest) {
-  
-        xmlhttp = new XMLHttpRequest();
-    
-    } else {
-    
-        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-    
-    }
+	if (window.XMLHttpRequest) {
+		xmlhttp = new XMLHttpRequest();
+	} else {
+		xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+	}
 
-    xmlhttp.open("GET", url, false);
-    xmlhttp.send();
+	xmlhttp.open("GET", url, false);
+	xmlhttp.send();
+	xmlList = xmlhttp.responseXML;
 
-    xmlList = xmlhttp.responseXML;
+	return xmlList;
 
-    return xmlList;
-    
 }
 
 /*******************************************************************************
- * @brief This function returns the status of the alert flag given the alert 
+ * @brief This function returns the status of the alert flag given the alert
  * levels
- * 
+ *
  * @param {type} currentLevel
  * @param {type} advisoryLevel
  * @param {type} watchLevel
  * @param {type} warningLevel
  * @returns {String}
  ******************************************************************************/
-function getAlertLevel(currentLevel, advisoryLevel, watchLevel, warningLevel){
-    
-    var retVal;
-    
-    // green mode
-    if ( currentLevel < advisoryLevel )
-    {
-        retVal = "normal";
-    }
-    // yellow mode
-    else if ( (currentLevel >= advisoryLevel) && (currentLevel < watchLevel) )
-    {
-        retVal = "advisory";
-    }
-    // orange mode
-    else if ( (currentLevel >= watchLevel) && (currentLevel < warningLevel) )
-    {
-        retVal = "watch";
-    }
-    // red mode
-    else if ( currentLevel >= warningLevel )
-    {
-        retVal = "warning";
-    }
+function getAlertLevel(currentLevel, advisoryLevel, watchLevel, warningLevel) {
 
-    return retVal;
-
+	var retVal;
+	if ( currentLevel < advisoryLevel ) {
+		// green mode
+		retVal = "normal";
+	} else if ( (currentLevel >= advisoryLevel) && (currentLevel < watchLevel) ) {
+		// yellow mode
+		retVal = "advisory";
+	} else if ( (currentLevel >= watchLevel) && (currentLevel < warningLevel) ) {
+		// orange mode
+		retVal = "watch";
+	} else if ( currentLevel >= warningLevel ) {
+		// red mode
+		retVal = "warning";
+	}
+	return retVal;
 }
 
 
 /*******************************************************************************
- * @brief function to populate the list of stations available in the the parsed 
+ * @brief function to populate the list of stations available in the the parsed
  * Data
- * 
+ *
  * @returns {undefined}
  ******************************************************************************/
 function populateList(){
-		var timeStamp = Date.now();
-		// parse alertlevels.xml
-		var XMLStationAlerts = parseXML("http://geonb.snb.ca/riverwatch/alertlevels.xml");
+	var timeStamp = Date.now();
+	// parse alertlevels.xml
+	var XMLStationAlerts = parseXML("alertlevels.xml");
 
-		// parse alert.xml
-		var XMLStationsList = parseXML("http://geonb.snb.ca/riverwatch/alert.xml?t="+timeStamp);
+	// parse alert.xml
+	var XMLStationsList = parseXML("alert.xml?t="+timeStamp);
 
-		var dates = XMLStationsList.getElementsByTagName("dates")[0];
-		var day0En = dates.getElementsByTagName("dates_in")[0].textContent;
-		var day0Fr = dates.getElementsByTagName("dates_in")[1].textContent;
-		var day1En = dates.getElementsByTagName("dates_24")[0].textContent;
-		var day1Fr = dates.getElementsByTagName("dates_24")[1].textContent;
-		var day2En = dates.getElementsByTagName("dates_48")[0].textContent;
-		var day2Fr = dates.getElementsByTagName("dates_48")[1].textContent;
-		chartLabels['en']['dates'] = [day0En, day1En, day2En];
-		chartLabels['fr']['dates'] = [day0Fr, day1Fr, day2Fr];
-		firstDate = day0En;
+	var dates = XMLStationsList.getElementsByTagName("dates")[0];
+	var day0En = dates.getElementsByTagName("dates_in")[0].textContent;
+	var day0Fr = dates.getElementsByTagName("dates_in")[1].textContent;
+	var day1En = dates.getElementsByTagName("dates_24")[0].textContent;
+	var day1Fr = dates.getElementsByTagName("dates_24")[1].textContent;
+	var day2En = dates.getElementsByTagName("dates_48")[0].textContent;
+	var day2Fr = dates.getElementsByTagName("dates_48")[1].textContent;
+	var day3En = dates.getElementsByTagName("dates_72")[0].textContent;
+	var day3Fr = dates.getElementsByTagName("dates_72")[1].textContent;
+	var day4En = dates.getElementsByTagName("dates_96")[0].textContent;
+	var day4Fr = dates.getElementsByTagName("dates_96")[1].textContent;
+	var day5En = dates.getElementsByTagName("dates_120")[0].textContent;
+	var day5Fr = dates.getElementsByTagName("dates_120")[1].textContent;
 
-		var alertCounts = {
-			'normal': 0,
-			'advisory': 0,
-			'watch': 0,
-			'warning': 0
+	chartLabels['en']['dates'] = [day0En, day1En, day2En, day3En, day4En, day5En];
+	chartLabels['fr']['dates'] = [day0Fr, day1Fr, day2Fr, day3Fr, day4Fr, day5Fr];
+	firstDate = dates.getElementsByTagName("date_issued")[0].textContent;
+
+	var alertCounts = {
+		'normal': 0,
+		'advisory': 0,
+		'watch': 0,
+		'warning': 0
+	};
+
+	// get the list of stations from the parsed XML list
+	var stations = XMLStationsList.getElementsByTagName("station");
+
+	// get the lists of alert levels
+	var alertLevelList = XMLStationAlerts.getElementsByTagName("station");
+
+	// find the already defined html station list
+	var list = document.getElementById("station-list");
+
+	for(var i=0; i<stations.length; i++){
+		var stationData;
+
+		// get current station name
+		var stationName = stations[i].getElementsByTagName("name")[0].textContent;
+
+		// gets station id
+		var stationId = stations[i].getElementsByTagName("stationID")[0].textContent;
+		var listId = makeSlug(stationName);
+
+		// get levels data - convert string to float for comparison
+		var currentLevel = parseFloat(stations[i].getElementsByTagName("forecast_cur")[0].textContent) || 0;
+		var forcast24Level = parseFloat(stations[i].getElementsByTagName("forecast_24")[0].textContent) || 0;
+		var forcast48Level = parseFloat(stations[i].getElementsByTagName("forecast_48")[0].textContent) || 0;
+		var forcast72Level = parseFloat(stations[i].getElementsByTagName("forecast_72")[0].textContent) || 0;
+		var forcast96Level = parseFloat(stations[i].getElementsByTagName("forecast_96")[0].textContent) || 0;
+		var forcast120Level = parseFloat(stations[i].getElementsByTagName("forecast_120")[0].textContent) || 0;
+		var advisoryLevel = parseFloat(alertLevelList[i].getElementsByTagName("advisory")[0].textContent);
+		var watchLevel = parseFloat(alertLevelList[i].getElementsByTagName("watch")[0].textContent);
+		var warningLevel = parseFloat(alertLevelList[i].getElementsByTagName("warning")[0].textContent);
+		var waterLevels = [currentLevel, forcast24Level, forcast48Level, forcast72Level, forcast96Level, forcast120Level];
+		var alertLevels = [advisoryLevel, watchLevel, warningLevel];
+
+		// not used	- kept in case needed in the future
+		//var floodLevel = parseInt(alertLevelList[i].getElementByTagName("Floodlvl")[0].textContent);
+
+		// a flag to store the condition of the current alert level
+		var currentAlertlevel = getAlertLevel(currentLevel, advisoryLevel, watchLevel, warningLevel);
+
+		// data status should be as following:
+		// "3 normal"
+		// "2 advisory"
+		// "1 watch"
+		// "0 warning"
+		var dataStatus = "3 normal";
+		switch (currentAlertlevel) {
+			case "normal":
+				dataStatus = "3 normal";
+				break;
+			case "advisory":
+				dataStatus = "2 advisory";
+				break;
+			case "watch":
+				dataStatus = "1 watch";
+				break;
+			case "warning":
+				dataStatus = "0 warning";
+				break;
+		}
+		alertCounts[currentAlertlevel]++;
+
+		stationData = {
+			'id': stationId,
+			'name': stationName,
+			'level': currentLevel,
+			'alertLevel': currentAlertlevel,
+			'status': dataStatus,
+			'waterLevels': waterLevels,
+			'alertLevels': alertLevels
 		};
+		stationList.push(stationData);
 
-    // get the list of stations from the parsed XML list
-    var stations = XMLStationsList.getElementsByTagName("station");
-    
-    // get the lists of alert levels
-    var alertLevelList = XMLStationAlerts.getElementsByTagName("station");
-        
-    // find the already defined html station list
-    var list = document.getElementById("station-list");
-    
-    for(var i=0; i<stations.length; i++){
-    		var stationData;
-         
-        // get current station name
-        //                picks the station then tag picks item inside the station then get text value
-        var stationName = stations[i].getElementsByTagName("name")[0].textContent;
-        
-        // gets station id
-        var stationId = stations[i].getElementsByTagName("stationID")[0].textContent;
-        var listId = makeSlug(stationName);
-        
-        // get levels data - convert string to float for comparison
-        var currentLevel = parseFloat( stations[i].getElementsByTagName("forecast_cur")[0].textContent ) || 0;
-        var forcast24Level = parseFloat(stations[i].getElementsByTagName("forecast_24")[0].textContent ) || 0;
-        var forcast48Level = parseFloat(stations[i].getElementsByTagName("forecast_48")[0].textContent ) || 0;
-        var advisoryLevel = parseFloat( alertLevelList[i].getElementsByTagName("advisory")[0].textContent );
-        var watchLevel = parseFloat( alertLevelList[i].getElementsByTagName("watch")[0].textContent );
-        var warningLevel = parseFloat( alertLevelList[i].getElementsByTagName("warning")[0].textContent );
-        var waterLevels = [currentLevel, forcast24Level, forcast48Level];
-        var alertLevels = [advisoryLevel, watchLevel, warningLevel];
-        
-        // not used  - kept in case needed in the future
-        //var floodLevel = parseInt(alertLevelList[i].getElementByTagName("Floodlvl")[0].textContent);
-        
-        // a flag to store the condition of the current alert level
-        
-        var currentAlertlevel = getAlertLevel(currentLevel, advisoryLevel, watchLevel, warningLevel);
+		// create new station and insert data into the list on leftside of screen
+		var item = createStationItem(stationData);
 
-        // data status should be as following:
-        // "3 normal"
-        // "2 advisory"
-        // "1 watch"
-        // "0 warning"
-        var dataStatus = "3 normal";
-        if( currentAlertlevel === "normal" )   dataStatus = "3 normal";
-        if( currentAlertlevel === "advisory" ) dataStatus = "2 advisory";
-        if( currentAlertlevel === "watch" )    dataStatus = "1 watch";
-        if( currentAlertlevel === "warning" )  dataStatus = "0 warning";
-        alertCounts[currentAlertlevel]++;
-        
-        stationData = {
-        	'id': stationId,
-        	'name': stationName,
-        	'level': currentLevel,
-        	'alertLevel': currentAlertlevel,
-        	'status': dataStatus,
-        	'waterLevels': waterLevels,
-        	'alertLevels': alertLevels
-        };
-        stationList.push(stationData);
-        
-        // create new station and insert data into the list on leftside of screen
-				var item = createStationItem(stationData);
-        
-        // Add it to the list:
-        list.appendChild(item);
-        
-    }
+		// Add it to the list:
+		list.appendChild(item);
+	}
 	['advisory', 'watch', 'warning'].forEach(function(level) {
 		var levelCount = alertCounts[level];
-		$('#'+level+'-count').text(levelCount);
+		$('.'+level+'-count').text(levelCount);
 	});
 }
 
 /*******************************************************************************
  * @brief Creates a DOM element for a station to be used in the list view
- * 
+ *
  * @param {object} station
  * @returns {DOM element}
  ******************************************************************************/
@@ -212,14 +213,14 @@ function createStationItem(station) {
 	item.setAttribute("data-status",station['status']);
 	item.setAttribute("data-name",station['name']);
 
-	// Set its Name:
+	// Set its Name
 	item.appendChild(document.createTextNode(station['name']));
 	return item;
 }
 
 /*******************************************************************************
  * @brief Allows the user to switch between French and English versions of the site
- * 
+ *
  * @returns {undefined}
  ******************************************************************************/
 function setupLang() {
@@ -254,7 +255,7 @@ function setupLang() {
 
 /*******************************************************************************
  * @brief A dropdown on mobile that the user can switch between list and map modes
- * 
+ *
  * @returns {undefined}
  ******************************************************************************/
 function setupToggleView() {
@@ -268,9 +269,9 @@ function setupToggleView() {
 }
 
 /*******************************************************************************
- * @brief Displays a disclaimer overlay when the site first loads and the user 
+ * @brief Displays a disclaimer overlay when the site first loads and the user
  * must close it to use the site
- * 
+ *
  * @returns {undefined}
  ******************************************************************************/
 function setupIntro() {
@@ -278,20 +279,20 @@ function setupIntro() {
 		$(this).parents('section').first().removeClass('show');
 		$('body').addClass('intro-closed');
 	});
-	
+
 	$('#help-link').on('click', function() {
 		$('#help').addClass('show');
 	});
-	
+
 	$('.overlay .close').on('click', function() {
 		$(this).parents('section').first().removeClass('show');
 	});
 }
 
 /*******************************************************************************
- * @brief Sets up the behaviour of all site dropdown and calls functions 
+ * @brief Sets up the behaviour of all site dropdown and calls functions
  * setupStationList and setupChooseStation
- * 
+ *
  * @returns {undefined}
  ******************************************************************************/
 function setupNav() {
@@ -307,7 +308,7 @@ function setupNav() {
 /*******************************************************************************
  * @brief Allows the user to sort the station list by location, name, or warning
  * level and saves that sort order in a cookie
- * 
+ *
  * @param {jQuery object} list
  * @param {jQuery object} link
  * @returns {undefined}
@@ -326,7 +327,7 @@ function sortList(list, link) {
 /*******************************************************************************
  * @brief Sets up the dropdown that the user can use to sort the station list and
  * applies the previous sort order if there is a cookie saved
- * 
+ *
  * @returns {undefined}
  ******************************************************************************/
 function setupStationList() {
@@ -346,7 +347,7 @@ function setupStationList() {
 /*******************************************************************************
  * @brief Controls a checkbox where the user can mark a specific station as their
  * favorite and checks for an existing favorite saved as a cookie
- * 
+ *
  * @param {int} id
  * @returns {undefined}
  ******************************************************************************/
@@ -359,7 +360,7 @@ function setupChooseStation(id) {
 			clearMyStation();
 		}
 	});
-	
+
 	if (Cookies.get('station_id')) {
 		var id = Cookies.get('station_id');
 		setMyStation(id);
@@ -367,9 +368,9 @@ function setupChooseStation(id) {
 }
 
 /*******************************************************************************
- * @brief Displays the chosen favorite and saves a cookie with the favorite 
+ * @brief Displays the chosen favorite and saves a cookie with the favorite
  * station id
- * 
+ *
  * @param {int} id
  * @returns {undefined}
  ******************************************************************************/
@@ -386,7 +387,7 @@ function setMyStation(id) {
 /*******************************************************************************
  * @brief Deletes the favorite station cookie and removes the favorite station from
  * the top of the list
- * 
+ *
  * @returns {undefined}
  ******************************************************************************/
 function clearMyStation() {
@@ -398,7 +399,7 @@ function clearMyStation() {
 /*******************************************************************************
  * @brief Creates the controls to open the chart and calls functions
  * initializeChart and setupDateWarning
- * 
+ *
  * @returns {undefined}
  ******************************************************************************/
 function setupChart() {
@@ -408,14 +409,14 @@ function setupChart() {
 	$('#station-readings').on('click', '.close', function() {
 		$('body').removeClass('show-station');
 	});
-	
+
 	setupDateWarning();
 }
 
 /*******************************************************************************
  * @brief Initializes the chart.js plugin that we are using to display the water
  * levels
- * 
+ *
  * @returns {undefined}
  ******************************************************************************/
 function initializeChart() {
@@ -429,8 +430,11 @@ function initializeChart() {
 				data: [],
 				backgroundColor: [
 					'rgba(0, 81, 198, 1.0)',
-					'rgba(64, 125, 212, 1.0)',
-					'rgba(127, 168, 226, 1.0)'
+					'rgba(43, 110, 208, 1.0)',
+					'rgb(85, 139, 217, 1.0)',
+					'rgb(128, 168, 227, 1.0)',
+					'rgb(170, 197, 236, 1.0)',
+					'rgb(213, 226, 246, 1.0)',
 				],
 				borderWidth: 0
 			}]
@@ -507,7 +511,7 @@ function initializeChart() {
 
 /*******************************************************************************
  * @brief Updates the chart data for a specific station and then display the chart
- * 
+ *
  * @returns {undefined}
  ******************************************************************************/
 function openChart() {
@@ -520,7 +524,8 @@ function openChart() {
 		max = 0; // the max value displayed on the chart
 	$('#station-title').text(name);
 	$('#station-readings').data('id', id);
-	
+	$('#flood-level .water-level').text(waterLevels[0]);
+
 	if (Cookies.get('station_id') == id) {
 		$('#choose-station').prop('checked', true);
 	} else {
@@ -538,7 +543,7 @@ function openChart() {
 			if (level > max) {
 				max = level;
 			}
-			if (level < min) {
+			if (level < min && level < 0) {
 				min = level;
 			}
 		});
@@ -556,7 +561,7 @@ function openChart() {
 			min = annotation.value;
 		}
 	});
-	
+
 	// round and pad the max and min for tidier y-axis values
 	max = Math.ceil(max + 1); // pad above the max
 	min = Math.floor(min - 3); // pad below the min
@@ -570,7 +575,7 @@ function openChart() {
 		min = 2*Math.floor(min/2); // make the min an even number
 		max = min + nearestDiff; // set the max as an even amount more than the min
 	}
-	
+
 	// update the min and max on the chart
 	floodChart.options.scales.yAxes[0].ticks.min = min;
 	floodChart.options.scales.yAxes[0].ticks.max = max;
@@ -582,7 +587,7 @@ function openChart() {
 
 /*******************************************************************************
  * @brief Changes the language of the station chart between French & English
- * 
+ *
  * @returns {undefined}
  ******************************************************************************/
 
@@ -601,35 +606,17 @@ function updateChartLabels() {
 
 /*******************************************************************************
  * @brief Displays a message about the age of the data if it is more than a day old
- * 
+ *
  * @returns {undefined}
  ******************************************************************************/
 function setupDateWarning() {
-	var today = new Date(),
-		currentYear = today.getFullYear();
-		startDate = new Date(firstDate+' '+currentYear), // assume the forecast is from the current year
-		oneDay = 1000*60*60*24; // ms in a day
-		days = Math.floor((today - startDate)/oneDay);
-	// if the assumed forecast date is in future, the date must be from last year instead
-	if (days < 0) {
-		var lastYear = currentYear - 1;
-		startDate = new Date(firstDate+' '+lastYear);
-		days = Math.floor((today - startDate)/oneDay);
-	}
-	// display the warning about the age of the forecast
-	if (days > 0) {
-		$('#forecast-notice .count').text(days);
-		if (days == 1) {
-			$('#forecast-notice').addClass('singular');
-		}
-		$('#forecast-notice').addClass('show');
-	}
+	$('#date-issued').text(firstDate);
 }
 
 /*******************************************************************************
  * @brief Calls populateList, setupNav, and setupChart and then create the google
  * map that displays all of the station locations
- * 
+ *
  * @returns {undefined}
  ******************************************************************************/
 function initMap() {
@@ -677,7 +664,7 @@ function initMap() {
  * @brief Creates a slug from the station name so it can be used as an element id
  * Used by initMap and createStationItem to connect the map marker to the station
  * it represents
- * 
+ *
  * @param {string} string
  * @returns {string}
  ******************************************************************************/
