@@ -127,31 +127,14 @@
 		<nav id="nav">
 			<section class="legend">
 				<div class="nav-controls">
-					<span class="nav-title legend-title">
-						<span class="en">Legend</span>
-						<span class="fr">Légende</span>
-					</span>
+					<span class="nav-title legend-title"><span class="en">Legend</span><span class="fr">Légende</span></span>
 				</div>
 				<ul>
-					<li class="normal">
-						<span class="en">Normal</span>
-						<span class="fr">Normal</span>
-					</li>
-					<li class="advisory">
-						<span class="en">Advisory</span>
-						<span class="fr">Avis</span>
-						(<span class="advisory-count">0</span>)
-					</li>
-					<li class="watch">
-						<span class="en">Watch</span>
-						<span class="fr">Veille</span>
-						(<span class="watch-count">0</span>)
-					</li>
-					<li class="warning">
-						<span class="en">Warning</span>
-						<span class="fr">Avertissement</span>
-						(<span class="warning-count">0</span>)
-					</li>
+					<li class="normal"><span class="en">Normal</span><span class="fr">Normal</span></li>
+					<li class="advisory"><span class="en">Advisory</span><span class="fr">Avis</span> (<span class="advisory-count">0</span>)</li>
+					<li class="watch"><span class="en">Watch</span><span class="fr">Veille</span> (<span class="watch-count">0</span>)</li>
+					<li class="warning"><span class="en">Warning</span><span class="fr">Avertissement</span> (<span class="warning-count">0</span>)</li>
+					<li class="flood"><span class="en">Flood</span><span class="fr">Crue</span> (<span class="flood-count">0</span>)</li>
 				</ul>
 			</section>
 			<div id="my-station">
@@ -200,17 +183,13 @@
 			<section id="station-readings" data-id="">
 				<h3 id="station-title"></h3>
 				<div class="close">X</div>
-				<div id="flood-level">
-					<span class="en">Water Level: <span class="water-level"></span> meters</span>
-					<span class="fr">Niveau des eaux: <span class="water-level"></span> mètres</span>
-				</div>
-				<div id="chart-wrapper">
-					<canvas id="flood-chart"></canvas>
-				</div>
 				<div id="forecast-notice">
 					<span class="en">Date Issued:</span>
 					<span class="fr">Date d'émission:</span>
 					<span id="date-issued"></span>
+				</div>
+				<div id="chart-wrapper">
+					<canvas id="flood-chart"></canvas>
 				</div>
 				<div id="station-footer">
 					<input id="choose-station" type="checkbox">
@@ -221,30 +200,13 @@
 		</main>
 
 		<section class="legend">
-			<span class="legend-title">
-				<span class="en">Legend</span>
-				<span class="fr">Légende</span>
-			</span>
+			<span class="legend-title"><span class="en">Legend</span><span class="fr">Légende</span></span>
 			<ul>
-				<li class="normal">
-					<span class="en">Normal</span>
-					<span class="fr">Normal</span>
-				</li>
-				<li class="advisory">
-					<span class="en">Advisory</span>
-					<span class="fr">Avis</span>
-					(<span class="advisory-count">0</span>)
-				</li>
-				<li class="watch">
-					<span class="en">Watch</span>
-					<span class="fr">Veille</span>
-					(<span class="watch-count">0</span>)
-				</li>
-				<li class="warning">
-					<span class="en">Warning</span>
-					<span class="fr">Avertissement</span>
-					(<span class="warning-count">0</span>)
-				</li>
+				<li class="normal"><span class="en">Normal</span><span class="fr">Normal</span></li>
+				<li class="advisory"><span class="en">Advisory</span><span class="fr">Avis</span> (<span class="advisory-count">0</span>)</li>
+				<li class="watch"><span class="en">Watch</span><span class="fr">Veille</span> (<span class="watch-count">0</span>)</li>
+				<li class="warning"><span class="en">Warning</span><span class="fr">Avertissement</span> (<span class="warning-count">0</span>)</li>
+				<li class="flood"><span class="en">Flood</span><span class="fr">Crue</span> (<span class="flood-count">0</span>)</li>
 			</ul>
 		</section>
 

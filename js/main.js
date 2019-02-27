@@ -5,12 +5,12 @@ var lang = 'en';
 var chartLabels = {
 	en: {
 		dates: [],
-		levels: ['Advisory', 'Watch', 'Warning'],
+		levels: ['Advisory', 'Watch', 'Warning', 'Flood'],
 		yAxis: 'Water level (m)',
 	},
 	fr: {
 		dates: [],
-		levels: ['Avis', 'Veille', 'Avertissement'],
+		levels: ['Avis', 'Veille', 'Avertissement', 'Crue'],
 		yAxis: "Niveau des eaux (m)",
 	}
 };
@@ -56,21 +56,24 @@ function parseXML(url){
  * @param {type} warningLevel
  * @returns {String}
  ******************************************************************************/
-function getAlertLevel(currentLevel, advisoryLevel, watchLevel, warningLevel) {
+function getAlertLevel(currentLevel, advisoryLevel, watchLevel, warningLevel, floodLevel) {
 
 	var retVal;
-	if ( currentLevel < advisoryLevel ) {
-		// green mode
-		retVal = "normal";
-	} else if ( (currentLevel >= advisoryLevel) && (currentLevel < watchLevel) ) {
-		// yellow mode
-		retVal = "advisory";
-	} else if ( (currentLevel >= watchLevel) && (currentLevel < warningLevel) ) {
-		// orange mode
-		retVal = "watch";
-	} else if ( currentLevel >= warningLevel ) {
+	if (currentLevel >= floodLevel) {
+		// black mode
+		retVal = "flood";
+	}	else if (currentLevel >= warningLevel) {
 		// red mode
 		retVal = "warning";
+	} else if (currentLevel >= watchLevel) {
+		// orange mode
+		retVal = "watch";
+	} else if (currentLevel >= advisoryLevel) {
+		// yellow mode
+		retVal = "advisory";
+	} else {
+		// green mode
+		retVal = "normal";
 	}
 	return retVal;
 }
@@ -112,7 +115,8 @@ function populateList(){
 		'normal': 0,
 		'advisory': 0,
 		'watch': 0,
-		'warning': 0
+		'warning': 0,
+		'flood': 0
 	};
 
 	// get the list of stations from the parsed XML list
@@ -144,33 +148,35 @@ function populateList(){
 		var advisoryLevel = parseFloat(alertLevelList[i].getElementsByTagName("advisory")[0].textContent);
 		var watchLevel = parseFloat(alertLevelList[i].getElementsByTagName("watch")[0].textContent);
 		var warningLevel = parseFloat(alertLevelList[i].getElementsByTagName("warning")[0].textContent);
+		var floodLevel = parseFloat(alertLevelList[i].getElementsByTagName("Floodlvl")[0].textContent);
 		var waterLevels = [currentLevel, forcast24Level, forcast48Level, forcast72Level, forcast96Level, forcast120Level];
-		var alertLevels = [advisoryLevel, watchLevel, warningLevel];
-
-		// not used	- kept in case needed in the future
-		//var floodLevel = parseInt(alertLevelList[i].getElementByTagName("Floodlvl")[0].textContent);
+		var alertLevels = [advisoryLevel, watchLevel, warningLevel, floodLevel];
 
 		// a flag to store the condition of the current alert level
-		var currentAlertlevel = getAlertLevel(currentLevel, advisoryLevel, watchLevel, warningLevel);
+		var currentAlertlevel = getAlertLevel(currentLevel, advisoryLevel, watchLevel, warningLevel, floodLevel);
 
 		// data status should be as following:
-		// "3 normal"
-		// "2 advisory"
-		// "1 watch"
-		// "0 warning"
-		var dataStatus = "3 normal";
+		// "4 normal"
+		// "3 advisory"
+		// "2 watch"
+		// "1 warning"
+		// "0 flood"
+		var dataStatus = "4 normal";
 		switch (currentAlertlevel) {
 			case "normal":
-				dataStatus = "3 normal";
+				dataStatus = "4 normal";
 				break;
 			case "advisory":
-				dataStatus = "2 advisory";
+				dataStatus = "3 advisory";
 				break;
 			case "watch":
-				dataStatus = "1 watch";
+				dataStatus = "2 watch";
 				break;
 			case "warning":
-				dataStatus = "0 warning";
+				dataStatus = "1 warning";
+				break;
+			case "flood":
+				dataStatus = "0 flood";
 				break;
 		}
 		alertCounts[currentAlertlevel]++;
@@ -192,7 +198,7 @@ function populateList(){
 		// Add it to the list:
 		list.appendChild(item);
 	}
-	['advisory', 'watch', 'warning'].forEach(function(level) {
+	['advisory', 'watch', 'warning', 'flood'].forEach(function(level) {
 		var levelCount = alertCounts[level];
 		$('.'+level+'-count').text(levelCount);
 	});
@@ -503,6 +509,20 @@ function initializeChart() {
 						content: chartLabels[lang]['levels'][2],
 						position: 'right'
 					}
+				},
+				{
+					type: 'line',
+					mode: 'horizontal',
+					id: '3',
+					scaleID: 'y-axis-0',
+					value: 0,
+					borderColor: 'rgb(0, 0, 0)',
+					borderWidth: 3,
+					label: {
+						enabled: true,
+						content: chartLabels[lang]['levels'][3],
+						position: 'right'
+					}
 				}]
 			}
 		}
@@ -524,7 +544,6 @@ function openChart() {
 		max = 0; // the max value displayed on the chart
 	$('#station-title').text(name);
 	$('#station-readings').data('id', id);
-	$('#flood-level .water-level').text(waterLevels[0]);
 
 	if (Cookies.get('station_id') == id) {
 		$('#choose-station').prop('checked', true);

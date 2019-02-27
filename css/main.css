@@ -193,10 +193,11 @@ h2 {margin-top: 0;}
 .normal::before,
 .advisory::before,
 .watch::before,
-.warning::before {
+.warning::before,
+.flood::before {
 	background-image: url('../img/icons.png');
 	background-repeat: repeat-x;
-	background-size: 75px 15px;
+	background-size: 96px 15px;
 	content: " ";
 	display: inline-block;
 	height: 18px;
@@ -210,17 +211,20 @@ h2 {margin-top: 0;}
 }
 
 .advisory::before {
-	background-position: -92% 0;
+	background-position: -20px 0;
 }
 
 .watch::before {
-	background-position: -60% 0;
+	background-position: -40px 0;
 }
 
 .warning::before {
-	background-position: -25% 0;
+	background-position: -60px 0;
 }
 
+.flood::before {
+	background-position: -80px 0;
+}
 
 /* Intro & Help */
 
@@ -430,10 +434,6 @@ h2 {margin-top: 0;}
 	padding-left: 20px;
 }
 
-#flood-level {
-	padding: 10px 70px 0;
-}
-
 #flood-chart {
 
 }
@@ -462,7 +462,7 @@ h2 {margin-top: 0;}
 
 .legend ul li {
 	display: inline-block;
-	padding: 0 10px;
+	padding: 0 5px;
 }
 
 /* Footer */
@@ -473,7 +473,7 @@ h2 {margin-top: 0;}
 
 /* Responsive */
 
-@media screen and (min-width: 769px) {
+@media screen and (min-width: 800px) {
 	#mobile-view {
 		display: none;
 	}
@@ -523,7 +523,7 @@ h2 {margin-top: 0;}
 
 	#chart-wrapper {
 		height: 385px;
-		max-height: calc(100vh - 220px);
+		max-height: calc(100vh - 230px);
 	}
 
 	.legend {
@@ -630,7 +630,7 @@ h2 {margin-top: 0;}
 	}
 
 	#chart-wrapper {
-		height: calc(100vh - 200px);
+		height: calc(100vh - 170px);
 	}
 
 }
