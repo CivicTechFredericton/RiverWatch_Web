@@ -618,6 +618,7 @@ function updateChartLabels() {
 	floodChart.options.annotation.annotations[0].label.content = chartLabels[lang]['levels'][0];
 	floodChart.options.annotation.annotations[1].label.content = chartLabels[lang]['levels'][1];
 	floodChart.options.annotation.annotations[2].label.content = chartLabels[lang]['levels'][2];
+	floodChart.options.annotation.annotations[3].label.content = chartLabels[lang]['levels'][3];
 	floodChart.data.labels = chartLabels[lang]['dates'];
 
 	floodChart.update(0);
