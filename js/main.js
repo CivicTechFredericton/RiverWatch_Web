@@ -88,10 +88,10 @@ function getAlertLevel(currentLevel, advisoryLevel, watchLevel, warningLevel, fl
 function populateList(){
 	var timeStamp = Date.now();
 	// parse alertlevels.xml
-	var XMLStationAlerts = parseXML("http://geonb.snb.ca/documents/misc/rwm_xml/alertlevels.xml");
+	var XMLStationAlerts = parseXML("https://geonb.snb.ca/documents/misc/rwm_xml/alertlevels.xml");
 
 	// parse alert.xml
-	var XMLStationsList = parseXML("http://geonb.snb.ca/documents/misc/rwm_xml/alert.xml?t="+timeStamp);
+	var XMLStationsList = parseXML("https://geonb.snb.ca/documents/misc/rwm_xml/alert.xml?t="+timeStamp);
 
 	var dates = XMLStationsList.getElementsByTagName("dates")[0];
 	var day0En = dates.getElementsByTagName("dates_in")[0].textContent;
