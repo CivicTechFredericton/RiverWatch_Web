@@ -562,7 +562,7 @@ function openChart() {
 			if (level > max) {
 				max = level;
 			}
-			if (level < min && level < 0) {
+			if (level < min && level > 0) {
 				min = level;
 			}
 		});
