@@ -423,11 +423,11 @@ h2 {margin-top: 0;}
 #station-title {
 	/*border-bottom: 1px solid #aaa;*/
 	font-weight: normal;
-	height: 1.1em;
-	padding: 5px;
+	height: 1.2em;
+	margin: 0 0 10px;
+	padding: 10px;
 	text-align: left;
     display: inline;
-    font-size: 1.2em;
 }
 
 #chart-wrapper {
@@ -441,21 +441,21 @@ h2 {margin-top: 0;}
 
 #forecast-notice {
 	/*padding: 10px 70px 0;*/
-	/*padding: 0px 70px 0;*/
+	padding: 0px 10px 0;
 }
 
 #station-footer {
 
 	font-size: 0.9em;
 	display: grid;
-	-ms-grid-columns: 25px 100px 25px 85px 25px 100px;
-		grid-template-columns: 25px 100px 25px 85px 25px 100px;
+	-ms-grid-columns: 75px 100px 75px 100px;
+		grid-template-columns: 75px 100px 75px 100px;
 	
-	-ms-grid-rows: 25px 25px;	
-		grid-template-rows: 25px 25px;
+	-ms-grid-rows: 25px 25px 25px 25px;	
+		grid-template-rows: 25px 25px 25px 25px;
 	
 
-	margin-left: 30px;
+	margin-left: 10px;
   	margin-right: auto;
     
 	/*
@@ -647,7 +647,7 @@ h2 {margin-top: 0;}
 	}
 
 	#chart-wrapper {
-		height: calc(100vh - 230px);
+		height: calc(100vh - 170px);
 	}
 
 }
