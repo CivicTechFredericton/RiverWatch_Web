@@ -3,7 +3,7 @@
 
 # TEAM
 		
-		Civic Tech Fredericton
+		Government of New Brunswick
 		GeoNB
 		
 
@@ -15,4 +15,4 @@
 
     CSS3, HTML5
     Apache Server Configs, jQuery, Modernizr, Normalize.css
-    Chart.js, Google Maps API, js-cookie
+    Chart.js, ArcGIS Javascript API, js-cookie

@@ -1,25 +1,246 @@
-<!doctype html>
-<html class="no-js" lang="">
-	<head>
-		<meta charset="utf-8">
-		<meta http-equiv="x-ua-compatible" content="ie=edge">
-		<title>River Watch Mobile / Surveillance du fleuve mobile</title>
-		<meta name="description" content="">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+.head {
+  background-color:grey;
+  border: 1px solid black;
+  height:44px;
+  width:100%;
+}
 
-		<link rel="manifest" href="site.webmanifest">
-		<link rel="apple-touch-icon" href="icon.png">
+.title {
+  background-color:grey;
+  color:black;
+  font-size:24px;
+  height:44px;
+  vertical-align:center;
+  float: left;
+  width: 40%;
+}
+
+.toolbar {
+  content: "";
+  display: inline-table;
+  float: right;
+}
+
+.toolbar  img  {
+  background-color: grey;
+  border:  1px solid black;
+  padding: 0px;
+  cursor:  pointer;
+  float:  leftt;  
+}
+
+.frames {
+  height:100%;
+  width: 100%;
+  border: 2px solid blue;
+  min-height:100px;
+}
+  
+.dbframe { 
+  width:50%;
+  height:100%;
+  background-color: white;
+  left:0;
+  position:fixed;
+} 
+  
+.mapframe {
+  width: 100%;
+  height: 100%;
+  background-color: lightgrey;
+  right:0;
+  position:fixed;
+}
+
+</style>
+
+<link href="https://js.arcgis.com/4.10/esri/css/main.css" rel="stylesheet" type="text/css">
+
+<link rel="manifest" href="site.webmanifest">
+<link rel="apple-touch-icon" href="icon.png">
 		<!-- Place favicon.ico in the root directory -->
+<link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
 
-		<link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
-		<link rel="stylesheet" href="css/normalize.css">
-		<link rel="stylesheet" href="css/main.css">
-	</head>
-	<body class="en">
-		<!--[if lte IE 9]>
-			<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
-		<![endif]-->
+<link rel="stylesheet" href="css/normalize.css">
+<link rel="stylesheet" href="css/main.css">
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script> 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js"></script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment-with-locales.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/locale/fr.js"></script>
+
+<script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
+
+<script src="js/vendor/chartjs-plugin-annotation.min.js"></script>
+
+<script src="https://js.arcgis.com/4.10"></script>
+<script>
+  require([
+      "esri/layers/TileLayer",
+      "esri/Map",
+      "esri/Basemap",
+      "esri/widgets/BasemapToggle",
+      "esri/views/MapView",
+	  "esri/widgets/CoordinateConversion",
+	  "esri/geometry/Extent",
+	  "esri/geometry/Geometry",
+	  "esri/geometry/Extent",
+	  "esri/tasks/QueryTask",
+	  "esri/Graphic",
+	  "esri/geometry/Point",
+      "esri/tasks/GeometryService",
+      "esri/geometry/SpatialReference",
+      "esri/tasks/support/ProjectParameters",
+      "esri/layers/GraphicsLayer",
+      "dojo/_base/connect"
+  ], function(TileLayer, Map,
+      Basemap, BasemapToggle, MapView, CoordinateConversion, Extent, Geometry, Extent, QueryTask, Graphic, Point, GeometryService, SpatialReference, ProjectParameters, GraphicsLayer
+  ) {
+      // Create a WebTileLayer with a third-party cached service
+      var mapBaseLayer = new TileLayer({
+        url: "https://geonb.snb.ca/arcgis/rest/services/GeoNB_Basemap_Topo/MapServer",
+        copyright: "From SNB.",
+		visible: true
+      });
+      // Create a Basemap with the WebTileLayer. The thumbnailUrl will be used for
+      // the image in the BasemapToggle widget.
+      var snbbase = new Basemap({
+        baseLayers: [mapBaseLayer],
+        title: "Terrain",
+        id: "terrain",
+        thumbnailUrl: "https://geonb.snb.ca/arcgis/rest/services/GeoNB_Basemap_Topo/MapServer/WMTS/tile/1.0.0/GeoNB_Basemap_Topo/default/default028mm//0/64/65.png"
+      });
+
+      var statLyr = new GraphicsLayer({
+        id : 'Stations',
+        title : 'Stations'
+      });
+        
+      var map = new Map({
+		  basemap: snbbase
+      });
+		
+      map.layers.add(statLyr);
+      
+	  var index = new Extent({
+	      	xmin: 2261652,	
+	     	ymin: 7259455, 
+			xmax: 2827464, 
+			ymax: 7704882,
+		  	spatialReference: 2036});
+	  
+      var view = new MapView({
+        container: "viewDiv",
+        map: map,
+		extent: index
+		// Sets center point of view using longitude,latitude
+      });
+		
+    // Get the screen point from the view's click event
+		
+	//Works for pop-up on mouse over to a station: TODOS --> Add a popup to x, y location when pointer-move event happens
+	/*
+	view.on("pointer-move",function (event) {
+		var screenPoint = {
+			x: event.x,
+			y: event.y
+		};
+
+	view.hitTest(screenPoint).then(function (response) {
+			if (response.results.length) {
+				var id = makeSlug(response.results[0].graphic.symbol.title);			
+				view.popup.open({
+				    title: id,
+				    location: event.mapPoint
+				});		
+			}
+		});
+	});
+	*/	
+	view.on("hold",function (event) {
+		var screenPoint = {
+			x: event.x,
+			y: event.y
+		};	
+	view.hitTest(screenPoint).then(function (response) {
+			if (response.results.length) {
+				var id = makeSlug(response.results[0].graphic.symbol.title);
+                id = id.trim();
+				view.popup.open({
+				    title: id,
+				    //content = id,
+				    location: event.mapPoint
+				});		
+			}
+		});
+	});
+
+    // Get the screen point from the view's click event
+	view.on("click", function (event) {
+		var screenPoint = {
+			x: event.x,
+			y: event.y
+		};
+	view.hitTest(screenPoint).then(function (response) {
+			if (response.results.length) {
+				var id = makeSlug(response.results[0].graphic.symbol.title);
+				$('#'+id).trigger('click');
+			}
+		});
+	});
+
+
+
+    function AddStation(lat, lng, inurl, name) {
+      var outSR = "2036"; // `wkid {number}`
+      var geometryService = new GeometryService("https://geonb.snb.ca/arcgis/rest/services/Utilities/Geometry/GeometryServer");
+      var inputpoint = new Point({
+          longitude: lng,
+          latitude: lat
+      });
+      var projectParams = new ProjectParameters();
+        projectParams.geometries = [inputpoint];
+        projectParams.outSR = new SpatialReference({ wkid: outSR });
+
+        geometryService.project(projectParams).then(function(result) {
+          	var  outputpoint = result[0]; // outputpoint first element of result array
+          	var  stat = new Graphic({
+             	geometry: {
+	                type: "point",
+	                x : outputpoint.x,
+	                y : outputpoint.y,
+	                spatialReference: view.spatialReference
+             	},
+             	symbol: {
+	                type: "picture-marker",
+	                url : inurl,
+	                width : '21px',
+	                height: '31px',
+                	yoffset: '15px',
+	                title : name
+             	}
+          	});
+        	statLyr.add(stat);
+        });
+    }
+
+    view.on("layerview-create" , function(lyr, lvw) {
+      if(lyr.layer.id == 'Stations') {
+        initMap(AddStation);
+      }
+    });
+    
+  });
+</script>
+<title>RWM-SFM</title>
+</head>
+<body class="en" >
 		<header id="header">
 			<h1 class="en">River Watch Mobile<span class="subtitle"> - Water Level Current and Forecast</span></h1>
 			<h1 class="fr">Surveillance du fleuve mobile<span class="subtitle"> - Niveau des eaux : état actuel et prévisions</span></h1>
@@ -56,19 +277,19 @@
 				<div class="credit">
 					<img id="nb-logo" class="logo" src="img/nb-logo.png" alt="Government of New Brunswick" />
 					<span class="en">Flood forecast data is prepared by the Government of New Brunswick</span>
-					<span class="fr">Les données de prévisions du niveau des eaux proviennent du Gouvernement du Nouveau Brunswick</span>
+					<span class="fr">Les données des prévisions du niveau des eaux proviennent du gouvernement du Nouveau-Brunswick</span>
 				</div>
 				<div class="disclaimer">
 					<div class="en">
 						<h2>Disclaimer</h2>
-						<p><!-- This flood mapping information, including flood lines, extents, flood risk areas, and areas flooded in particular events, is provided for general information purposes only. Due to mapping and other inaccuracies, lines, boundaries or extents may not correspond exactly with locations on the ground. If there is any question whether a given property or location is within a flood risk area, the location and elevation should be determined by a survey. --> No representations or warranties, either express or implied, are made as to the accuracy of the information presented and the user assumes the entire risk as to the use of any and all information.</p>
-						<p>The information displayed here is current as of the date and time indicated. Updates are provided throughout the spring freshet and other times of the year when high water levels are anticipated.</p>
-						<p>Forecast water levels are dependant on a number of factors not least of which is weather forecasts, therefore complete accuracy can not be guaranteed. Users of this service are advised to allow for some margin of error.</p>
+						<p>No representations or warranties, either express or implied, are made as to the accuracy of the information presented and the user assumes the entire risk as to the use of any and all information.</p>
+						<p>The information displayed here is current as of the date and time indicated. Updates are provided throughout the spring freshet and other times of the year when high water levels are anticipated. Source data is processed for flood forecasting purposes.</p>
+						<p>Forecast water levels are dependent on several factors not least of which is weather forecasts, therefore complete accuracy can not be guaranteed. Users of this service are advised to allow for some margin of error.</p>
 					</div>
 					<div class="fr">
 						<h2>Avertissement</h2>
-						<p><!-- L’information cartographique, y compris les lignes d’inondation, l’étendue de l’eau, les zones inondables et les zones qui ont été inondées lors de crues données, est fournie à titre indicatif seulement. En raison d’imprécisions relatives à la cartographie ou de toute autre inexactitude, il se peut que les lignes, les limites ou les étendues ne correspondent pas exactement aux endroits au sol. Lorsqu’un doute subsiste quant à la possibilité qu’un terrain ou un endroit donné se trouve dans une zone inondable, l’emplacement et l’élévation devraient être déterminés au moyen d’un levé. --> Le ministère n’offre aucune garantie explicite ou implicite quant à l’exactitude de l’information présentée et l’utilisateur accepte pleinement les risques liés à l’utilisation d’une partie ou de l’ensemble de cette information.</p>
-						<p>L'information affichée reflète les données actualisées à la date et à l'heure indiquées. Les mises à jour sont fournies pendant la crue printanière et à d'autres moments pendant l'année lorsque des niveaux d'eau élevés sont prévisions.</p>
+						<p>Le Ministère n’offre aucune garantie explicite ou implicite quant à l’exactitude de l’information présentée et l’utilisateur accepte pleinement les risques liés à l’utilisation d’une partie ou de l’ensemble de cette information.</p>
+						<p>L'information affichée reflète les données actualisées à la date et à l'heure indiquées. Les mises à jour sont fournies pendant la crue printanière et à d'autres moments pendant l'année lorsque des niveaux d'eau élevés sont anticipés. Les données sources sont préparées pour la prévision des inondations.</p>
 						<p>Les prévisions concernant les niveaux d'eau dépendent d'un certain nombre de facteurs, dont les prévisions météorologiques. Par conséquent, une exactitude absolue des renseignements ne peut être garantie. Les utilisateurs du service sont priés de prévoir une certaine marge d'erreur.</p>
 					</div>
 				</div>
@@ -77,9 +298,10 @@
 					<span class="fr">OK</span>
 				</div>
 				<div class="credit">
-					<img id="civic-tech-logo" class="logo" src="img/civic-tech-logo.png" alt="Civic Tech Fredericton" />
+					<!--<img id="civic-tech-logo" class="logo" src="img/civic-tech-logo.png" alt="Civic Tech Fredericton" />
 					<span class="en">This app is created and maintained by Civic Tech Fredericton</span>
 					<span class="fr">Application développée et maintenue par Civic Tech Fredericton</span>
+					-->
 				</div>
 			</div>
 		</section>
@@ -91,20 +313,28 @@
 					<div class="en">
 						<h3>Help</h3>
 						<ul>
-							<li>Website: <a href="http://www2.gnb.ca/content/gnb/en/news/public_alerts/river_watch.html" target="_blank">River Watch</a></li>
+							<li>Website: <a href="https://www2.gnb.ca/content/gnb/en/news/public_alerts/river_watch.html" target="_blank">River Watch</a></li>
 							<li>Twitter: <a href="https://twitter.com/NBEMO_OMUNB" target="_blank">@NBEMO_OMUNB</a></li>
-							<li>Email: <a href="mailto:emo@gnb.ca">emo@gnb.ca</a></li>
+							<li>Email: <a href="mailto:opsroom@gnb.ca">opsroom@gnb.ca</a></li>
 							<li>Telephone: <a href="tel:+18005614034">1-800-561-4034</a></li>
 						</ul>
+                        <p>Residents can report any issues related to increased water levels or flooding at any time by calling 1-800-561-4034. In case of emergency, call 911.</p>
+                        <ul>
+                          <li>River Watch Mobile application support: <a href="mailto:geonb@snb.ca">geonb@snb.ca</a></li>
+                        </ul>
 					</div>
 					<div class="fr">
 						<h3>Aide</h3>
 						<ul>
-							<li>Site web: <a href="http://www2.gnb.ca/content/gnb/fr/nouvelles/alerte/SurveillanceDesCoursDEau.html" target="_blank">Surveillance des cours d’eau</a></li>
+							<li>Site web: <a href="https://www2.gnb.ca/content/gnb/fr/nouvelles/alerte/SurveillanceDesCoursDEau.html" target="_blank">Surveillance des cours d’eau</a></li>
 							<li>Twitter: <a href="https://twitter.com/NBEMO_OMUNB" target="_blank">@NBEMO_OMUNB</a></li>
-							<li>Courriel: <a href="mailto:emo@gnb.ca">emo@gnb.ca</a></li>
+							<li>Courriel: <a href="mailto:opsroom@gnb.ca">opsroom@gnb.ca</a></li>
 							<li>Téléphone: <a href="tel:+18005614034">1-800-561-4034</a></li>
 						</ul>
+                        <p>Les résidents peuvent signaler des préoccupations relatives aux inondations et à l’augmentation des niveaux d’eau à n’importe quel moment en composant le 1-800-561-4034. En cas d’urgence, les résidents doivent appeler le 911.</p>
+                        <ul>
+                          <li>Assistance pour l’application de surveillance du fleuve mobile : <a href="mailto:geonb@snb.ca">geonb@snb.ca</a></li>
+                        </ul>
 					</div>
 				</div>
 				<div class="alerts">
@@ -116,9 +346,9 @@
 					</div>
 					<div class="fr">
 						<h3>Niveau d’alerte</h3>
-						<p><span class="advisory"></span>Un voyant jaune clignotant que les conditions prévues ne devraient pas atteindre les critères du niveau de danger immédiat, mais pourraient tout de même causer des inconvénients ou perturber légèrement les activités habituelles.</p>
-						<p><span class="watch"></span>Un voyant orange signifie que les conditions sont favorables à la perturbation mineure des activités habituelles.Des mesures de </p>
-						<p><span class="warning"></span>Un voyant rouge signifie qu’un phénomène météorologique va se produire de manière certaine ou IMMINENTE. Les mesures adéquates doivent donc être prises IMMÉDIATEMENT pour protéger la vie des gens et les biens.</p>
+						<p><span class="advisory"></span>Un avis indique que les conditions prévues ne devraient pas atteindre les critères du niveau de danger immédiat, mais pourraient tout de même causer des inconvénients ou perturber légèrement les activités habituelles.</p>
+						<p><span class="watch"></span>Une veille indique que les conditions sont favorables à la perturbation mineure des activités habituelles. Des précautions devraient être prises afin de réduire la perte ou le dommage potentiel. Les veilles ont pour but de sensibiliser le public aux impacts potentiels des événements.</p>
+						<p><span class="warning"></span>Un avertissement indique qu’un phénomène météorologique va se produire de manière certaine ou est IMMINENT. Des mesures adéquates doivent donc être prises IMMÉDIATEMENT pour protéger la vie des gens et leurs biens.</p>
 					</div>
 				</div>
 			</div>
@@ -139,10 +369,12 @@
 			</section>
 			<div id="my-station">
 				<div class="nav-controls">
+						
 					<div class="nav-title">
 						<span class="en">My Favorite Location</span>
 						<span class="fr">Mon site préféré</span>
 					</div>
+					
 				</div>
 				<ul id="my-station-list">
 				</ul>
@@ -179,27 +411,87 @@
 		</nav>
 
 		<main id="content">
-			<section id="map"></section>
+			<section id="map">
+  				<div  class="mapframe" id="viewDiv">  </div>
+            </section>
+
 			<section id="station-readings" data-id="">
-				<h3 id="station-title"></h3>
-				<div class="close">X</div>
-				<div id="forecast-notice">
-					<span class="en">Date Issued:</span>
-					<span class="fr">Date d'émission:</span>
-					<span id="date-issued"></span>
+				
+				
+              <div  id="station-header">  
+                <!-- Stattion Title-->
+                <div id="station-title" style="margin-left: 30%;"></div>
+                <!-- Close X -->
+                <div class="close">X</div>
+                <hr style="margin-bottom: 0px">
+                <!-- Real Time Water Level-->
+	            <div>
+	            	<a href="" id="near-real-time-wlvl" target="_blank">
+						<span class="en" style="font-size: 0.8em ; margin-left: 0%; float: right">Real-Time</br>Water Level</span> 
+						<span class="fr" style="font-size: 0.8em ; margin-left: 0%; float: right">Niveaux d'eau</br>en temps réel</span>
+					</a>
 				</div>
+                
+                
+
+                <!-- My Favourite Location-->
+				<div style="display:inline; color: grey; font-size: 0.8em;"> <input id="choose-station"  type="checkbox">
+				  <span class="en">My Favorite Location</span>
+				  <span class="fr">Mon site préféré</span>
+                </div>
+                
+				
+				<div>
+					<div id="forecast-notice">
+						<span class="en">Date Issued:</span>
+						<span class="fr">Date d'émission:</span>
+						<span id="date-issued"></span>
+					</div>
+				</div>
+			  </div>		
 				<div id="chart-wrapper">
-					<canvas id="flood-chart"></canvas>
+					<canvas id="flood-chart"  height="350" width="400"></canvas>
+					
 				</div>
+				
+				<hr>
+
 				<div id="station-footer">
-					<input id="choose-station" type="checkbox">
-					<span class="en">My Favorite Location</span>
-					<span class="fr">Mon site préféré</span>
+					<img src="img/measured.png" />
+					<div class="en">Measured</div> 
+					<div class="fr">Niveau des eaux</div> 
+
+					<img src="img/advisory.png" />
+					<div class="en">Advisory</div> 
+					<div class="fr">Avis</div>
+
+					<img src="img/warning.png" />
+					<div class="en">Warning</div> 
+					<div class="fr">Avertissement</div> 
+					
+					<img src="img/forecast.png" class="en" />
+					<img src="img/forecast.png" class="fr" style="padding-left: 0px"/>
+					<div class="en">Forecast</div> 
+					<div class="fr" style="padding-left: 0px">Prévoir</div> 
+
+					<img src="img/watch.png" class="en" />
+					<img src="img/watch.png" class="fr" style="padding-left: 0px"/>
+					<div class="en">Watch</div> 
+					<div class="fr" style="padding-left: 0px">Veille</div>
+
+					<img src="img/flood.png" />
+					<div class="en">Flood</div> 
+					<div class="fr">Crue</div>
+                    <br />
 				</div>
+				
+				<!--div id="station-footer">
+				</div -->
+
 			</section>
 		</main>
-
-		<section class="legend">
+        
+ 		<section class="legend">
 			<span class="legend-title"><span class="en">Legend</span><span class="fr">Légende</span></span>
 			<ul>
 				<li class="normal"><span class="en">Normal</span><span class="fr">Normal</span></li>
@@ -212,24 +504,15 @@
 
 		<footer>
 		</footer>
-
+        
 		<script src="js/vendor/modernizr-3.5.0.min.js"></script>
 		<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
 		<script>window.jQuery || document.write('<script src="js/vendor/jquery-3.2.1.min.js"><\/script>')</script>
 
-		<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js"></script>
-		<script src="js/vendor/chartjs-plugin-annotation.min.js"></script>
 		<script src="js/plugins.js"></script>
 		<script src="js/station-locations.js"></script>
 		<script src="js/main.js"></script>
-		<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBogcztiGvTqPeQ7ZRpgshvqSjApRGzoUw&callback=initMap"></script>
-
-		<!-- Google Analytics -->
-		<script>
-			window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
-			ga('create','UA-34468740-1','snb.ca');ga('send','pageview')
-		</script>
-		<script src="https://www.google-analytics.com/analytics.js" async defer></script>
-	</body>
+       
+    }
+</body>
 </html>
