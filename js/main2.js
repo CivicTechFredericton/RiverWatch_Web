@@ -12,7 +12,6 @@ var wsc_url_en = "NONE";
 var wsc_url_fr = "NONE";
 var date_arr = [];
 var date_arr2 = [];
-var create_date = '';
 
 var chartLabels = {
 	en: {
@@ -232,10 +231,19 @@ function get_month_french(month){
  * @returns {undefined}
  ******************************************************************************/
 function populateList(){
+console.log('  Populate list ');
 	var timeStamp = Date.now();
 	
+    //var XMLStationAlerts = parseXML("http://localhost:8000/Projects/RiverWatch/working/RiverWatch_Web-develop/data/alertlevels_2020.xml");
+console.log('  Loading alert levels ');
     var XMLStationAlerts = parseXML("https://geonb-t.snb.ca/documents/misc/rwm_xml/alertlevels_2020.xml");
-	var XMLStationsList = parseXML("https://geonb-t.snb.ca/documents/misc/rwm_xml/alert_2020.xml");
+	//var XMLStationAlerts = parseXML("http://localhost:8000/Projects/RiverWatch/working/RiverWatch_Web-develop/data/alertlevels_2020_extended.xml");
+	
+	//var XMLStationsList = parseXML("http://localhost:8000/Projects/RiverWatch/working/RiverWatch_Web-develop/data/alert_2020_test.xml");
+//	var XMLStationsList = parseXML("https://geonb-t.snb.ca/documents/misc/rwm_xml/alert_2020.xml");
+
+console.log('  Loading water levels ');
+	var XMLStationsList = parseXML("https://geonb.snb.ca/documents/misc/alert.xml");
 
 	var alertCounts = {
 		'normal': 0,
@@ -252,6 +260,7 @@ function populateList(){
 	var alertLevelList = XMLStationAlerts.getElementsByTagName("station");
 
 	// find the already defined html station list
+console.log('  Next step '+alertLevelList.length);
 	var list = document.getElementById("station-list");
 
 	for(var i = 0; i < alertLevelList.length; i++) {
@@ -266,8 +275,15 @@ function populateList(){
 		
 		var has_measured_data = alertLevelList[i].getElementsByTagName("Measured")[0].textContent;
 		var has_forecast_data = alertLevelList[i].getElementsByTagName("Forecast")[0].textContent;
-		wsc_url_en = alertLevelList[i].getElementsByTagName("WSC_URL_EN")[0].textContent;
-		wsc_url_fr = alertLevelList[i].getElementsByTagName("WSC_URL_FR")[0].textContent;
+console.log('  Get URLs ');
+var  ab = alertLevelList[i].getElementsByTagName("WSC_URL_EN");
+		if( alertLevelList[i].getElementsByTagName("WSC_URL_EN").length > 0 ) {
+		  wsc_url_en = alertLevelList[i].getElementsByTagName("WSC_URL_EN")[0].textContent;
+                }
+		if( alertLevelList[i].getElementsByTagName("WSC_URL_FR").length > 0) {
+		  wsc_url_fr = alertLevelList[i].getElementsByTagName("WSC_URL_FR")[0].textContent;
+                }
+console.log('  Have  URLs ');
 		//console.log("wsc_url_en: " + wsc_url_en);
 		var listId = makeSlug(stationName);
 		
@@ -282,9 +298,6 @@ function populateList(){
         var forecasts = getForecast(stationId, stations);
         var startDate = getStartDate(stationId, stations);
 
-        if (create_date == '')
-            create_date = startDate;
-        
         var currentLevel = 0;
         if(measures != null) {
             currentLevel = measures[measures.length-1].wlvl;
@@ -292,7 +305,7 @@ function populateList(){
         else  if(forecasts != null) {
             currentLevel = forecasts[forecasts.length-1].wlvl;
         }
-        
+console.log('  we are here ');
         // a flag to store the condition of the current alert level
 		// need this but how
 		var currentAlertlevel = getAlertLevel(currentLevel, advisoryLevel, watchLevel, warningLevel, floodLevel);
@@ -327,7 +340,7 @@ function populateList(){
 		}
 		
 		alertCounts[currentAlertlevel]++;
-
+console.log('  Create Station ');
 		stationData = {
 			'id': i,
 			'name': stationName,
@@ -346,12 +359,14 @@ function populateList(){
 			'startDate': startDate
 		};
 		
+console.log('  Add Station  '+stationName);
 		stationList.push(stationData);
 		
 		// create new station and insert data into the list on leftside of screen
 		var item = createStationItem(stationData);
 
 		// Add it to the list:
+console.log('  Add to list  '+stationName);
 		list.appendChild(item); //this is the html list on the ledt panel of map
 	}
 	
@@ -602,7 +617,7 @@ function setupChart_NEW() {
 
 	var borderColorProp = function(){ 
 							if(forecast_available)
-								return 'rgba(176, 209, 247, 1)'; //B0D1F7
+								return 'rgba(198, 179, 255, 1)';
 							return 'rgba(198, 179, 255, 0)';	
 						}
  	var forecast_data = function(){ 
@@ -628,7 +643,7 @@ function setupChart_NEW() {
                     label: chartLabels[lang]['yAxis'],
                     data: [],
                     fill: true,
-                    borderColor: 'rgba(69, 146, 235, 1)' //4592EB
+                    borderColor: 'rgb(121, 210, 121)'
                 },
                 {
                     label: chartLabels[lang]['yAxis_forecast'],
@@ -703,14 +718,11 @@ function setupChart_NEW() {
                     	return res[0] + ' ' + res[1] + ' ' + res[2] + ' ' + res[3];
                 	},
                 	label: function ( item, data ) {
-                        var num = round(item.yLabel, 1).toString();
-                        if(num.indexOf('.') < 0)
-                            num += '.0';
-                        
-                        if(lang != 'en')
-                          num = num.toString().replace('.', ',');
-                      
-                        return num+'m';
+                        if(lang == 'en')
+                        	return round(item.yLabel, 1);
+                        var num = round(item.yLabel, 1);
+                        num = num.toString().replace('.', ',');
+                        return num;
                 	}
             	}
             },
@@ -941,32 +953,23 @@ function setupChart_NEW() {
 					xx = x * (1 + offset_x);
 					yy = y + height * offset_y;
 					ctx.fillStyle  = 'rgba(0, 0, 0, 0.8)';
-					ctx.font = "0.6em Arial";
-               		if(lang == 'en') {
-  					  ctx.fillText("NO FORECAST DUE TO", xx + 0.1 * xx, yy + 0.08 * yy);
-					  ctx.fillText("THE UNPREDICTABLE", xx + 0.1 * xx, 14 + yy + 0.08 * yy);
-					  ctx.fillText("NATURE OF ICE JAMS", xx + 0.1 * xx, 28 + yy + 0.08 * yy);
-                    } else {
-  					  ctx.fillText("AUCUNE PRÉVISION DISPONIBLE", xx + 0.1 * xx, yy + 0.08 * yy);
-					  ctx.fillText("EN RAISON DE LA NATURE", xx + 0.1 * xx, 14 + yy + 0.08 * yy);
-					  ctx.fillText("IMPRÉVISIBLE DES EMBÂCLES.", xx + 0.1 * xx, 28 + yy + 0.08 * yy);
-                    }
+					ctx.font = "0.8em Arial";
+					ctx.fillText("FORECAST NOT", xx + 0.15 * xx, yy + 0.08 * yy);
+					ctx.fillText("AVAILABLE DUE TO", xx + 0.15 * xx, 14 + yy + 0.08 * yy);
+					ctx.fillText("UNPREDICTABLE", xx + 0.15 * xx, 28 + yy + 0.08 * yy);
+					ctx.fillText("NATURE", xx + 0.15 * xx, 42 + yy + 0.08 * yy);
+					ctx.fillText("OF ICE JAMS", xx + 0.15 * xx, 56 + yy + 0.08 * yy);
 				}
 				//Cond-4
 				else if(forecast_missing_value == true){
 					xx = x * (1 + offset_x);
 					yy = y + height * offset_y;
 					ctx.fillStyle  = 'rgba(0, 0, 0, 0.8)';
-					ctx.font = "0.6em Arial";
-                    if(lang == 'en') {
-					  ctx.fillText("DUE TO CURRENT ", xx , yy + 0.08 * yy);
-					  ctx.fillText("CONDITIONS NO FORECAST", xx , 14 + yy + 0.08 * yy);
-					  ctx.fillText("AT THIS TIME", xx , 28 + yy + 0.08 * yy);	
-                    } else {
-					  ctx.fillText("EN RAISON DES CONDITIONS", xx , yy + 0.08 * yy);
-					  ctx.fillText("ACTUELLES, AUCUNE PRÉVISION", xx , 14 + yy + 0.08 * yy);
-					  ctx.fillText("DISPONIBLE POUR LE MOMENT.", xx , 28 + yy + 0.08 * yy);	
-                    }
+					ctx.font = "0.8em Arial";
+					ctx.fillText("CURRENT CONDITIONS", xx , yy + 0.08 * yy);
+					ctx.fillText("DO NOT WARRANT", xx , 14 + yy + 0.08 * yy);
+					ctx.fillText("A FORECAST", xx , 28 + yy + 0.08 * yy);
+					ctx.fillText("AT THIS TIME", xx , 42 + yy + 0.08 * yy);	
 				}
 				
 				//Cond-1
@@ -974,21 +977,15 @@ function setupChart_NEW() {
 					xx = x - 0.65 * x;
 					yy = y + height * offset_y;
 					ctx.fillStyle  = 'rgba(0, 0, 0, 0.8)';
-					ctx.font = "0.6em Arial";
-                    if(lang == 'en') {
-					  ctx.fillText("ONLY FORECAST WATER", xx + 0.1 * xx, yy + 0.08 * yy);
-					  ctx.fillText("LEVELS AVAILABLE", xx + 0.1 * xx, 14 + yy + 0.08 * yy);
-					  ctx.fillText("AT THIS TIME", xx + 0.1 * xx, 28 + yy + 0.08 * yy);
-                    } else {
-					  ctx.fillText("SEULES LES PRÉVISIONS DES", xx + 0.1 * xx, yy + 0.08 * yy);
-					  ctx.fillText("NIVEAUX D’EAU SONT DISPONIBLES", xx + 0.1 * xx, 14 + yy + 0.08 * yy);
-					  ctx.fillText("À CET ENDROIT.", xx + 0.1 * xx, 28 + yy + 0.08 * yy);
-                    }
+					ctx.font = "0.8em Arial";
+					ctx.fillText("RECENT", xx + 0.15 * xx, yy + 0.08 * yy);
+					ctx.fillText("WATER-LEVELS", xx + 0.15 * xx, 14 + yy + 0.08 * yy);
+					ctx.fillText("NOT AVAILABLE", xx + 0.15 * xx, 28 + yy + 0.08 * yy);
+					ctx.fillText("IN THIS AREA", xx + 0.15 * xx, 42 + yy + 0.08 * yy);
+
 				}
 				//Cond-3
 				else if(waterlevels_missing_value == true){
-					//DO NOTHING
-					/*
 					xx = x - 0.65 * x + 10;
 					yy = y + height * 0.75;
 					ctx.fillStyle  = 'rgba(0, 0, 0, 0.8)';
@@ -997,8 +994,7 @@ function setupChart_NEW() {
 					ctx.fillText("MAY BE MISSING", xx, 14 + yy + 0.08 * yy);
 					ctx.fillText("DUE TO", xx, 28 + yy + 0.08 * yy);
 					ctx.fillText("TEMPORARY", xx, 42 + yy + 0.08 * yy);
-					ctx.fillText("MALFUNCTION", xx, 56 + yy + 0.08 * yy);
-					*/	
+					ctx.fillText("MALFUNCTION", xx, 56 + yy + 0.08 * yy);	
 				}
 
 				ctx.restore();
@@ -1133,7 +1129,6 @@ function openChart_NEW(){
         else {
         		if(has_forecast_data == 'YES' && total_forecast > 0) {
         			forecast_available = true;
-        			total_missing_forecast = 0;
 	  		  		forecasts.forEach(function(level) {
 						total += 1;
 			            var dt = level.dtime.getDate() + '/' + (1+level.dtime.getMonth())+'/'+level.dtime.getFullYear() + ' '+level.dtime.getHours() + ':'+level.dtime.getMinutes();
@@ -1141,7 +1136,7 @@ function openChart_NEW(){
 			            
 			            var wlvl = null;
 		            	if(level.wlvl != -999) wlvl = level.wlvl;
-		            	else total_missing_forecast += 1;
+		            	else forecast_missing_value = true;
 			            var itm = {
 			            				x: dt,
 			                       		y: wlvl
@@ -1156,9 +1151,6 @@ function openChart_NEW(){
 							min = level.wlvl;
 						}
 			  		});
-
-			  		if(total_missing_forecast == forecasts.length)
-			  			forecast_missing_value = true;
        		 }
        		 else{
        		 	forecast_available = false;
@@ -1249,23 +1241,27 @@ function openChart_NEW(){
     
     //console.log("min: " + min + " max: " + max);
     
-//    if(min < 10)
-//    	floodChart.options.scales.yAxes[0].ticks.min = 0;
-//    else
-//    	floodChart.options.scales.yAxes[0].ticks.min = Math.floor(min - 0.5);
-    
-//    if(max <= 10)
-//		floodChart.options.scales.yAxes[0].ticks.max = 10;
-//	else 
-//		floodChart.options.scales.yAxes[0].ticks.max = Math.ceil(max + 0.5);
-
-	floodChart.options.scales.yAxes[0].ticks.min = Math.floor(min - 0.5);
-	floodChart.options.scales.yAxes[0].ticks.max = Math.ceil(max + 0.5);	
+ /*   if(min < 10)
+    	floodChart.options.scales.yAxes[0].ticks.min = 0;
+    else
+*/
+    	floodChart.options.scales.yAxes[0].ticks.min = Math.floor(min);
+    /*
+    else if(min - 4 >= 10)
+		floodChart.options.scales.yAxes[0].ticks.min = min - 4;
+	else 
+		floodChart.options.scales.yAxes[0].ticks.min = min;
+	*/
+	
+/*	if(max <= 10)
+		floodChart.options.scales.yAxes[0].ticks.max = 10;
+	else 
+*/
+		floodChart.options.scales.yAxes[0].ticks.max = Math.ceil(max) + 1;
 
 	floodChart.update(0);
 	$('body').addClass('show-station');
-//	$('#date-issued').text(station['startDate']);
-    $('#date-issued').text(create_date);
+	$('#date-issued').text(station['startDate']);
 }
 
 /*******************************************************************************
@@ -1306,6 +1302,7 @@ function setupDateWarning() {
  ******************************************************************************/
 function initMap(AddStation) {
 	// the map needs station data to be created
+console.log('  Init map ');
 	populateList();
 	setupNav();
 	//setupChart();
