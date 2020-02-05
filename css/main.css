@@ -540,7 +540,7 @@ h2 {margin-top: 0;}
 
 	#chart-wrapper {
 		height: 385px;
-		max-height: calc(100vh - 230px);
+		max-height: calc(100vh - 305px);
 	}
 
 	.legend {
@@ -557,7 +557,7 @@ h2 {margin-top: 0;}
 	}
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 799px) {
 	.overlay .overlay-content {
 		left: 10px;
 		max-height: calc(100vh - 200px);
