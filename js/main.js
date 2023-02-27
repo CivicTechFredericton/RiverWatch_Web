@@ -15,7 +15,6 @@ var wsc_url_fr = "NONE";
 var date_arr = [];
 var date_arr2 = [];
 var create_date = '—';
-var next_date = '—';
 
 var chartLabels = {
 	en: {
@@ -183,20 +182,21 @@ function getAlertLevel(currentLevel, advisoryLevel, watchLevel, warningLevel, fl
 }
 
 
-function  getMeasures(locId, stations) {
-  var  is;
-    for(is=0 ; is < stations.length ; is++) {
-      var  shdr = stations[is].getElementsByTagName("header")[0];
-      var  slid = shdr.getElementsByTagName("locationId")[0].textContent;
-        if(slid == locId) {
-          var  pid = shdr.getElementsByTagName("parameterId")[0].textContent;
+function getMeasures(locId, stations) {
+    for(var is=0 ; is < stations.length ; is++) {
+		var  shdr = stations[is].getElementsByTagName("header")[0];
+      	var  slid = shdr.getElementsByTagName("locationId")[0].textContent;
+        
+		if(slid == locId) {
+			var  pid = shdr.getElementsByTagName("parameterId")[0].textContent;
             if(pid != "HG")
                 continue;
             
-          var    wmeas = stations[is].getElementsByTagName("event");
-          var    lvls = [];
-          var    im;
-            for(im=0 ; im < wmeas.length ; im++) {
+			var    wmeas = stations[is].getElementsByTagName("event");
+          	var    lvls = [];
+          	var    im;
+            
+			for(im=0 ; im < wmeas.length ; im++) {
               //console.log(wmeas[im].getAttribute('date') + 'T' + wmeas[im].getAttribute('time'));
               var  mdt = new Date(wmeas[im].getAttribute('date') + 'T' + wmeas[im].getAttribute('time'));
         	  var wLevel = parseFloat(wmeas[im].getAttribute('value'));
@@ -204,27 +204,30 @@ function  getMeasures(locId, stations) {
                           wlvl : wLevel };
               lvls.push(meas);
             }
-          return lvls;
+          
+			return lvls;
         }
     }
     
     return null;
 }
 
-function  getForecast(locId, stations) {
-  var  is;
-    for(is=0 ; is < stations.length ; is++) {
-      var  shdr = stations[is].getElementsByTagName("header")[0];
-      var  slid = shdr.getElementsByTagName("locationId")[0].textContent;
-        if(slid == locId) {
-          var  pid = shdr.getElementsByTagName("parameterId")[0].textContent;
+function getForecast(locId, stations) {
+
+	for(var is=0 ; is < stations.length ; is++) {
+		var  shdr = stations[is].getElementsByTagName("header")[0];
+		var  slid = shdr.getElementsByTagName("locationId")[0].textContent;
+		
+		if(slid == locId) {
+			var  pid = shdr.getElementsByTagName("parameterId")[0].textContent;
             if(pid != "SSTG")
                 continue;
-            
-          var    wmeas = stations[is].getElementsByTagName("event");
-          var    lvls = [];
-          var    im;
-            for(im=0 ; im < wmeas.length ; im++) {
+
+			var    wmeas = stations[is].getElementsByTagName("event");
+			var    lvls = [];
+			var    im;
+			
+			for(im=0 ; im < wmeas.length ; im++) {
               var  mdt = new Date(wmeas[im].getAttribute('date') + 'T' + wmeas[im].getAttribute('time'));
         	  var wLevel = parseFloat(wmeas[im].getAttribute('value'));
               var meas = {dtime : mdt,
@@ -295,9 +298,6 @@ function get_month_french(month){
 function populateList(){
 	var timeStamp = Date.now();
 	
-    var XMLStationAlerts = parseXML("https://geonb.snb.ca/rwm/flood/alertlevels.xml");
-	var XMLStationsList = parseXML("https://geonb.snb.ca/rwm/flood/StJohn_FEWSNB_export.xml");
-
 	var alertCounts = {
 		'normal': 0,
 		'advisory': 0,
@@ -307,15 +307,17 @@ function populateList(){
 	};
 
 	// get the list of stations from the parsed XML list
+	var XMLStationsList = parseXML("https://geonb.snb.ca/rwm/flood/StJohn_FEWSNB_export.xml");
 	var stations = XMLStationsList.getElementsByTagName("series");
+	var nextForecastInterval = getNextForecastInterval(stations);
 
 	// get the lists of alert levels
+    var XMLStationAlerts = parseXML("https://geonb.snb.ca/rwm/flood/alertlevels.xml");
 	var alertLevelList = XMLStationAlerts.getElementsByTagName("station");
 
 	// find the already defined html station list
 	var list = document.getElementById("station-list");
 
-	// Loop through the data to extract the stations from the XML
 	for(var i = 0; i < alertLevelList.length; i++) {
 		var stationData;
 
@@ -325,7 +327,6 @@ function populateList(){
 		var lat = alertLevelList[i].getElementsByTagName("latitude")[0].textContent;
 		var lng = alertLevelList[i].getElementsByTagName("longitude")[0].textContent;
 
-		
 		var has_measured_data = alertLevelList[i].getElementsByTagName("Measured")[0].textContent;
 		var has_forecast_data = alertLevelList[i].getElementsByTagName("Forecast")[0].textContent;
 		wsc_url_en = alertLevelList[i].getElementsByTagName("WSC_URL_EN")[0].textContent;
@@ -352,29 +353,8 @@ function populateList(){
         var startDate = new Date(getStartDate(stationId, stations)).toLocaleDateString();
 		var reportDate = new Date(startDate);
 
-        if (create_date == '—')
+		if (create_date == '—')
             create_date = startDate;
-        
-		// The next expected forecast date will be stored in the stations XML file. Only one date for the entire set unlike start time which is per station.
-		// We'll read the interval (in days) and add it to this reports date to know when the next report is expected.
-		try
-		{
-			//Read the interval from the XML file.
-			var nextDateInterval = XMLStationsList.getElementsByTagName("nextForecast")[0].textContent;
-
-			//Add the interval (in days) to the creation date of this report
-			var nextDate = new Date(startDate);
-			nextDate.setDate(reportDate.getDate() + parseInt(nextDateInterval));
-
-			//Experiment with built in localization for 'in 1 day', etc.
-			const rtf1 = new Intl.RelativeTimeFormat(lang, { style: 'long' });
-			next_date = rtf1.format(nextDateInterval, 'day');
-		}
-		catch (error)
-		{
-			console.log(error);
-			console.log("Likely reason: no nextForecast provided in XML");
-		}
 
 		var currentLevel = 0;
         if(measures != null) {
@@ -458,11 +438,11 @@ function populateList(){
 			'wsc_url_en': wsc_url_en,
 			'wsc_url_fr': wsc_url_fr,
 			'startDate': startDate,
-			'nextDate': next_date
+			'nextForcastInterval': nextForecastInterval
 		};
 
 		stationList.push(stationData);
-2
+
 		// create new station and insert data into the list on leftside of screen
 		var item = createStationItem(stationData);
 
@@ -474,6 +454,75 @@ function populateList(){
 		var levelCount = alertCounts[level];
 		$('.'+level+'-count').text(levelCount);
 	});
+}
+
+/*******************************************************************************
+ * @brief Extract the integer which holds the number of days until the next forcast will be available.
+ *
+ * 	Note: There is a 'special' site that may be included with a parameterId/locationID/StationID of 'NextFcst'. This is a site that was created specifically to
+	       hold a special entry to indicate the next time the XML data set will be updated. In that site, there are 3 events. the event with a flag of '0' is the one we want.
+	<series>
+        <header>
+            <type>instantaneous</type>
+            <locationId>NextFcst</locationId>
+            <parameterId>NextFcst</parameterId>
+            <timeStep unit="second" multiplier="86400"/>
+            <startDate date="2023-02-20" time="20:00:00"/>
+            <endDate date="2023-02-22" time="20:00:00"/>
+            <missVal>-999</missVal>
+            <stationName>NextFcst</stationName>
+            <units>REAL</units>
+            <creationDate>2023-02-21</creationDate>
+            <creationTime>14:41:08</creationTime>
+        </header>
+        <event date="2023-02-20" time="20:00:00" value="-999" flag="8"/>
+        <event date="2023-02-21" time="20:00:00" value="1" flag="0"/>
+        <event date="2023-02-22" time="20:00:00" value="-999" flag="8"/>
+    </series>
+ * @param {object} stations array
+ * @returns {Integer or null if no next forcast found}
+ ******************************************************************************/
+function getNextForecastInterval(stations) {
+	var nextForcastName = "NextFcst";
+
+	try
+	{
+		for(var is=0 ; is < stations.length ; is++) {
+			var  shdr = stations[is].getElementsByTagName("header")[0];
+			var  locationId = shdr.getElementsByTagName("locationId")[0].textContent;
+
+			if(locationId === nextForcastName) {
+				// Found the next forcast data. Now, we look up the events to find the one with a flag of '0'. That's where the next forcast interval is stored.
+
+				var events = stations[is].getElementsByTagName("event")
+				for (var i = 0; i< events.length; i++)
+				{
+					//find the '0' flag.
+					var currentEvent = events[i];
+					var eventFlag = currentEvent.getAttribute("flag");
+					
+					//we're looking for flag 0. If it's flag 0, return value.
+					if (eventFlag === "0")
+					{
+						console.log(currentEvent.getAttribute("value"));
+						return currentEvent.getAttribute("value");
+					}
+				}
+			}
+			else
+			{
+				//Not the location we're looking for... keep going through the XML find the NextFcst element
+				continue;
+			}
+		}
+	}
+	catch (error)
+	{
+		console.log("Can't find next forcast interal in the XML");
+		console.log(error)
+	}
+    
+	return null;
 }
 
 /*******************************************************************************
@@ -1202,8 +1251,8 @@ function displayChart(id) {
 		alertLevels = station['alertLevels'],
 		name = station['name'],
 		has_forecast_data = station['has_forecast_data'],
-		has_measured_data = station['has_measured_data']
-	
+		has_measured_data = station['has_measured_data'],
+		next_forecast_value = station['nextForcastInterval']
 	min = 200, // the min value displayed on the chart
 	max = 0; // the max value displayed on the chart
     wsc_url_en = station['wsc_url_en'];
@@ -1466,7 +1515,19 @@ function displayChart(id) {
 //	$('#date-issued').text(station['startDate']);
     $('#date-issued').text(create_date);
 
-    $('#date-next').text(next_date);
+	// Get the value to display based on the interval. This will take care of translation also
+	var nextForecastDateValue = "—";
+	try
+	{
+		const rtf1 = new Intl.RelativeTimeFormat(lang, { style: 'long' });
+		nextForecastDateValue = rtf1.format(parseInt(next_forecast_value), 'day');
+	}
+	catch (error)
+	{
+		//console.log('Unknown next forcast interval ');
+	}
+
+    $('#date-next').text(nextForecastDateValue);
 }
 
 /*******************************************************************************
