@@ -2,186 +2,377 @@
 <area>
 	<station>
 		<name>Connors</name> 
-		<stationID>0</stationID> 
+		<stationID>Connors</stationID> 
 		<advisory>168.7</advisory>
 		<watch>169.7</watch>
 		<warning>170.2</warning>
 		<Floodlvl>170.7</Floodlvl>
+		<max>164.7</max>
+		<latitude>47.20835</latitude>
+		<longitude>-68.82395</longitude>
+		<Measured>NO</Measured>
+		<Forecast>YES</Forecast>
+		<WSC_URL_EN>NONE</WSC_URL_EN>
+		<WSC_URL_FR>NONE</WSC_URL_FR>
 	</station>
 	<station>
 		<name>Saint-François</name> 
-		<stationID>1</stationID> 
+		<stationID>St_Francois</stationID> 
 		<advisory>158.2</advisory>
 		<watch>159.2</watch>
 		<warning>159.7</warning>
 		<Floodlvl>160.2</Floodlvl>
+		<max>160.7</max>
+		<latitude>47.24101</latitude>
+		<longitude>-68.69828</longitude>
+		<Measured>NO</Measured>
+		<Forecast>YES</Forecast>
+		<WSC_URL_EN>NONE</WSC_URL_EN>
+		<WSC_URL_FR>NONE</WSC_URL_FR>
 	</station>
 	<station>
 		<name>Clair</name> 
-		<stationID>2</stationID> 
+		<stationID>Ft_Kent</stationID> 
 		<advisory>154.2</advisory>
 		<watch>155.2</watch>
 		<warning>155.7</warning>
 		<Floodlvl>156.2</Floodlvl>
+		<max>158.2</max>
+		<latitude>47.25762</latitude>
+		<longitude>-68.59468</longitude>
+		<Measured>YES</Measured>
+		<Forecast>YES</Forecast>
+		<WSC_URL_EN>NONE</WSC_URL_EN>
+		<WSC_URL_FR>NONE</WSC_URL_FR>
 	</station>
 	<station>
 		<name>Baker Brook</name> 
-		<stationID>3</stationID> 
+		<stationID>Baker_Brook</stationID> 
 		<advisory>148.8</advisory>
 		<watch>149.8</watch>
 		<warning>150.3</warning>
 		<Floodlvl>150.8</Floodlvl>
+		<max>151.4</max>
+		<latitude>47.29647</latitude>
+		<longitude>-68.50764</longitude>
+		<Measured>NO</Measured>
+		<Forecast>YES</Forecast>
+		<WSC_URL_EN>NONE</WSC_URL_EN>
+		<WSC_URL_FR>NONE</WSC_URL_FR>
 	</station>
 	<station>
 		<name>St. Hilaire</name> 
-		<stationID>4</stationID> 
+		<stationID>St_Hilaire</stationID> 
 		<advisory>143.5</advisory>
 		<watch>144.5</watch>
 		<warning>145</warning>
 		<Floodlvl>145.5</Floodlvl>
+		<max>148.1</max>
+		<latitude>47.29750</latitude>
+		<longitude>-68.37901</longitude>
+		<Measured>NO</Measured>
+		<Forecast>YES</Forecast>
+		<WSC_URL_EN>NONE</WSC_URL_EN>
+		<WSC_URL_FR>NONE</WSC_URL_FR>
 	</station>
 	<station>
 		<name>Edmundston</name> 
-		<stationID>5</stationID> 
+		<stationID>Edmundston</stationID> 
 		<advisory>138.5</advisory>
 		<watch>139.5</watch>
 		<warning>140</warning>
 		<Floodlvl>140.5</Floodlvl>
+		<max>143.1</max>
+		<latitude>47.35972</latitude>
+		<longitude>-68.32387</longitude>
+		<Measured>YES</Measured>
+		<Forecast>YES</Forecast>
+		<WSC_URL_EN>https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=01AD004</WSC_URL_EN>
+		<WSC_URL_FR>https://wateroffice.ec.gc.ca/report/real_time_f.html?stn=01AD004</WSC_URL_FR>
 	</station>
 	<station>
 		<name>Iroquois</name> 
-		<stationID>6</stationID> 
+		<stationID>Iroquois</stationID> 
 		<advisory>138.65</advisory>
 		<watch>139.65</watch>
 		<warning>140.15</warning>
 		<Floodlvl>140.65</Floodlvl>
+		<max>142.0</max>
+		<latitude>47.35228</latitude>
+		<longitude>-68.25524</longitude>
+		<Measured>NO</Measured>
+		<Forecast>YES</Forecast>
+		<WSC_URL_EN>NONE</WSC_URL_EN>
+		<WSC_URL_FR>NONE</WSC_URL_FR>
 	</station>
 	<station>
 		<name>Saint-Basile</name> 
-		<stationID>7</stationID> 
+		<stationID>St_Basile</stationID> 
 		<advisory>141.9</advisory>
 		<watch>142.9</watch>
 		<warning>143.4</warning>
 		<Floodlvl>143.9</Floodlvl>
+		<max>141.3</max>
+		<latitude>47.33951</latitude>
+		<longitude>-68.20406</longitude>
+		<Measured>NO</Measured>
+		<Forecast>YES</Forecast>
+		<WSC_URL_EN>NONE</WSC_URL_EN>
+		<WSC_URL_FR>NONE</WSC_URL_FR>
 	</station>
 	<station>
 		<name>Sainte-Anne</name> 
-		<stationID>8</stationID> 
+		<stationID>St_Anne</stationID> 
 		<advisory>136.3</advisory>
 		<watch>137.3</watch>
 		<warning>137.8</warning>
 		<Floodlvl>138.3</Floodlvl>
+		<max>138.8</max>
+		<latitude>47.24224</latitude>
+		<longitude>-68.03076</longitude>
+		<Measured>NO</Measured>
+		<Forecast>YES</Forecast>
+		<WSC_URL_EN>NONE</WSC_URL_EN>
+		<WSC_URL_FR>NONE</WSC_URL_FR>
 	</station>
 	<station>
 		<name>Saint-Léonard</name> 
-		<stationID>9</stationID> 
+		<stationID>St_Leonard</stationID> 
 		<advisory>134</advisory>
 		<watch>135</watch>
 		<warning>135.5</warning>
 		<Floodlvl>136.0</Floodlvl>
+		<max>137.3</max>
+		<latitude>47.15966</latitude>
+		<longitude>-67.93077</longitude>
+		<Measured>YES</Measured>
+		<Forecast>YES</Forecast>
+		<WSC_URL_EN>NONE</WSC_URL_EN>
+		<WSC_URL_FR>NONE</WSC_URL_FR>
 	</station>
 	<station>
 		<name>Perth-Andover</name> 
-		<stationID>10</stationID> 
+		<stationID>Perth</stationID> 
 		<advisory>75.2</advisory>
 		<watch>76.2</watch>
 		<warning>76.7</warning>
 		<Floodlvl>77.2</Floodlvl>
+		<max>80.2</max>
+		<latitude>46.74111</latitude>
+		<longitude>-67.70119</longitude>
+		<Measured>YES</Measured>
+		<Forecast>NO</Forecast>
+		<WSC_URL_EN>NONE</WSC_URL_EN>
+		<WSC_URL_FR>NONE</WSC_URL_FR>
 	</station>
 	<station>
 		<name>Simonds</name> 
-		<stationID>11</stationID> 
+		<stationID>Simonds</stationID> 
 		<advisory>46.5</advisory>
 		<watch>47.5</watch>
 		<warning>48.0</warning>
 		<Floodlvl>48.5</Floodlvl>
+		<max>51.2</max>
+		<latitude>46.33529</latitude>
+		<longitude>-67.55360</longitude>
+		<Measured>YES</Measured>
+		<Forecast>NO</Forecast>
+		<WSC_URL_EN>NONE</WSC_URL_EN>
+		<WSC_URL_FR>NONE</WSC_URL_FR>
 	</station>
 	<station>
 		<name>Hartland</name> 
-		<stationID>12</stationID> 
+		<stationID>Hartland</stationID> 
 		<advisory>43.7</advisory>
 		<watch>44.7</watch>
 		<warning>45.2</warning>
 		<Floodlvl>45.7</Floodlvl>
+		<max>48.2</max>
+		<latitude>46.29785</latitude>
+		<longitude>-67.52918</longitude>
+		<Measured>YES</Measured>
+		<Forecast>NO</Forecast>
+		<WSC_URL_EN>NONE</WSC_URL_EN>
+		<WSC_URL_FR>NONE</WSC_URL_FR>
 	</station>
 	<station>
 		<name>Woodstock</name> 
-		<stationID>13</stationID> 
+		<stationID>Woodstock</stationID> 
 		<advisory>39.4</advisory>
 		<watch>40.4</watch>
 		<warning>40.9</warning>
 		<Floodlvl>41.4</Floodlvl>
+		<max>44.0</max>
+		<latitude>46.13748</latitude>
+		<longitude>-67.57503</longitude>
+		<Measured>YES</Measured>
+		<Forecast>NO</Forecast>
+		<WSC_URL_EN>NONE</WSC_URL_EN>
+		<WSC_URL_FR>NONE</WSC_URL_FR>
 	</station>
 	<station>
-		<name>Nashwaak (Durham Bridge)</name>
-		<stationID>14</stationID>
-		<advisory>19</advisory>
-		<watch>20</watch>
-		<warning>20.5</warning>
-		<Floodlvl>21.0</Floodlvl>
-	</station>	
-	<station>
-		<name>Kennebecasis (Apohaqui)</name>
-		<stationID>15</stationID>
-		<advisory>11</advisory>
-		<watch>12</watch>
-		<warning>12.5</warning>
-		<Floodlvl>13.0</Floodlvl>
-	</station>	
-	<station>
 		<name>Fredericton</name>
-		<stationID>16</stationID>
+		<stationID>Fredericton</stationID>
 		<advisory>4.5</advisory>
 		<watch>5.5</watch>
 		<warning>6</warning>
 		<Floodlvl>6.5</Floodlvl>
-	</station>	
+		<max>8.6</max>
+		<latitude>45.96619</latitude>
+		<longitude>-66.65161</longitude>
+		<Measured>YES</Measured>
+		<Forecast>YES</Forecast>
+		<WSC_URL_EN>https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=01AK003</WSC_URL_EN>
+		<WSC_URL_FR>https://wateroffice.ec.gc.ca/report/real_time_f.html?stn=01AK003</WSC_URL_FR>
+	</station>
+	<station>
+		<name>Durham Bridge (Nashwaak R.)</name>
+		<stationID>Nashwaak</stationID>
+		<advisory>19</advisory>
+		<watch>20</watch>
+		<warning>20.5</warning>
+		<Floodlvl>21.0</Floodlvl>
+		<max>23.0</max>
+		<latitude>46.12592</latitude>
+		<longitude>-66.61131</longitude>
+		<Measured>YES</Measured>
+		<Forecast>YES</Forecast>
+		<WSC_URL_EN>https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=01AL002</WSC_URL_EN>
+		<WSC_URL_FR>https://wateroffice.ec.gc.ca/report/real_time_f.html?stn=01AL002</WSC_URL_FR>
+	</station>
 	<station>
 		<name>Maugerville</name>
-		<stationID>17</stationID>
+		<stationID>Maugerville</stationID>
 		<advisory>4</advisory>
 		<watch>5</watch>
 		<warning>5.5</warning>
 		<Floodlvl>6.0</Floodlvl>
-	</station>	
+		<max>7.3</max>
+		<latitude>45.86244</latitude>
+		<longitude>-66.45677</longitude>
+		<Measured>YES</Measured>
+		<Forecast>YES</Forecast>
+		<WSC_URL_EN>https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=01AO002</WSC_URL_EN>
+		<WSC_URL_FR>https://wateroffice.ec.gc.ca/report/real_time_f.html?stn=01AO002</WSC_URL_FR>
+	</station>
 	<station>
 		<name>Jemseg</name>
-		<stationID>18</stationID>
+		<stationID>Jemseg</stationID>
 		<advisory>2.3</advisory>
 		<watch>3.3</watch>
 		<warning>3.8</warning>
 		<Floodlvl>4.3</Floodlvl>
-	</station>		
-	<station>
-		<name>Grand Lake</name>
-		<stationID>19</stationID>
-		<advisory>3</advisory>
-		<watch>4</watch>
-		<warning>4.5</warning>
-		<Floodlvl>5.0</Floodlvl>
-	</station>	
+		<max>6.8</max>
+		<latitude>45.82892</latitude>
+		<longitude>-66.11542</longitude>
+		<Measured>YES</Measured>
+		<Forecast>YES</Forecast>
+		<WSC_URL_EN>https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=01AO004</WSC_URL_EN>
+		<WSC_URL_FR>https://wateroffice.ec.gc.ca/report/real_time_f.html?stn=01AO004</WSC_URL_FR>
+	</station>
 	<station>
 		<name>Sheffield-Lakeville Corner</name>
-		<stationID>20</stationID>
+		<stationID>Lakeville_Corner</stationID>
 		<advisory>2.8</advisory>
 		<watch>3.8</watch>
 		<warning>4.3</warning>
 		<Floodlvl>4.8</Floodlvl>
-	</station>	
+		<max>7.0</max>
+		<latitude>45.90883</latitude>
+		<longitude>-66.25644</longitude>
+		<Measured>YES</Measured>
+		<Forecast>YES</Forecast>
+		<WSC_URL_EN>https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=01AO010</WSC_URL_EN>
+		<WSC_URL_FR>https://wateroffice.ec.gc.ca/report/real_time_f.html?stn=01AO010</WSC_URL_FR>
+	</station>
+	<station>
+		<name>Grand Lake</name>
+		<stationID>Grand_Lake</stationID>
+		<advisory>3</advisory>
+		<watch>4</watch>
+		<warning>4.5</warning>
+		<Floodlvl>5.0</Floodlvl>
+		<max>6.9</max>
+		<latitude>46.05672</latitude>
+		<longitude>-66.00403</longitude>
+		<Measured>YES</Measured>
+		<Forecast>YES</Forecast>
+		<WSC_URL_EN>https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=01AO003</WSC_URL_EN>
+		<WSC_URL_FR>https://wateroffice.ec.gc.ca/report/real_time_f.html?stn=01AO003</WSC_URL_FR>
+	</station>
+	<station>
+		<name>Gagetown</name>
+		<stationID>Gagetown</stationID>
+		<advisory>2.0</advisory>
+		<watch>3.0</watch>
+		<warning>3.5</warning>
+		<Floodlvl>4.0</Floodlvl>
+		<max>6.7</max>
+		<latitude>45.76861</latitude>
+		<longitude>-66.14027</longitude>
+		<Measured>YES</Measured>
+		<Forecast>YES</Forecast>
+		<WSC_URL_EN>https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=01AO012</WSC_URL_EN>
+		<WSC_URL_FR>https://wateroffice.ec.gc.ca/report/real_time_f.html?stn=01AO012</WSC_URL_FR>
+	</station>
 	<station>
 		<name>Oak Point</name>
-		<stationID>21</stationID>
+		<stationID>Oak_Point</stationID>
 		<advisory>2.7</advisory>
 		<watch>3.7</watch>
 		<warning>4.2</warning>
 		<Floodlvl>4.7</Floodlvl>
+		<max>6.0</max>
+		<latitude>45.51463</latitude>
+		<longitude>-66.07702</longitude>
+		<Measured>YES</Measured>
+		<Forecast>YES</Forecast>
+		<WSC_URL_EN>https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=01AP003</WSC_URL_EN>
+		<WSC_URL_FR>https://wateroffice.ec.gc.ca/report/real_time_f.html?stn=01AP003</WSC_URL_FR>
 	</station>
 	<station>
 		<name>Quispamsis - Saint John</name>
-		<stationID>22</stationID>
+		<stationID>Saint_John</stationID>
 		<advisory>2.2</advisory>
 		<watch>3.2</watch>
 		<warning>3.7</warning>
 		<Floodlvl>4.2</Floodlvl>
-	</station>	
+		<max>5.8</max>
+		<latitude>45.27194</latitude>
+		<longitude>-66.08900</longitude>
+		<Measured>YES</Measured>
+		<Forecast>YES</Forecast>
+		<WSC_URL_EN>https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=01AP005</WSC_URL_EN>
+		<WSC_URL_FR>https://wateroffice.ec.gc.ca/report/real_time_f.html?stn=01AP005</WSC_URL_FR>
+	</station>
+	<station>
+		<name>Hampton (Kennebecasis R.)</name>
+		<stationID>Hampton</stationID>
+		<advisory>2.6</advisory>
+		<watch>3.6</watch>
+		<warning>4.1</warning>
+		<Floodlvl>4.6</Floodlvl>
+		<max>5.9</max>
+		<latitude>45.54278</latitude>
+		<longitude>-65.83639</longitude>
+		<Measured>NO</Measured>
+		<Forecast>YES</Forecast>
+		<WSC_URL_EN>NONE</WSC_URL_EN>
+		<WSC_URL_FR>NONE</WSC_URL_FR>
+	</station>
+	<station>
+		<name>Apohaqui (Kennebecasis R.)</name>
+		<stationID>Kennebecasis</stationID>
+		<advisory>11</advisory>
+		<watch>12</watch>
+		<warning>12.5</warning>
+		<Floodlvl>13.0</Floodlvl>
+		<max>13.9</max>
+		<latitude>45.70139</latitude>
+		<longitude>-65.60169</longitude>
+		<Measured>YES</Measured>
+		<Forecast>YES</Forecast>
+		<WSC_URL_EN>https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=01AP004</WSC_URL_EN>
+		<WSC_URL_FR>https://wateroffice.ec.gc.ca/report/real_time_f.html?stn=01AP004</WSC_URL_FR>
+	</station>
 </area>

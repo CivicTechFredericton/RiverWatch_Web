@@ -229,12 +229,17 @@ h2 {margin-top: 0;}
 /* Intro & Help */
 
 .overlay {
-	background: rgba(255,255,255,0.5);
+	background: rgba(220,220,220,0.8);
 	display: none;
 	height: 100%;
 	position: fixed;
 	width: 100%;
 	z-index: 12;
+}
+
+#help
+{
+	z-index: 13;
 }
 
 .overlay.show {
@@ -243,9 +248,9 @@ h2 {margin-top: 0;}
 
 .overlay .overlay-content {
 	background: #fff;
-	max-height: calc(100vh - 120px);
+	max-height: calc(100vh - 70px);
 	overflow-y: auto;
-	padding: 30px;
+	padding: 10px;
 	position: fixed;
 	top: 50px;
 	-webkit-box-shadow: 1px 1px 2px 1px rgba(170,170,170,1);
@@ -253,37 +258,29 @@ h2 {margin-top: 0;}
 	box-shadow: 1px 1px 2px 1px rgba(170,170,170,1);
 }
 
-.close {
-	cursor: pointer;
-	padding: 20px;
-	position: absolute;
-	right: 0;
-	top: 0;
-}
-
 .disclaimer {
-	margin-top: 40px;
+	margin-top: 20px;
+	font-size: 11px;
 }
 
 .agree {
 	cursor: pointer;
-	margin-bottom: 40px;
+	margin-bottom: 10px;
 	text-align: center;
 }
 
 .agree span {
 	border: 1px solid #666;
 	display: inline-block;
-	padding: 10px;
+	padding: 10px 40px;
 }
 
 .credit p {
 	margin-top: 10px;
 }
 .credit .logo {
-	float: left;
-	margin-right: 20px;
-	margin-top: -5px;
+	display: block;
+	margin-bottom: 10px;
 }
 
 .credit:after {
@@ -347,6 +344,7 @@ h2 {margin-top: 0;}
 	overflow-y: auto;
 	top: 40px;
 	z-index: 10;
+
 }
 
 .nav-controls {
@@ -364,6 +362,7 @@ h2 {margin-top: 0;}
 
 .nav-title {
 	padding: 10px;
+	font-weight: bold;
 }
 
 #nav ul {
@@ -409,48 +408,72 @@ h2 {margin-top: 0;}
 
 #station-readings {
 	display: none;
+	padding: 10px;
+	overflow-y: scroll;
 	background-color: #fff;
+	z-index: 12; /*Infront of map legend, but behind the 'help' dialog*/
 }
 
 .show-station #station-readings {
 	display: block;
 }
 
-#station-readings .close {
-	padding: 12px 15px 10px;
+.close {
+	cursor: pointer;
+    position: absolute;
+    right: 5px;
+    top: 0;
+    color: #222;
+    font-size: 22px;
+    padding: 0.5em;
+    user-select: none;	
 }
 
 #station-title {
-	border-bottom: 1px solid #aaa;
+	/*border-bottom: 1px solid #aaa;*/
 	font-weight: normal;
-	height: 1.2em;
-	margin: 0 0 10px;
-	padding: 10px;
-	text-align: center;
+	height: 1.1em;
+	text-align: left;
+    display: inline;
+    font-size: 1.2em;
+}
+
+#forecast-notice dl
+{
+	display: inline-block;
+	margin-inline-end: 20px;
+}
+
+#forecast-notice dl dt
+{
+	display: inline-block;
+	padding-right: 3px;
+}
+
+#forecast-notice dl dd
+{
+	font-weight: bold;
+	margin-inline-start: 5px;
+	display: inline-block;	
 }
 
 #chart-wrapper {
 	position: relative;
-	padding-left: 20px;
-}
-
-#flood-chart {
-
-}
-
-#forecast-notice {
-	padding: 10px 70px 0;
 }
 
 #station-footer {
-	border-top: 1px solid #aaa;
-	padding: 10px 20px;
-	margin-top: 10px;
-	text-align: right;
-}
 
-.legend-title {
-	display: inline-block;
+	font-size: 0.9em;
+	display: grid;
+
+	grid-template-columns: repeat(auto-fill, 130px);	
+
+  	margin-right: auto;
+}
+#station-footer img
+{
+	float:left;
+	padding-right: 5px;
 }
 
 .legend ul {
@@ -458,17 +481,12 @@ h2 {margin-top: 0;}
 	list-style: none;
 	margin: 0;
 	padding: 0;
+	cursor: pointer;
 }
 
 .legend ul li {
 	display: inline-block;
 	padding: 0 5px;
-}
-
-/* Footer */
-
-#footer {
-
 }
 
 /* Responsive */
@@ -494,7 +512,7 @@ h2 {margin-top: 0;}
 	}
 
 	#station-list {
-		padding: 0 20px 20px;
+		padding: 0 20px 30px;
 	}
 	#my-station-list {
 		padding: 0 20px;
@@ -503,22 +521,20 @@ h2 {margin-top: 0;}
 	#station-list li,
 	#my-station-list li {
 		padding: 10px 0;
-	}
-	#station-list li {
 		border-bottom: 1px solid #888;
 	}
 
 	#content {
-		left: 276px;
+		left:276px;
 	}
 
 	#station-readings {
 		border: 1px solid #aaa;
-		left: 30px;
-		max-height: calc(100vh - 100px);
+		left: 20px;
+		max-height: calc(100vh - 10px);
 		position: absolute;
-		top: 30px;
-		width: 385px;
+		top: 20px;
+		width: 90%; /*MALLIK: was 385*/
 	}
 
 	#chart-wrapper {
@@ -538,12 +554,20 @@ h2 {margin-top: 0;}
 	#nav .legend {
 		display: none;
 	}
+    
+    .widescr {
+        display: inline-block;
+    }
+    
+    .nrwscr {
+        display: none;
+    }
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 799px) {
 	.overlay .overlay-content {
 		left: 10px;
-		max-height: calc(100vh - 200px);
+		max-height: calc(100vh - 100px);
 		right: 10px;
 	}
 
@@ -585,25 +609,29 @@ h2 {margin-top: 0;}
 		padding: 10px 20px;
 	}
 
-	#station-list,
 	#my-station-list {
-		padding: 20px;
+		padding: 0 20px 20px;
+	}
+
+	#station-list {
+		padding: 0 20px 50px;
 	}
 
 	#station-list li,
 	#my-station-list li {
-		border: 2px solid #999;
-		border-radius: 15px;
-		font-size: 16px;
-		padding: 10px;
-	}
-
-	#station-list li + li {
-		margin-top: 15px;
+		padding: 10px 0;
+		border-bottom: 1px solid #888;
 	}
 
 	.legend {
-		display: none;
+		background: rgba(255,255,255,1);
+		bottom: 0;
+		padding: 5px;
+		position: absolute;
+		right: 0;
+		z-index: 11;
+		border: 1px solid #999;
+		
 	}
 
 	#nav .legend {
@@ -619,7 +647,7 @@ h2 {margin-top: 0;}
 	}
 
 	.show-station #content {
-		z-index: 11;
+		z-index: 12;
 	}
 
 	#station-readings {
@@ -627,11 +655,20 @@ h2 {margin-top: 0;}
 		position: absolute;
 		top: 0;
 		width: 100%;
+		box-sizing: border-box;
+		z-index: 12; /*Infront of map legend, but behind the 'help' dialog*/
 	}
 
 	#chart-wrapper {
-		height: calc(100vh - 170px);
+		height: calc(100vh - 235px);
 	}
+    .widescr {
+        display: none;
+    }
+    
+    .nrwscr {
+        display: inline-block;
+    }
 
 }
 

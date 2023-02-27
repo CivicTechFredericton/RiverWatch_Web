@@ -2,16 +2,33 @@ var floodChart;
 var firstDate;
 var stationList = new Array();
 var lang = 'en';
+var forecast_available = true;
+var waterlevels_available = true;
+
+var geometryService = null;
+
+var forecast_missing_value = false;
+var waterlevels_missing_value = false;
+var times = 1;
+var wsc_url_en = "NONE";
+var wsc_url_fr = "NONE";
+var date_arr = [];
+var date_arr2 = [];
+var create_date = '—';
+var next_date = '—';
+
 var chartLabels = {
 	en: {
 		dates: [],
-		levels: ['Advisory', 'Watch', 'Warning', 'Flood'],
+		levels: ['Normal','Advisory', 'Watch', 'Warning', 'Flood', 'Record'],
 		yAxis: 'Water level (m)',
+		yAxis_forecast: "Forecast (m)"
 	},
 	fr: {
 		dates: [],
-		levels: ['Avis', 'Veille', 'Avertissement', 'Crue'],
+		levels: ['ASD','Avis', 'Veille', 'Avertissement', 'Crue', 'Record'],
 		yAxis: "Niveau des eaux (m)",
+		yAxis_forecast: "Prévoir (m)"
 	}
 };
 
@@ -19,8 +36,92 @@ $(document).ready( function() {
 	setupLang();
 	setupToggleView();
 	setupIntro();
+
+	// Detect click on the background to close the help dialog
+	$('.overlay').on('click', function(e) {
+		if (e.target !== this)
+			return;
+
+		e.stopPropagation();
+
+		//Close the help dialog
+		$('#help').removeClass('show');
+	});
+
+	//Close station dialog
+	$('#map').click(function(e) {
+		$('body').removeClass('show-station');
+	});
+
+	$(document).on('keydown', function(e) {
+
+		// Handle key presses
+		// Escape - close help dialog. Close station readings dialog
+		// Left / Right Arrow - forward / back through the stations. Similar to the swipe funcionality
+		if (e.key === "Escape") { // escape key maps to keycode `27`
+			//close the open dialog (i.e. help dialogs)
+			$("#help").first().removeClass("show");
+
+			//Close station dialog
+			$('body').removeClass('show-station');
+		}
+		else 
+		{
+			switch((e.keyCode ? e.keyCode : e.which))
+			{
+			case 37: //Left arrow
+				//Check if the station dialog is open
+				if ( $('body').hasClass('show-station') )
+				{
+					displayPrev();
+				}
+				e.stopPropagation();
+
+				break;
+			case 39: //Right arrow
+				//Check if the station dialog is open
+				if ( $('body').hasClass('show-station') )
+				{
+					displayNext();
+				}
+				e.stopPropagation();
+
+				break;
+			}
+		}
+	});
+
 });
 
+function month_day_swap(date){
+	//TODO. Feb 2016-2023 This appears to be localization type code to see the date in the preferred format.
+	// Consider changing to using proper date objects and localization. See. toLocaleDateString
+	var month = "";
+	var day = "";
+	var year = "";
+	var slash = 0;
+	for(var i = 0; i < date.length; i += 1){
+		if(date[i] == ' ') break;
+		if(date[i] == '/'){
+			slash += 1;
+			continue;
+		}
+		if(slash == 0) day += date[i];
+		else if(slash == 1) month += date[i];
+		else year += date[i];
+	}
+	//year += "T00:00";
+	return month + '/' + day + '/' + year;
+}
+
+var date_sort_asc = function (date1, date2) {
+  // This is a comparison function that will result in dates being sorted in
+  // ASCENDING order. As you can see, JavaScript's native comparison operators
+  // can be used to compare dates. This was news to me.
+  if (date1 > date2) return 1;
+  if (date1 < date2) return -1;
+  return 0;
+};
 /*******************************************************************************
  * @brief function to Parse XML data and return a JS object containing the data
  * @param {type} url
@@ -43,9 +144,12 @@ function parseXML(url){
 	xmlList = xmlhttp.responseXML;
 
 	return xmlList;
-
 }
 
+function round(value, precision) {
+    var multiplier = Math.pow(10, precision || 0);
+    return Math.round(value * multiplier) / multiplier;
+}
 /*******************************************************************************
  * @brief This function returns the status of the alert flag given the alert
  * levels
@@ -79,6 +183,109 @@ function getAlertLevel(currentLevel, advisoryLevel, watchLevel, warningLevel, fl
 }
 
 
+function  getMeasures(locId, stations) {
+  var  is;
+    for(is=0 ; is < stations.length ; is++) {
+      var  shdr = stations[is].getElementsByTagName("header")[0];
+      var  slid = shdr.getElementsByTagName("locationId")[0].textContent;
+        if(slid == locId) {
+          var  pid = shdr.getElementsByTagName("parameterId")[0].textContent;
+            if(pid != "HG")
+                continue;
+            
+          var    wmeas = stations[is].getElementsByTagName("event");
+          var    lvls = [];
+          var    im;
+            for(im=0 ; im < wmeas.length ; im++) {
+              //console.log(wmeas[im].getAttribute('date') + 'T' + wmeas[im].getAttribute('time'));
+              var  mdt = new Date(wmeas[im].getAttribute('date') + 'T' + wmeas[im].getAttribute('time'));
+        	  var wLevel = parseFloat(wmeas[im].getAttribute('value'));
+              var meas = {dtime : mdt,
+                          wlvl : wLevel };
+              lvls.push(meas);
+            }
+          return lvls;
+        }
+    }
+    
+    return null;
+}
+
+function  getForecast(locId, stations) {
+  var  is;
+    for(is=0 ; is < stations.length ; is++) {
+      var  shdr = stations[is].getElementsByTagName("header")[0];
+      var  slid = shdr.getElementsByTagName("locationId")[0].textContent;
+        if(slid == locId) {
+          var  pid = shdr.getElementsByTagName("parameterId")[0].textContent;
+            if(pid != "SSTG")
+                continue;
+            
+          var    wmeas = stations[is].getElementsByTagName("event");
+          var    lvls = [];
+          var    im;
+            for(im=0 ; im < wmeas.length ; im++) {
+              var  mdt = new Date(wmeas[im].getAttribute('date') + 'T' + wmeas[im].getAttribute('time'));
+        	  var wLevel = parseFloat(wmeas[im].getAttribute('value'));
+              var meas = {dtime : mdt,
+                          wlvl : wLevel };
+              lvls.push(meas);
+            }
+          return lvls;
+        }
+    }
+    
+    return null;
+}
+
+function getStartDate(stationId, stations){
+	for(var i = 0; i < stations.length; i++){
+		var header = stations[i].getElementsByTagName("header")[0];
+      	var id = header.getElementsByTagName("locationId")[0].textContent;
+      	if(id == stationId){
+      		var  parameterId = header.getElementsByTagName("parameterId")[0].textContent;
+            if(parameterId != "SSTG")
+                continue;
+            var cdts = header.getElementsByTagName("creationDate");
+            if(cdts.length > 0) {
+        		var creationDate = cdts[0].textContent;
+        		return creationDate;
+            }
+      	}
+	}
+	return "";
+}
+
+function get_month_french(month){
+	switch (month) {
+			case "Jan":
+				return "jan";
+			case "Feb":
+				return "fév";
+			case "Mar":
+				return "mar";
+			case "Apr":
+				return "avr";
+			case "May":
+				return "mai";
+			case "Jun":
+				return "juin";
+			case "Jul":
+				return "juil";
+			case "Aug":
+				return "aou";
+			case "Sep":
+				return "sep";
+			case "Oct":
+				return "oct";
+			case "Nov":
+				return "nov";
+			case "Dec":
+				return "déc";
+		}
+	return "Unknown Month";
+}
+
 /*******************************************************************************
  * @brief function to populate the list of stations available in the the parsed
  * Data
@@ -87,29 +294,9 @@ function getAlertLevel(currentLevel, advisoryLevel, watchLevel, warningLevel, fl
  ******************************************************************************/
 function populateList(){
 	var timeStamp = Date.now();
-	// parse alertlevels.xml
-	var XMLStationAlerts = parseXML("https://geonb.snb.ca/documents/misc/rwm_xml/alertlevels.xml");
-
-	// parse alert.xml
-	var XMLStationsList = parseXML("https://geonb.snb.ca/documents/misc/rwm_xml/alert.xml?t="+timeStamp);
-
-	var dates = XMLStationsList.getElementsByTagName("dates")[0];
-	var day0En = dates.getElementsByTagName("dates_in")[0].textContent;
-	var day0Fr = dates.getElementsByTagName("dates_in")[1].textContent;
-	var day1En = dates.getElementsByTagName("dates_24")[0].textContent;
-	var day1Fr = dates.getElementsByTagName("dates_24")[1].textContent;
-	var day2En = dates.getElementsByTagName("dates_48")[0].textContent;
-	var day2Fr = dates.getElementsByTagName("dates_48")[1].textContent;
-	var day3En = dates.getElementsByTagName("dates_72")[0].textContent;
-	var day3Fr = dates.getElementsByTagName("dates_72")[1].textContent;
-	var day4En = dates.getElementsByTagName("dates_96")[0].textContent;
-	var day4Fr = dates.getElementsByTagName("dates_96")[1].textContent;
-	var day5En = dates.getElementsByTagName("dates_120")[0].textContent;
-	var day5Fr = dates.getElementsByTagName("dates_120")[1].textContent;
-
-	chartLabels['en']['dates'] = [day0En, day1En, day2En, day3En, day4En, day5En];
-	chartLabels['fr']['dates'] = [day0Fr, day1Fr, day2Fr, day3Fr, day4Fr, day5Fr];
-	firstDate = dates.getElementsByTagName("date_issued")[0].textContent;
+	
+    var XMLStationAlerts = parseXML("https://geonb.snb.ca/rwm/flood/alertlevels.xml");
+	var XMLStationsList = parseXML("https://geonb.snb.ca/rwm/flood/StJohn_FEWSNB_export.xml");
 
 	var alertCounts = {
 		'normal': 0,
@@ -120,7 +307,7 @@ function populateList(){
 	};
 
 	// get the list of stations from the parsed XML list
-	var stations = XMLStationsList.getElementsByTagName("station");
+	var stations = XMLStationsList.getElementsByTagName("series");
 
 	// get the lists of alert levels
 	var alertLevelList = XMLStationAlerts.getElementsByTagName("station");
@@ -128,32 +315,104 @@ function populateList(){
 	// find the already defined html station list
 	var list = document.getElementById("station-list");
 
-	for(var i=0; i<stations.length; i++){
+	// Loop through the data to extract the stations from the XML
+	for(var i = 0; i < alertLevelList.length; i++) {
 		var stationData;
 
-		// get current station name
-		var stationName = stations[i].getElementsByTagName("name")[0].textContent;
+		// get current station name and ID
+		var stationName = alertLevelList[i].getElementsByTagName("name")[0].textContent;
+		var stationId = alertLevelList[i].getElementsByTagName("stationID")[0].textContent;
+		var lat = alertLevelList[i].getElementsByTagName("latitude")[0].textContent;
+		var lng = alertLevelList[i].getElementsByTagName("longitude")[0].textContent;
 
-		// gets station id
-		var stationId = stations[i].getElementsByTagName("stationID")[0].textContent;
+		
+		var has_measured_data = alertLevelList[i].getElementsByTagName("Measured")[0].textContent;
+		var has_forecast_data = alertLevelList[i].getElementsByTagName("Forecast")[0].textContent;
+		wsc_url_en = alertLevelList[i].getElementsByTagName("WSC_URL_EN")[0].textContent;
+		wsc_url_fr = alertLevelList[i].getElementsByTagName("WSC_URL_FR")[0].textContent;
+		//console.log("wsc_url_en: " + wsc_url_en);
 		var listId = makeSlug(stationName);
-
+		
 		// get levels data - convert string to float for comparison
-		var currentLevel = parseFloat(stations[i].getElementsByTagName("forecast_cur")[0].textContent) || 0;
-		var forcast24Level = parseFloat(stations[i].getElementsByTagName("forecast_24")[0].textContent) || 0;
-		var forcast48Level = parseFloat(stations[i].getElementsByTagName("forecast_48")[0].textContent) || 0;
-		var forcast72Level = parseFloat(stations[i].getElementsByTagName("forecast_72")[0].textContent) || 0;
-		var forcast96Level = parseFloat(stations[i].getElementsByTagName("forecast_96")[0].textContent) || 0;
-		var forcast120Level = parseFloat(stations[i].getElementsByTagName("forecast_120")[0].textContent) || 0;
 		var advisoryLevel = parseFloat(alertLevelList[i].getElementsByTagName("advisory")[0].textContent);
 		var watchLevel = parseFloat(alertLevelList[i].getElementsByTagName("watch")[0].textContent);
 		var warningLevel = parseFloat(alertLevelList[i].getElementsByTagName("warning")[0].textContent);
 		var floodLevel = parseFloat(alertLevelList[i].getElementsByTagName("Floodlvl")[0].textContent);
-		var waterLevels = [currentLevel, forcast24Level, forcast48Level, forcast72Level, forcast96Level, forcast120Level];
-		var alertLevels = [advisoryLevel, watchLevel, warningLevel, floodLevel];
+//        var maxLevel = parseFloat(alertLevelList[i].getElementsByTagName("max")[0].textContent);
+        var maxVal = alertLevelList[i].getElementsByTagName("max");
+        var maxLevel = null;
+        if (maxVal.length > 0) {
+            maxLevel = parseFloat(maxVal[0].textContent);
+        }
+//  var maxLevel = 8.0;
+		var alertLevels = [advisoryLevel, watchLevel, warningLevel, floodLevel, maxLevel];
 
-		// a flag to store the condition of the current alert level
+		var measures = getMeasures(stationId, stations);
+        var forecasts = getForecast(stationId, stations);
+        var startDate = new Date(getStartDate(stationId, stations)).toLocaleDateString();
+		var reportDate = new Date(startDate);
+
+        if (create_date == '—')
+            create_date = startDate;
+        
+		// The next expected forecast date will be stored in the stations XML file. Only one date for the entire set unlike start time which is per station.
+		// We'll read the interval (in days) and add it to this reports date to know when the next report is expected.
+		try
+		{
+			//Read the interval from the XML file.
+			var nextDateInterval = XMLStationsList.getElementsByTagName("nextForecast")[0].textContent;
+
+			//Add the interval (in days) to the creation date of this report
+			var nextDate = new Date(startDate);
+			nextDate.setDate(reportDate.getDate() + parseInt(nextDateInterval));
+
+			//Experiment with built in localization for 'in 1 day', etc.
+			const rtf1 = new Intl.RelativeTimeFormat(lang, { style: 'long' });
+			next_date = rtf1.format(nextDateInterval, 'day');
+		}
+		catch (error)
+		{
+			console.log(error);
+			console.log("Likely reason: no nextForecast provided in XML");
+		}
+
+		var currentLevel = 0;
+        if(measures != null) {
+            currentLevel = measures[measures.length-1].wlvl;
+            if(currentLevel == -999) {
+              var  idx = measures.length-2;
+              var  cnt = 0;
+              while(idx >= 0 && measures[idx].wlvl == -999) {
+                  idx --;
+              }
+              if(idx >= 0) {
+                  cnt = 1;
+                  currentLevel = measures[idx].wlvl;
+              }
+              if(forecasts != null) {
+                  idx = 0;
+                  while(idx < forecasts.length && forecasts[idx].wlvl == -999) {
+                      idx ++;
+                  }
+                  if(idx < forecasts.length) {
+                      currentLevel += forecasts[idx].wlvl;
+                      cnt ++;
+                  }
+              }
+              if(cnt > 0)
+                  currentLevel /= cnt;
+            }
+        }
+        else  if(forecasts != null) {
+            currentLevel = forecasts[0].wlvl;
+        }
+        
+        // a flag to store the condition of the current alert level
+		// need this but how
 		var currentAlertlevel = getAlertLevel(currentLevel, advisoryLevel, watchLevel, warningLevel, floodLevel);
+//		var currentAlertlevel = 'normal';
+  		if (measures == null) measures = 'NA';
+  		if (forecasts == null) forecasts = 'NA';
 
 		// data status should be as following:
 		// "4 normal"
@@ -162,6 +421,7 @@ function populateList(){
 		// "1 warning"
 		// "0 flood"
 		var dataStatus = "4 normal";
+
 		switch (currentAlertlevel) {
 			case "normal":
 				dataStatus = "4 normal";
@@ -179,25 +439,37 @@ function populateList(){
 				dataStatus = "0 flood";
 				break;
 		}
+
 		alertCounts[currentAlertlevel]++;
 
 		stationData = {
-			'id': stationId,
+			'id': i,
 			'name': stationName,
 			'level': currentLevel,
 			'alertLevel': currentAlertlevel,
 			'status': dataStatus,
-			'waterLevels': waterLevels,
-			'alertLevels': alertLevels
+			'waterLevels': measures,
+            'forecasts' : forecasts,
+			'alertLevels': alertLevels,
+			'lat': lat,
+			'lng': lng,
+			'has_measured_data': has_measured_data,
+			'has_forecast_data': has_forecast_data,
+			'wsc_url_en': wsc_url_en,
+			'wsc_url_fr': wsc_url_fr,
+			'startDate': startDate,
+			'nextDate': next_date
 		};
-		stationList.push(stationData);
 
+		stationList.push(stationData);
+2
 		// create new station and insert data into the list on leftside of screen
 		var item = createStationItem(stationData);
 
 		// Add it to the list:
-		list.appendChild(item);
+		list.appendChild(item); //this is the html list on the ledt panel of map
 	}
+	
 	['advisory', 'watch', 'warning', 'flood'].forEach(function(level) {
 		var levelCount = alertCounts[level];
 		$('.'+level+'-count').text(levelCount);
@@ -215,6 +487,7 @@ function createStationItem(station) {
 	var item = document.createElement('li');
 	item.setAttribute("id",makeSlug(station['name']));
 	item.setAttribute("class",station['alertLevel']);
+	item.setAttribute("class",station['alertLevel']);
 	item.setAttribute("data-id",station['id']);
 	item.setAttribute("data-status",station['status']);
 	item.setAttribute("data-name",station['name']);
@@ -229,7 +502,7 @@ function createStationItem(station) {
  *
  * @returns {undefined}
  ******************************************************************************/
-function setupLang() {
+ function setupLang() {
 	// all text on the site is in both French and English and has a class to identify the language
 	// the class on body controls which language is visible
 	$('#lang div').on('click', function() {
@@ -237,10 +510,12 @@ function setupLang() {
 			$('body').removeClass('fr').addClass('en');
 			document.location.hash = 'en';
 			lang = 'en';
+			document.getElementById("near-real-time-wlvl").href = wsc_url_en;
 		} else {
 			$('body').removeClass('en').addClass('fr');
 			document.location.hash = 'fr';
 			lang = 'fr';
+			document.getElementById("near-real-time-wlvl").href = wsc_url_fr;
 		}
 		updateChartLabels();
 	});
@@ -251,9 +526,11 @@ function setupLang() {
 	switch (lang) {
 		case 'en':
 			$('body').removeClass('fr').addClass('en');
+			
 			break;
 		case 'fr':
 			$('body').removeClass('en').addClass('fr');
+			
 			break;
 	}
 	updateChartLabels();
@@ -287,6 +564,10 @@ function setupIntro() {
 	});
 
 	$('#help-link').on('click', function() {
+		$('#help').addClass('show');
+	});
+
+	$('#legend').on('click', function() {
 		$('#help').addClass('show');
 	});
 
@@ -386,7 +667,8 @@ function setMyStation(id) {
 	var stationItem = createStationItem(stationData);
 	$('#my-station-list').empty().append(stationItem);
 
-	Cookies.set('station_id', id, {expires: 365});
+	//add SameSite settings to avoid warnings
+	Cookies.set('station_id', id, {expires: 365, samesite:'lax'});
 	$('#my-station').addClass('show');
 }
 
@@ -408,15 +690,14 @@ function clearMyStation() {
  *
  * @returns {undefined}
  ******************************************************************************/
-function setupChart() {
-	initializeChart();
-
-	$('#station-list, #my-station').on('click', 'li', openChart);
+function setupChart_NEW() {
+ console.log('setup chart');
+	initializeChart_NEW();
+	$('#station-list, #my-station').on('click', 'li', openChart_NEW);
 	$('#station-readings').on('click', '.close', function() {
 		$('body').removeClass('show-station');
 	});
-
-	setupDateWarning();
+	//setupDateWarning();
 }
 
 /*******************************************************************************
@@ -425,108 +706,446 @@ function setupChart() {
  *
  * @returns {undefined}
  ******************************************************************************/
-function initializeChart() {
-	var ctx = $("#flood-chart");
-	floodChart = new Chart(ctx, {
-		type: 'bar',
-		data: {
-			labels: chartLabels[lang]['dates'],
-			datasets: [{
-				label: chartLabels[lang]['yAxis'],
-				data: [],
-				backgroundColor: [
-					'rgba(0, 81, 198, 1.0)',
-					'rgba(43, 110, 208, 1.0)',
-					'rgb(85, 139, 217, 1.0)',
-					'rgb(128, 168, 227, 1.0)',
-					'rgb(170, 197, 236, 1.0)',
-					'rgb(213, 226, 246, 1.0)',
-				],
-				borderWidth: 0
-			}]
-		},
-		options: {
-			responsive: true,
-			maintainAspectRatio: false,
-			legend: {
-				display: false,
-			},
-			scales: {
-				yAxes: [{
-					id: 'y-axis-0',
+ 	Chart.defaults.modifiedline = Chart.defaults.line;
+
+    var timeFormat = 'DD/MM/YYYY';
+	
+
+	var borderColorProp = function(){ 
+							if(forecast_available)
+								return 'rgba(176, 209, 247, 1)'; //B0D1F7
+							return 'rgba(198, 179, 255, 0)';	
+						}
+ 	var forecast_data = function(){ 
+							if(forecast_available)
+							return [
+										
+										{ x: "06/02/2019 01:00", y: 6.7 }, 
+										{ x: "10/02/2019 06:00", y: 5.3 }
+										
+									];
+							return [
+										{ x: "06/02/2019 12:20", y: "" }, 
+										{ x: "07/02/2019 12:20", y: "" },
+										{ x: "08/02/2019 12:20", y: "" }
+									];	
+						}
+	var config = {
+        type:    'modifiedline',
+        data:    {
+        	labels: chartLabels[lang]['dates'],
+            datasets: [
+                {
+                    label: chartLabels[lang]['yAxis'],
+                    data: [],
+                    fill: true,
+                    borderColor: 'rgba(69, 146, 235, 1)' //4592EB
+                },
+                {
+                    label: chartLabels[lang]['yAxis_forecast'],
+                    data:  [],
+                    fill:  false,
+					//borderDash: [4, 2],
+                    borderColor: borderColorProp()
+                }
+            ]
+        },
+        options: {
+			spanGaps: false,
+			legend: { 
+						display: false,
+					  	position: 'bottom'	
+					  },
+            responsive: true,
+            maintainAspectRatio: false, //Adding this makes graph fit on the screen
+            
+            scales:     {
+                
+                xAxes: [{
+                	id: 'x-axis-0',
+                    type: 'time',
+                    position:'bottom',
+                    time: {
+							parser: 'DD/MM/YYYY HH:mm',
+							tooltipFormat: 'll HH:mm',
+							unit: 'day',
+							unitStepSize: 2,
+							displayFormats: {
+									'day': 'MMM-DD'
+								},	
+							},
+					ticks: {
+							autoSkip: true,
+							maxTicksLimit: 3,
+							stepSize: 2,
+							callback: function( label, index, labels ) {
+                        		if(lang == 'en')
+                        			return label;
+                        		var res = label.split('-');
+								res[0] = get_month_french(res[0]);
+								return res[0] + '-' + res[1];
+                    		}
+						}
+                }],
+
+
+                yAxes: [{
+                	id: 'y-axis-0',
 					scaleLabel: {
 						display: true,
 						labelString: chartLabels[lang]['yAxis']
 					},
 					ticks: {
-						min: 0,
-						max: 200
+						autoSkip: true,
+						maxTicksLimit: 10,
+						callback: function(value) {if (value % 1 === 0) {return value;}}
 					}
-				}],
-				xAxes: [{
-					categoryPercentage: 0.4
-				}]
-			},
-			annotation: {
-				annotations: [{
+                }]
+            },
+
+            tooltips: {
+            	callbacks: {
+            		// Here's where the magic happens:
+                	title: function( data ) {
+                		if(lang == 'en')
+                    		return data[0].xLabel;
+                    	var res = data[0].xLabel.split(' ');
+                    	res[0] = get_month_french(res[0]);                    	
+                    	return res[0] + ' ' + res[1] + ' ' + res[2] + ' ' + res[3];
+                	},
+                	label: function ( item, data ) {
+                        var num = round(item.yLabel, 1).toString();
+                        if(num.indexOf('.') < 0)
+                            num += '.0';
+                        
+                        if(lang != 'en')
+                          num = num.toString().replace('.', ',');
+                      
+                        return num+'m';
+                	}
+            	}
+            },
+
+
+		    pan: {
+		      enabled: true,
+		      mode: "xy" 
+		    },
+            zoom: {
+		      enabled: true,
+		      mode: "xy"
+		      
+		    },
+
+            //Annotation STARTS            
+            annotation: { 
+            	drawTime: 'beforeDatasetsDraw',
+				annotations: [
+				{
+					//Draw the 'Advisory' line
 					type: 'line',
 					mode: 'horizontal',
 					id: '0',
 					scaleID: 'y-axis-0',
-					value: 0,
-					borderColor: 'rgb(252, 238, 33)',
+					value: 6, 
+					borderColor: 'rgba(252, 238, 33, 0.5)',
 					borderWidth: 3,
 					label: {
-						enabled: true,
-						content: chartLabels[lang]['levels'][0],
-						position: 'right'
-					}
-				},
-				{
-					type: 'line',
-					mode: 'horizontal',
-					id: '1',
-					scaleID: 'y-axis-0',
-					value: 0,
-					borderColor: 'rgb(247, 147, 30)',
-					borderWidth: 3,
-					label: {
-						enabled: true,
+						enabled: false,
 						content: chartLabels[lang]['levels'][1],
 						position: 'right'
 					}
 				},
 				{
+					//Draw the 'Watch' line
+					type: 'line',
+					mode: 'horizontal',
+					id: '1',
+					scaleID: 'y-axis-0',
+					value: 7,
+					borderColor: 'rgba(247, 147, 30, 0.5)',
+					borderWidth: 3,
+					label: {
+						enabled: false,
+						content: chartLabels[lang]['levels'][2],
+						position: 'right'
+					}
+				},
+				{
+					//Draw the 'Warning' line
 					type: 'line',
 					mode: 'horizontal',
 					id: '2',
 					scaleID: 'y-axis-0',
-					value: 0,
-					borderColor: 'rgb(255, 67, 67)',
+					value: 8,
+					borderColor: 'rgba(255, 67, 67, 0.5)',
 					borderWidth: 3,
 					label: {
-						enabled: true,
-						content: chartLabels[lang]['levels'][2],
+						enabled: false,
+						content: chartLabels[lang]['levels'][3],
+						position: 'right'
+					}
+				},
+				{
+					//Draw the 'Flood' line
+					type: 'line',
+					mode: 'horizontal',
+					id: '3',
+					scaleID: 'y-axis-0',
+					value: 9,
+					borderColor: 'rgba(0, 0, 0, 0.5)',
+					borderWidth: 3,
+					label: {
+						enabled: false,
+						content: chartLabels[lang]['levels'][4],
 						position: 'right'
 					}
 				},
 				{
 					type: 'line',
 					mode: 'horizontal',
-					id: '3',
+					id: '4',
 					scaleID: 'y-axis-0',
-					value: 0,
-					borderColor: 'rgb(0, 0, 0)',
+					value: 9,
+					borderColor: 'rgba(0, 0, 240, 0.9)',
 					borderWidth: 3,
+                    borderDash: [8, 5],
 					label: {
 						enabled: true,
-						content: chartLabels[lang]['levels'][3],
+						content: chartLabels[lang]['levels'][5],
 						position: 'right'
 					}
-				}]
+				},
+				{
+					type: 'line',
+					mode: 'vertical',
+					id: '10',
+					scaleID: 'x-axis-0',
+					value: date_arr2[0], //new Date('5/13/2019'), //new Date('05/13/2019 00:00'), //DD/MM/YYYY HH:mm  '2019-05-12T02:00:00' new Date('May-13-2019')
+					borderColor: 'lightgrey',
+					borderWidth: 1
+				},
+				{
+					type: 'line',
+					mode: 'vertical',
+					id: '11',
+					scaleID: 'x-axis-0',
+					value: date_arr2[1], //new Date('5/13/2019'), //new Date('05/13/2019 00:00'), //DD/MM/YYYY HH:mm  '2019-05-12T02:00:00' new Date('May-13-2019')
+					borderColor: 'lightgrey',
+					borderWidth: 1
+				},
+				{
+					type: 'line',
+					mode: 'vertical',
+					id: '12',
+					scaleID: 'x-axis-0',
+					value: date_arr2[2], //new Date('5/13/2019'), //new Date('05/13/2019 00:00'), //DD/MM/YYYY HH:mm  '2019-05-12T02:00:00' new Date('May-13-2019')
+					borderColor: 'lightgrey',
+					borderWidth: 1
+				},
+				{
+					type: 'line',
+					mode: 'vertical',
+					id: '13',
+					scaleID: 'x-axis-0',
+					value: date_arr2[3], //new Date('5/13/2019'), //new Date('05/13/2019 00:00'), //DD/MM/YYYY HH:mm  '2019-05-12T02:00:00' new Date('May-13-2019')
+					borderColor: 'lightgrey',
+					borderWidth: 1
+				},
+				{
+					type: 'line',
+					mode: 'vertical',
+					id: '14',
+					scaleID: 'x-axis-0',
+					value: date_arr2[4], //new Date('5/13/2019'), //new Date('05/13/2019 00:00'), //DD/MM/YYYY HH:mm  '2019-05-12T02:00:00' new Date('May-13-2019')
+					borderColor: 'lightgrey',
+					borderWidth: 1
+				},
+				{
+					type: 'line',
+					mode: 'vertical',
+					id: '15',
+					scaleID: 'x-axis-0',
+					value: date_arr2[5], //new Date('5/13/2019'), //new Date('05/13/2019 00:00'), //DD/MM/YYYY HH:mm  '2019-05-12T02:00:00' new Date('May-13-2019')
+					borderColor: 'lightgrey',
+					borderWidth: 1
+				},
+				{
+					type: 'line',
+					mode: 'vertical',
+					id: '16',
+					scaleID: 'x-axis-0',
+					value: date_arr2[6], //new Date('5/13/2019'), //new Date('05/13/2019 00:00'), //DD/MM/YYYY HH:mm  '2019-05-12T02:00:00' new Date('May-13-2019')
+					borderColor: 'lightgrey',
+					borderWidth: 1
+				},
+				{
+					type: 'line',
+					mode: 'vertical',
+					id: '17',
+					scaleID: 'x-axis-0',
+					value: date_arr2[7], //new Date('5/13/2019'), //new Date('05/13/2019 00:00'), //DD/MM/YYYY HH:mm  '2019-05-12T02:00:00' new Date('May-13-2019')
+					borderColor: 'lightgrey',
+					borderWidth: 1
+				},
+				{
+					type: 'line',
+					mode: 'vertical',
+					id: '18',
+					scaleID: 'x-axis-0',
+					value: date_arr2[8], //new Date('5/13/2019'), //new Date('05/13/2019 00:00'), //DD/MM/YYYY HH:mm  '2019-05-12T02:00:00' new Date('May-13-2019')
+					borderColor: 'lightgrey',
+					borderWidth: 1
+				},
+				{
+					type: 'line',
+					mode: 'vertical',
+					id: '19',
+					scaleID: 'x-axis-0',
+					value: date_arr2[9], //new Date('5/13/2019'), //new Date('05/13/2019 00:00'), //DD/MM/YYYY HH:mm  '2019-05-12T02:00:00' new Date('May-13-2019')
+					borderColor: 'lightgrey',
+					borderWidth: 1
+				}
+
+				]
 			}
-		}
-	});
+			
+			//Annotation ENDS
+        }
+		
+    };
+
+    function parse_date(date_with_space){
+    	var date_no_space = "";
+    	for(var i = 0; i < date_with_space.length; i++){
+    		if(date_with_space[i] == ' ') break;
+    		date_no_space += date_with_space[i];
+    	}
+    	return date_no_space;
+    }
+
+    var custom = Chart.controllers.line.extend({
+			draw: function(ease) {
+				
+				//alert("custom draw : " + times);
+				times += 1;
+
+				Chart.controllers.line.prototype.draw.call(this, ease);
+				var scale = floodChart.scales['y-axis-0'];
+				
+				var x;
+				try{
+					if(forecast_missing_value == true) // that means,  forecast is made up of dummy dates ( 5 dates )
+						x = config.data.datasets[0]._meta[0].data[ config.data.datasets[0]._meta[0].data.length - 1]._model.x;
+					else
+						x = config.data.datasets[1]._meta[0].data[0]._model.x;
+				}
+				catch (error)
+				{
+					//console.log(error);
+					//console.log("Likely cause: _meta[0].data[0] is empty");
+				}
+				//var date_arr = getDates(config.data.datasets);
+				//for(var i = 0; i < date_arr.length; i += 1)
+					//console.log(date_arr[i]._model.x);
+				//console.log(date_arr);
+
+				var ctx = this.chart.chart.ctx;
+				ctx.save();
+				
+				//Draw the vertical line indicating the last reading date
+				ctx.strokeStyle  = 'rgba(0, 0, 0, 1.0)';
+				ctx.beginPath(); 
+				ctx.setLineDash([5, 5]);
+				ctx.lineWidth = 2;
+				ctx.moveTo(x, scale.top); //floodChart.options.scales.yAxes[0].ticks.min
+				ctx.lineTo(x, scale.bottom);
+				ctx.stroke();
+				ctx.closePath();
+				
+				//ctx.restore();
+				
+				var offset_x = 0.06;
+				var offset_y = 0.7;
+				var y = scale.top;
+				var height = scale.bottom;
+
+				//Cond-2
+				if(forecast_available == false){
+					xx = x * (1 + offset_x);
+					yy = y + height * offset_y;
+					ctx.fillStyle  = 'rgba(0, 0, 0, 0.8)';
+					ctx.font = "0.6em Arial";
+               		if(lang == 'en') {
+  					  ctx.fillText("NO FORECAST DUE TO", xx + 0.1 * xx, yy + 0.08 * yy);
+					  ctx.fillText("THE UNPREDICTABLE", xx + 0.1 * xx, 14 + yy + 0.08 * yy);
+					  ctx.fillText("NATURE OF ICE JAMS", xx + 0.1 * xx, 28 + yy + 0.08 * yy);
+                    } else {
+  					  ctx.fillText("AUCUNE PRÉVISION DISPONIBLE", xx + 0.1 * xx, yy + 0.08 * yy);
+					  ctx.fillText("EN RAISON DE LA NATURE", xx + 0.1 * xx, 14 + yy + 0.08 * yy);
+					  ctx.fillText("IMPRÉVISIBLE DES EMBÂCLES.", xx + 0.1 * xx, 28 + yy + 0.08 * yy);
+                    }
+				}
+				//Cond-4
+				else if(forecast_missing_value == true){
+					xx = x * (1 + offset_x);
+					yy = y + height * offset_y;
+					ctx.fillStyle  = 'rgba(0, 0, 0, 0.8)';
+					ctx.font = "0.6em Arial";
+                    if(lang == 'en') {
+					  ctx.fillText("DUE TO CURRENT ", xx , yy + 0.08 * yy);
+					  ctx.fillText("CONDITIONS NO FORECAST", xx , 14 + yy + 0.08 * yy);
+					  ctx.fillText("AT THIS TIME", xx , 28 + yy + 0.08 * yy);	
+                    } else {
+					  ctx.fillText("EN RAISON DES CONDITIONS", xx , yy + 0.08 * yy);
+					  ctx.fillText("ACTUELLES, AUCUNE PRÉVISION", xx , 14 + yy + 0.08 * yy);
+					  ctx.fillText("DISPONIBLE POUR LE MOMENT.", xx , 28 + yy + 0.08 * yy);	
+                    }
+				}
+				
+				//Cond-1
+				if(waterlevels_available == false){
+					xx = x - 0.65 * x;
+					yy = y + height * offset_y;
+					ctx.fillStyle  = 'rgba(0, 0, 0, 0.8)';
+					ctx.font = "0.6em Arial";
+                    if(lang == 'en') {
+					  ctx.fillText("ONLY FORECAST WATER", xx + 0.1 * xx, yy + 0.08 * yy);
+					  ctx.fillText("LEVELS AVAILABLE", xx + 0.1 * xx, 14 + yy + 0.08 * yy);
+					  ctx.fillText("AT THIS TIME", xx + 0.1 * xx, 28 + yy + 0.08 * yy);
+                    } else {
+					  ctx.fillText("SEULES LES PRÉVISIONS DES", xx + 0.1 * xx, yy + 0.08 * yy);
+					  ctx.fillText("NIVEAUX D’EAU SONT DISPONIBLES", xx + 0.1 * xx, 14 + yy + 0.08 * yy);
+					  ctx.fillText("À CET ENDROIT.", xx + 0.1 * xx, 28 + yy + 0.08 * yy);
+                    }
+				}
+				//Cond-3
+				else if(waterlevels_missing_value == true){
+					//DO NOTHING
+					/*
+					xx = x - 0.65 * x + 10;
+					yy = y + height * 0.75;
+					ctx.fillStyle  = 'rgba(0, 0, 0, 0.8)';
+					ctx.font = "0.8em Arial";
+					ctx.fillText("SOME DATA", xx, yy + 0.08 * yy);
+					ctx.fillText("MAY BE MISSING", xx, 14 + yy + 0.08 * yy);
+					ctx.fillText("DUE TO", xx, 28 + yy + 0.08 * yy);
+					ctx.fillText("TEMPORARY", xx, 42 + yy + 0.08 * yy);
+					ctx.fillText("MALFUNCTION", xx, 56 + yy + 0.08 * yy);
+					*/	
+				}
+
+				ctx.restore();
+				
+			}//end function
+		});
+	
+	Chart.controllers.modifiedline = custom;
+
+function initializeChart_NEW(){
+    console.log('init chart');
+	var ctx = $("#flood-chart");
+	floodChart = new Chart(ctx, config);
 }
 
 /*******************************************************************************
@@ -534,74 +1153,320 @@ function initializeChart() {
  *
  * @returns {undefined}
  ******************************************************************************/
-function openChart() {
-	var id = $(this).data('id'),
-		station = stationList[id],
+function openChart_NEW(){
+console.log('openchart');
+	var id = $(this).data('id');
+    displayChart(id);
+}
+
+var   curId = -1;
+
+function findPosition(inid) {
+  var  list = document.getElementById("station-list");
+  var  mxStats = list.childElementCount;
+  var  ii = 0;
+    for(ii=0 ; ii < mxStats && list.childNodes[ii].dataset.id != inid ; ii++) ;
+    return ii;
+}
+
+function displayPrev() {
+  var  nid = findPosition(curId) - 1;
+  var list = document.getElementById("station-list");
+  var  maxStats = list.childElementCount;
+  
+    if(nid < 0) {
+        nid = maxStats - 1;
+    }
+    nid = list.childNodes[nid].dataset.id;
+    displayChart(nid);
+}
+
+function displayNext() {
+  var  nid = findPosition(curId) + 1;
+  var list = document.getElementById("station-list");
+  var  maxStats = list.childElementCount;
+    if(nid >= maxStats) {
+        nid = 0;
+    }
+    nid = list.childNodes[nid].dataset.id;
+    displayChart(nid);
+}
+
+function displayChart(id) {
+	date_arr = [];
+    date_arr2 = [];
+    curId = id;
+	var	station = stationList[id],
 		waterLevels = station['waterLevels'],
+	    forecasts = station['forecasts'],
 		alertLevels = station['alertLevels'],
 		name = station['name'],
-		min = 200, // the min value displayed on the chart
-		max = 0; // the max value displayed on the chart
+		has_forecast_data = station['has_forecast_data'],
+		has_measured_data = station['has_measured_data']
+	
+	min = 200, // the min value displayed on the chart
+	max = 0; // the max value displayed on the chart
+    wsc_url_en = station['wsc_url_en'];
+	wsc_url_fr = station['wsc_url_fr'];
+	
 	$('#station-title').text(name);
+	$('#station-title').css("font-weight","bold");
 	$('#station-readings').data('id', id);
+
+	$("#near-real-time-wlvl").css("display", "block");
+	
+	if(lang == 'en')
+		$('#near-real-time-wlvl').attr("href", wsc_url_en);
+	else
+		$('#near-real-time-wlvl').attr("href", wsc_url_fr);
+	
+	if(wsc_url_en == "NONE" || wsc_url_fr == "NONE")
+		$("#near-real-time-wlvl").css("display", "none");
+
 
 	if (Cookies.get('station_id') == id) {
 		$('#choose-station').prop('checked', true);
 	} else {
 		$('#choose-station').prop('checked', false);
 	}
+	
+	forecast_available = true;
+	waterlevels_available = true;
 
+	forecast_missing_value = false;
+	waterlevels_missing_value = false;
 	// add water levels for this station
+    var  cs = 0;               // flag for denoting which chart set.
+	var  total_forecast = 0;
+	var  total_wlvl = 0;
+		if(has_forecast_data == 'YES'){
+			forecasts.forEach(function(level) {
+				if(level.wlvl != -999)
+					total_forecast += 1;
+			});	
+		}
+        else
+            forecast_available = false;
+
+		if(has_measured_data == 'YES'){
+			waterLevels.forEach(function(level) {
+				if(level.wlvl != -999)
+					total_wlvl += 1;
+			});	
+		}
+        else
+            waterlevels_available = false;
+
 	floodChart.data.datasets.forEach(function(dataset) {
 		// remove previous water levels
 		dataset.data = [];
-		// add current data
-		waterLevels.forEach(function(level) {
-			dataset.data.push(level);
-			// find max and min for the chart area
-			if (level > max) {
-				max = level;
-			}
-			if (level < min && level > 0) {
-				min = level;
-			}
-		});
-	});
+		
+		let total = 0;
+        if(cs == 0) {
+        	 if(has_measured_data == 'YES' && total_wlvl > 0){
+        	 	waterlevels_available = true;
+	  			waterLevels.forEach(function(level) {
+					total += 1;
+		            var dt = level.dtime.getDate() + '/' + ( 1 + level.dtime.getMonth()) +'/'+level.dtime.getFullYear() + ' '+level.dtime.getHours() + ':'+level.dtime.getMinutes();
+		            date_arr.push(parse_date(dt));
+		            
+		            var wlvl = null;
+		            if(level.wlvl != -999) wlvl = level.wlvl;
+		            else waterlevels_missing_value = true;
+		            var itm = {
+		            				x: dt,
+		                       		y: wlvl
+		                       };
+					dataset.data.push(itm);
+		                
+					if (level.wlvl > max) {
+						max = level.wlvl;
+					}
+					if (level.wlvl < min && level.wlvl > 0) {
+						min = level.wlvl;
+					}
+		  		});
+	  		}
+	  		else {
+                if(total_wlvl == 0) {
+                    waterlevels_missing_value = true;
+                }
+                
+	  			if(has_forecast_data == 'YES'){
+	  				var diff = 4;
+	  				while(diff >= 0){
+	  					var level = forecasts[0];
+                        var yr = level.dtime.getFullYear();
+                        var mon = level.dtime.getMonth();
+                        var dy = level.dtime.getDate() - diff;
+                        var hr = level.dtime.getHours();
+                        var dt = new Date(yr, mon, dy, hr, 0, 0, 0);
+		                var tdt = dt.getDate() + '/' + ( 1 + dt.getMonth()) +'/'+dt.getFullYear() + ' '+dt.getHours() + ':'+dt.getMinutes();
+		  				date_arr.push(parse_date(tdt));
+		  				
+		  				var itm = {
+		            				x: tdt,
+		                       		y: null 
+		                       };
+		                dataset.data.push(itm);       	
+		  				diff -= 1;	
+	  				}
+	  				
+	  			}
+				
+	  		}
+        } //cs = 0 ends
+        else {
+       		if(has_forecast_data == 'YES' && total_forecast > 0) {
+       			total_missing_forecast = 0;
+  		  		forecasts.forEach(function(level) {
+					total += 1;
+		            var dt = level.dtime.getDate() + '/' + (1+level.dtime.getMonth())+'/'+level.dtime.getFullYear() + ' '+level.dtime.getHours() + ':'+level.dtime.getMinutes();
+		            date_arr.push(parse_date(dt));
+			            
+		            var wlvl = null;
+	            	if(level.wlvl != -999)
+                        wlvl = level.wlvl;
+	            	else
+                        total_missing_forecast += 1;
+		            var itm = {
+           				x: dt,
+                   		y: wlvl
+                    };
+						
+					dataset.data.push(itm);
+			                
+					if (level.wlvl > max) {
+						max = level.wlvl;
+					}
+					if (level.wlvl < min && level.wlvl > 0) {
+						min = level.wlvl;
+					}
+		  		});
 
+		  		if(total_missing_forecast == forecasts.length)
+		  			forecast_missing_value = true;
+     		}
+       		else{
+                if(total_forecast == 0)
+                    forecast_missing_value = true;
+                
+                var   sdate = new Date();
+       		 	if(has_measured_data == 'YES'){
+  					var level = waterLevels[waterLevels.length - 1];
+                    sdate = level.dtime;
+                }
+                else if(forecasts.length > 0) {
+                    sdate = forecasts[0].dtime;
+                }
+       		 		
+   		 		var diff = 1;
+  				while(diff <= 5){
+                        var yr = sdate.getFullYear();
+                        var mon = sdate.getMonth();
+                        var dy = sdate.getDate() + diff;
+                        var hr = sdate.getHours();
+                    var  dt = new Date(yr, mon, dy, hr, 0, 0, 0);
+                    var  tdt = (dt.getDate()) + '/' + (1+dt.getMonth())+'/'+dt.getFullYear() + ' '+dt.getHours() + ':'+dt.getMinutes();
+		  			date_arr.push(parse_date(tdt));
+		  				
+		  			var itm = {
+		            	x: tdt,
+		            	y: null 
+		            };
+		            dataset.data.push(itm);       	
+		    		diff += 1;	
+	  			}
+       		 }
+    }
+        cs += 1;
+    });
+	
+
+	for(var i = 0; i < date_arr.length; i += 1)
+		date_arr[i] = new Date( month_day_swap(date_arr[i]) );
+	
+	
+	var date_map = {};
+	
+	for(var i = 0; i < date_arr.length; i += 1){
+		//console.log(date_arr[i]);
+		//console.log(date_map[date_arr[i]]);
+		
+		if(date_map[date_arr[i]] != undefined) continue;
+		
+		date_map[date_arr[i]] = true;
+		
+		date_arr2.push(date_arr[i]);
+	}
+
+	/*
+	date_arr.sort(date_sort_asc);
+	var begin_date = date_arr[0];
+	date_arr = [];
+	date_arr.push(begin_date);
+	for(var days = 1; days <= 8; days += 1){
+		var temp = begin_date;
+		temp.setDate(temp.getDate() + days);
+		date_arr.push(temp);
+	}
+	*/
+
+	//console.log(date_arr2);
+	
 	// update the alert levels
 	floodChart.options.annotation.annotations.forEach(function(annotation) {
 		var i = parseInt(annotation.id);
+		
+      if(alertLevels[i] != null) {
+      
 		annotation.value = parseFloat(alertLevels[i]);
-		// include annotations in chart number range
-		if (annotation.value > max) {
+
+		//if(i == 10) annotation.value = new Date('05/13/2019 00:00'); //DD/MM/YYYY HH:mm  '2019-05-12T02:00:00'
+		if(i == 10) annotation.value = date_arr2[0]; //new Date('May-13-2019');
+		if(i == 11) annotation.value = date_arr2[1]; //new Date('May-17-2019');
+		if(i == 12) annotation.value = date_arr2[2];
+		if(i == 13) annotation.value = date_arr2[3];
+		if(i == 14) annotation.value = date_arr2[4];
+		if(i == 15) annotation.value = date_arr2[5];
+		if(i == 16) annotation.value = date_arr2[6];
+		if(i == 17) annotation.value = date_arr2[7];
+		if(i == 18) annotation.value = date_arr2[8];
+		if(i == 19) annotation.value = date_arr2[9];
+		
+
+		if(i < 5){
+			if (annotation.value > max) {
 			max = annotation.value;
+			}
+			if (annotation.value < min) {
+				min = annotation.value;
+			}	
 		}
-		if (annotation.value < min) {
-			min = annotation.value;
-		}
+      }		
 	});
+    
+    //console.log("min: " + min + " max: " + max);
+    
+//    if(min < 10)
+//    	floodChart.options.scales.yAxes[0].ticks.min = 0;
+//    else
+//    	floodChart.options.scales.yAxes[0].ticks.min = Math.floor(min - 0.5);
+    
+//    if(max <= 10)
+//		floodChart.options.scales.yAxes[0].ticks.max = 10;
+//	else 
+//		floodChart.options.scales.yAxes[0].ticks.max = Math.ceil(max + 0.5);
 
-	// round and pad the max and min for tidier y-axis values
-	max = Math.ceil(max + 1); // pad above the max
-	min = Math.floor(min - 3); // pad below the min
-	if (min < 0) {
-		min = 0; // flood levels will not be negative
-	}
-	// adjust the max and min so the y-axis will have even tick intervals
-	if (max - min > 10) { // max of 10 ticks on the y-axis
-		var nearestDiff = 2*Math.round((max - min)/2); // difference between max and min rounded to an even number
-		min = min - Math.floor((nearestDiff - max + min)/2); // reduce the min by half the difference
-		min = 2*Math.floor(min/2); // make the min an even number
-		max = min + nearestDiff; // set the max as an even amount more than the min
-	}
+	floodChart.options.scales.yAxes[0].ticks.min = Math.floor(min - 0.5);
+	floodChart.options.scales.yAxes[0].ticks.max = Math.ceil(max + 0.5);	
 
-	// update the min and max on the chart
-	floodChart.options.scales.yAxes[0].ticks.min = min;
-	floodChart.options.scales.yAxes[0].ticks.max = max;
-
-	// render the chart with the updated values
 	floodChart.update(0);
 	$('body').addClass('show-station');
+//	$('#date-issued').text(station['startDate']);
+    $('#date-issued').text(create_date);
+
+    $('#date-next').text(next_date);
 }
 
 /*******************************************************************************
@@ -615,12 +1480,13 @@ function updateChartLabels() {
 
 	floodChart.options.scales.yAxes[0].scaleLabel.labelString = chartLabels[lang]['yAxis'];
 	floodChart.data.datasets[0].label = chartLabels[lang]['yAxis'];
-	floodChart.options.annotation.annotations[0].label.content = chartLabels[lang]['levels'][0];
-	floodChart.options.annotation.annotations[1].label.content = chartLabels[lang]['levels'][1];
-	floodChart.options.annotation.annotations[2].label.content = chartLabels[lang]['levels'][2];
-	floodChart.options.annotation.annotations[3].label.content = chartLabels[lang]['levels'][3];
+	floodChart.data.datasets[1].label = chartLabels[lang]['yAxis_forecast'];
+	floodChart.options.annotation.annotations[0].label.content = chartLabels[lang]['levels'][1];
+	floodChart.options.annotation.annotations[1].label.content = chartLabels[lang]['levels'][2];
+	floodChart.options.annotation.annotations[2].label.content = chartLabels[lang]['levels'][3];
+	floodChart.options.annotation.annotations[3].label.content = chartLabels[lang]['levels'][4];
 	floodChart.data.labels = chartLabels[lang]['dates'];
-
+	
 	floodChart.update(0);
 }
 
@@ -639,45 +1505,20 @@ function setupDateWarning() {
  *
  * @returns {undefined}
  ******************************************************************************/
-function initMap() {
+function initMap(AddStation) {
 	// the map needs station data to be created
 	populateList();
 	setupNav();
-	setupChart();
 
-	// create a new map centered on New Brunswick
-	var nb = new google.maps.LatLng(46.5653,-67.0619);
-	var map = new google.maps.Map(document.getElementById('map'), {
-		zoom: 7,
-		center: nb,
-		mapTypeId: 'terrain',
-		fullscreenControl: false,
-		streetViewControl: false
-	});
-
+	setupChart_NEW();
 	// add a marker for each station
-	for(var i=0; i<stationList.length; i++){
-		var latLong = new google.maps.LatLng(stationDetails[i]['lat'],stationDetails[i]['lng']),
-			statusCode = parseInt(stationList[i]['status']),
+	for(var i = 0; i < stationList.length; i++){
+			statusCode = parseInt(stationList[i]['status']);
 			imgUrl = 'img/map'+statusCode+'.png';
-		var image = {
-			url: imgUrl,
-			size: new google.maps.Size(21, 31),
-			origin: new google.maps.Point(0, 0),
-			anchor: new google.maps.Point(10, 31)
-		};
-		var marker = new google.maps.Marker({
-			position: latLong,
-			map: map,
-			icon: image,
-			title: stationList[i]['name']
-		});
-		// open the chart when the user clicks on a marker
-		marker.addListener('click', function() {
-			var id = makeSlug(this.getTitle());
-			$('#'+id).trigger('click');
-		});
-	}
+			//AddStation(stationDetails[i]['lat'],stationDetails[i]['lng'], imgUrl, stationList[i]['name']);
+			AddStation(stationList[i]['lat'], stationList[i]['lng'], imgUrl, stationList[i]['name']);
+		}
+    setupLang();
 }
 
 /*******************************************************************************
