@@ -224,8 +224,16 @@
 			}
 		});
 	});
-
-
+	view.on("key-down", function(event){
+		//Stop panning if the station dialog is visible. 
+		// Normally, when the left/right arrow keys are pressed, the app moves to the next / previous station.
+		// This way, the left/rifght  arrow keys wont pan the map around when the station dialog is open.
+		var keyPressed = event.key;
+		if(keyPressed.slice(0,5) === "Arrow"){
+			if ( $('body').hasClass('show-station') )
+				event.stopPropagation();
+  		}
+	});
 
 	function AddStation(lat, lng, inurl, name) {
 		var outSR = "2036"; // `wkid {number}`
