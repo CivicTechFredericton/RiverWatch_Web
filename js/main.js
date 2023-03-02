@@ -350,9 +350,8 @@ function populateList(){
 
 		var measures = getMeasures(stationId, stations);
         var forecasts = getForecast(stationId, stations);
-        var startDate = new Date(getStartDate(stationId, stations)).toLocaleDateString();
-		var reportDate = new Date(startDate);
-
+        var startDate = getStartDate(stationId, stations);
+		
 		if (create_date == '—')
             create_date = startDate;
 
