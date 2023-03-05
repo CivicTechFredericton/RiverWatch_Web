@@ -307,9 +307,12 @@ function populateList(){
 	};
 
 	// get the list of stations from the parsed XML list
-	var XMLStationsList = parseXML("https://geonb.snb.ca/rwm/flood/StJohn_FEWSNB_export.xml");
+//	var XMLStationsList = parseXML("https://geonb.snb.ca/rwm/flood/StJohn_FEWSNB_export.xml");
+
+	var XMLStationsList = parseXML("StJohn_FEWSNB_export.xml"); //debug with local file 
+
 	var stations = XMLStationsList.getElementsByTagName("series");
-	var nextForecastInterval = getNextForecastInterval(stations);
+	var nextForecastDate = getNextForecastDate(stations);
 
 	// get the lists of alert levels
     var XMLStationAlerts = parseXML("https://geonb.snb.ca/rwm/flood/alertlevels.xml");
@@ -437,7 +440,7 @@ function populateList(){
 			'wsc_url_en': wsc_url_en,
 			'wsc_url_fr': wsc_url_fr,
 			'startDate': startDate,
-			'nextForcastInterval': nextForecastInterval
+			'nextForecastDate': nextForecastDate
 		};
 
 		stationList.push(stationData);
@@ -456,7 +459,7 @@ function populateList(){
 }
 
 /*******************************************************************************
- * @brief Extract the integer which holds the number of days until the next forcast will be available.
+ * @brief Extract the integer which holds the number of days until the next forecast will be available.
  *
  * 	Note: There is a 'special' site that may be included with a parameterId/locationID/StationID of 'NextFcst'. This is a site that was created specifically to
 	       hold a special entry to indicate the next time the XML data set will be updated. In that site, there are 3 events. the event with a flag of '0' is the one we want.
@@ -479,20 +482,26 @@ function populateList(){
         <event date="2023-02-22" time="20:00:00" value="-999" flag="8"/>
     </series>
  * @param {object} stations array
- * @returns {Integer or null if no next forcast found}
+ * @returns {Integer or null if no next forecast found}
  ******************************************************************************/
-function getNextForecastInterval(stations) {
-	var nextForcastName = "NextFcst";
+function getNextForecastDate(stations) {
+	var nextForecastName = "NextFcst"; //This is the specific site ID we're looking for to grab the next forcase interval
+
+	var endDate = null;//This will be the date of the last reading, which we'll add the interval to.
 
 	try
 	{
 		for(var is=0 ; is < stations.length ; is++) {
-			var  shdr = stations[is].getElementsByTagName("header")[0];
-			var  locationId = shdr.getElementsByTagName("locationId")[0].textContent;
+			var  header = stations[is].getElementsByTagName("header")[0];
+			var  locationId = header.getElementsByTagName("locationId")[0].textContent;
 
-			if(locationId === nextForcastName) {
-				// Found the next forcast data. Now, we look up the events to find the one with a flag of '0'. That's where the next forcast interval is stored.
+			if(locationId === nextForecastName) {
+				// Found the next forecast data. 
 
+				// Remember the end date so we can add the interval later
+				endDate = header.getElementsByTagName("creationDate")[0].textContent;
+
+				//Now, we look up the events to find the one with a flag of '0'. That's where the next forecast interval is stored.
 				var events = stations[is].getElementsByTagName("event")
 				for (var i = 0; i< events.length; i++)
 				{
@@ -503,8 +512,13 @@ function getNextForecastInterval(stations) {
 					//we're looking for flag 0. If it's flag 0, return value.
 					if (eventFlag === "0")
 					{
-						console.log(currentEvent.getAttribute("value"));
-						return currentEvent.getAttribute("value");
+						var nextForcastInterval = currentEvent.getAttribute("value")
+						console.log(nextForcastInterval);
+						//Add the interval to the date given and return
+						var nextForcastDate = new Date(endDate);
+						nextForcastDate.setDate(nextForcastDate.getDate() + parseInt(nextForcastInterval));
+
+						return nextForcastDate;
 					}
 				}
 			}
@@ -517,7 +531,7 @@ function getNextForecastInterval(stations) {
 	}
 	catch (error)
 	{
-		console.log("Can't find next forcast interal in the XML");
+		console.log("Can't find next forecast interval in the XML");
 		console.log(error)
 	}
     
@@ -1251,7 +1265,7 @@ function displayChart(id) {
 		name = station['name'],
 		has_forecast_data = station['has_forecast_data'],
 		has_measured_data = station['has_measured_data'],
-		next_forecast_value = station['nextForcastInterval']
+		next_forecast_value = station['nextForecastDate']
 	min = 200, // the min value displayed on the chart
 	max = 0; // the max value displayed on the chart
     wsc_url_en = station['wsc_url_en'];
@@ -1514,19 +1528,19 @@ function displayChart(id) {
 //	$('#date-issued').text(station['startDate']);
     $('#date-issued').text(create_date);
 
-	// Get the value to display based on the interval. This will take care of translation also
-	var nextForecastDateValue = "—";
+	next_forecast_value = next_forecast_value ? next_forecast_value : "—";
+	
 	try
 	{
-		const rtf1 = new Intl.RelativeTimeFormat(lang, { style: 'long' });
-		nextForecastDateValue = rtf1.format(parseInt(next_forecast_value), 'day');
+		//Need to format as 2023-02-20. note the next_forecast_value is a Date object at this point
+		next_forecast_value = next_forecast_value.toLocaleDateString('fr-CA');
+		//Note - using fr-CA to get the YYYY-MM-DD formate that's used in the rest of the UI/XML
 	}
 	catch (error)
 	{
-		//console.log('Unknown next forcast interval ');
+		//console.log(error);
 	}
-
-    $('#date-next').text(nextForecastDateValue);
+    $('#date-next').text(next_forecast_value);
 }
 
 /*******************************************************************************
