@@ -307,9 +307,8 @@ function populateList(){
 	};
 
 	// get the list of stations from the parsed XML list
-//	var XMLStationsList = parseXML("https://geonb.snb.ca/rwm/flood/StJohn_FEWSNB_export.xml");
-
-	var XMLStationsList = parseXML("StJohn_FEWSNB_export.xml"); //debug with local file 
+	var XMLStationsList = parseXML("https://geonb.snb.ca/rwm/flood/StJohn_FEWSNB_export.xml");
+	//var XMLStationsList = parseXML("StJohn_FEWSNB_export.xml"); //debug with local file 
 
 	var stations = XMLStationsList.getElementsByTagName("series");
 	var nextForecastDate = getNextForecastDate(stations);
