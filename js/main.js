@@ -241,14 +241,11 @@ function getForecast(locId, stations) {
     return null;
 }
 
-function getStartDate(stationId, stations){
+function getCreationDate(stationId, stations){
 	for(var i = 0; i < stations.length; i++){
 		var header = stations[i].getElementsByTagName("header")[0];
       	var id = header.getElementsByTagName("locationId")[0].textContent;
       	if(id == stationId){
-      		var  parameterId = header.getElementsByTagName("parameterId")[0].textContent;
-            if(parameterId != "SSTG")
-                continue;
             var cdts = header.getElementsByTagName("creationDate");
             if(cdts.length > 0) {
         		var creationDate = cdts[0].textContent;
@@ -309,9 +306,12 @@ function populateList(){
 	// get the list of stations from the parsed XML list
 	var XMLStationsList = parseXML("https://geonb.snb.ca/rwm/flood/StJohn_FEWSNB_export.xml");
 	//var XMLStationsList = parseXML("StJohn_FEWSNB_export.xml"); //debug with local file 
-
+	var timeZone = XMLStationsList.getElementsByTagName("timeZone")[0].textContent;
 	var stations = XMLStationsList.getElementsByTagName("series");
-	var nextForecastDate = getNextForecastDate(stations);
+
+	var nextForecastStationId = "NextFcst"; //This is the specific site ID we're looking for to grab the next forcase interval
+	var creationDate = getCreationDate(nextForecastStationId, stations);
+	var nextForecastDate = getNextForecastDate(nextForecastStationId, stations, timeZone);
 
 	// get the lists of alert levels
     var XMLStationAlerts = parseXML("https://geonb.snb.ca/rwm/flood/alertlevels.xml");
@@ -352,10 +352,6 @@ function populateList(){
 
 		var measures = getMeasures(stationId, stations);
         var forecasts = getForecast(stationId, stations);
-        var startDate = getStartDate(stationId, stations);
-		
-		if (create_date == '—')
-            create_date = startDate;
 
 		var currentLevel = 0;
         if(measures != null) {
@@ -438,7 +434,7 @@ function populateList(){
 			'has_forecast_data': has_forecast_data,
 			'wsc_url_en': wsc_url_en,
 			'wsc_url_fr': wsc_url_fr,
-			'startDate': startDate,
+			'issuedDate': creationDate,
 			'nextForecastDate': nextForecastDate
 		};
 
@@ -483,10 +479,16 @@ function populateList(){
  * @param {object} stations array
  * @returns {Integer or null if no next forecast found}
  ******************************************************************************/
-function getNextForecastDate(stations) {
-	var nextForecastName = "NextFcst"; //This is the specific site ID we're looking for to grab the next forcase interval
-
+function getNextForecastDate(stationId, stations, timeZone) {
 	var endDate = null;//This will be the date of the last reading, which we'll add the interval to.
+
+	var timeZone = "-0400"; //This shouldn't be heard coded but the timeZone from the XML is in the incorrect format for Javascript
+	// Need the time zone when creating a javascript date object. Otherwise, javascript assumes UTC time which can shift our dates when we 
+	// read out as AST. Example
+	//   const date = new Date("2023-03-06");
+	//	 console.log(date); 
+	//	 Sun Mar 05 2023 20:00:00 GMT-0400 (Atlantic Standard Time)
+	//  Note it's March 5 in the response, even though we set the date to March 6th
 
 	try
 	{
@@ -494,7 +496,7 @@ function getNextForecastDate(stations) {
 			var  header = stations[is].getElementsByTagName("header")[0];
 			var  locationId = header.getElementsByTagName("locationId")[0].textContent;
 
-			if(locationId === nextForecastName) {
+			if(locationId === stationId) {
 				// Found the next forecast data. 
 
 				// Remember the end date so we can add the interval later
@@ -512,9 +514,12 @@ function getNextForecastDate(stations) {
 					if (eventFlag === "0")
 					{
 						var nextForcastInterval = currentEvent.getAttribute("value")
-						console.log(nextForcastInterval);
+
+						//Create the date. By default, javascript uses UTC time. WE need to make sure we set the time based on our locale.
+						//var nextForcastDate = new Date(endDate + "T00:00:00.000" + timeZone);						
+						var nextForcastDate = new Date(endDate + "T00:00:00.000" + timeZone);
+						
 						//Add the interval to the date given and return
-						var nextForcastDate = new Date(endDate);
 						nextForcastDate.setDate(nextForcastDate.getDate() + parseInt(nextForcastInterval));
 
 						return nextForcastDate;
@@ -1267,7 +1272,8 @@ function displayChart(id) {
 		name = station['name'],
 		has_forecast_data = station['has_forecast_data'],
 		has_measured_data = station['has_measured_data'],
-		next_forecast_value = station['nextForecastDate']
+		next_forecast_value = station['nextForecastDate'],
+		issued_date = station['issuedDate']
 	min = 200, // the min value displayed on the chart
 	max = 0; // the max value displayed on the chart
     wsc_url_en = station['wsc_url_en'];
@@ -1454,9 +1460,6 @@ function displayChart(id) {
 	var date_map = {};
 	
 	for(var i = 0; i < date_arr.length; i += 1){
-		//console.log(date_arr[i]);
-		//console.log(date_map[date_arr[i]]);
-		
 		if(date_map[date_arr[i]] != undefined) continue;
 		
 		date_map[date_arr[i]] = true;
@@ -1527,8 +1530,7 @@ function displayChart(id) {
 
 	floodChart.update(0);
 	$('body').addClass('show-station');
-//	$('#date-issued').text(station['startDate']);
-    $('#date-issued').text(create_date);
+    $('#date-issued').text(issued_date);
 
 	next_forecast_value = next_forecast_value ? next_forecast_value : "—";
 	
