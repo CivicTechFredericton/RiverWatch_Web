@@ -461,7 +461,12 @@ h2 {margin-top: 0;}
 	position: relative;
 }
 
-#station-footer {
+#station-footer
+{
+	cursor: pointer;
+}
+
+#station-footer-legend {
 
 	font-size: 0.9em;
 	display: grid;
@@ -469,8 +474,10 @@ h2 {margin-top: 0;}
 	grid-template-columns: repeat(auto-fill, 130px);	
 
   	margin-right: auto;
+	cursor: pointer;
+
 }
-#station-footer img
+#station-footer-legend img
 {
 	float:left;
 	padding-right: 5px;

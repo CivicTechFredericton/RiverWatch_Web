@@ -631,6 +631,9 @@ function setupIntro() {
 	$('#legend').on('click', function() {
 		$('#help').addClass('show');
 	});
+	$('#station-footer').on('click', function() {
+		$('#help').addClass('show');
+	});
 
 	$('.overlay .close').on('click', function() {
 		$(this).parents('section').first().removeClass('show');
