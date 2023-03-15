@@ -511,7 +511,9 @@ function getNextForecastDate(stationId, stations, timeZone) {
 					var eventFlag = currentEvent.getAttribute("flag");
 					
 					//we're looking for flag 0. If it's flag 0, return value.
-					if (eventFlag === "0")
+					// Update: the format changed on March 14, 2023. There will only be 1 event record with a flag of '1'. 
+					//  If the flag is '1' - this is the data we want. Adding a 'or' here to check for a 0 OR 1 to cover both cases and compatibility.
+					if ( (eventFlag === "0") || (eventFlag === "1"))
 					{
 						var nextForcastInterval = currentEvent.getAttribute("value")
 
