@@ -4,5 +4,4 @@ RiverWatch is a web application designed for monitoring water levels of the Sain
 
 This application was developed by volunteers at [Civic Tech Fredericton](https://www.civictechfredericton.com/), a non-profit organization based in Fredericton, New Brunswick, Canada, which connects volunteer technologists with community needs.
 
-The data utilized by RiverWatch is provided by [GeoNB](https://geonb.snb.ca/rwm/flood/StJohn_FEWSNB_export.xml), an official New Brunswick Government resource.
-
+The data utilized by River Watch Mobile is provided by the Water Sciences unit at the Department of Environment and Local Government (ELG) and hosted by GeoNB / Service New Brunswick (SNB).  Both ELG and SNB are departments of the Government of New Brunswick
